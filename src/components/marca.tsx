@@ -1,19 +1,14 @@
-/* The Trísion mark: four corner brackets locked into a `Tr` ligature.
-   NOTE: this is an APPROXIMATE redraw from the low-resolution raster on Amanda's
-   logo tile. The final lockup depends on the original vector — docs/spec-brand.md
-   §1.2, open question #8. Do not treat these paths as final. */
+import { MARCA_PATHS, MARCA_VIEWBOX } from "@/lib/marca-paths";
+
+/* Paths live in @/lib/marca-paths so the header mark, the favicon and the OG card
+   are literally the same geometry. See that file for the redraw caveat. */
 export function MarcaSimbolo({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 200 200" className={className} aria-hidden="true">
+    <svg viewBox={MARCA_VIEWBOX} className={className} aria-hidden="true">
       <g fill="currentColor">
-        <path d="M8 8h56v15H23v41H8z" />
-        <path d="M192 8v56h-15V23h-41V8z" />
-        <path d="M8 192v-56h15v41h41v15z" />
-        <path d="M192 192h-56v-15h41v-41h15z" />
-        <path d="M34 40h92v24H34z" />
-        <path d="M66 40h26v122H66z" />
-        <path d="M100 82h26v80h-26z" />
-        <path d="M126 82h24a28 28 0 0 1 28 28v18h-26v-18a2 2 0 0 0-2-2h-24z" />
+        {MARCA_PATHS.map((d) => (
+          <path key={d} d={d} />
+        ))}
       </g>
     </svg>
   );

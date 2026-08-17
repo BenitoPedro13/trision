@@ -536,21 +536,38 @@ export default function Apresentacao() {
           </p>
           <div className={s.fases}>
             {[
-              ["FASE 0", "Ver funcionando", "O site da Trísion no ar, com óculos de verdade e o botão de WhatsApp. Sem revendedor ainda."],
-              ["FASE 1", "A primeira vitrine", "O painel de cadastro, os endereços por revendedor, e um revendedor de verdade funcionando ponta a ponta."],
-              ["FASE 2", "Saber de onde vem", "Toda mensagem identificada por loja, com o painel pra você acompanhar."],
-              ["FASE 3", "Crescer", "Domínio próprio por revendedor, cadastro de loja nova sem depender de mim, importação do catálogo em planilha."],
-            ].map(([id, t, d]) => (
+              ["FASE 0", "Ver funcionando", "O site da Trísion no ar, com óculos de verdade e o botão de WhatsApp. Sem revendedor ainda.", "combinado"],
+              ["FASE 1", "A primeira vitrine", "O painel de cadastro, os endereços por revendedor, e um revendedor de verdade funcionando ponta a ponta.", "combinado"],
+              ["FASE 2", "Saber de onde vem", "Toda mensagem identificada por loja, com o painel pra você acompanhar.", "a combinar"],
+              ["FASE 3", "Crescer", "Domínio próprio por revendedor, cadastro de loja nova sem depender de mim, importação do catálogo em planilha.", "a combinar"],
+            ].map(([id, t, d, v]) => (
               <div key={id} className={s.fase}>
                 <span className={s.id}>{id}</span>
                 <span className={s.oq}>
                   <b>{t}</b>
                   {d}
                 </span>
-                <span className={s.val}>a combinar</span>
+                <span
+                  className={s.val}
+                  style={v === "combinado" ? { color: "var(--turquesa)" } : undefined}
+                >
+                  {v}
+                </span>
               </div>
             ))}
           </div>
+          <Visor cor="var(--turquesa)">
+            <div className="flex flex-col gap-1 bg-[color-mix(in_srgb,var(--fumo)_88%,transparent)] p-[clamp(16px,2.4vw,26px)]">
+              <span className={s.rotulo}>o combinado</span>
+              <p className="max-w-none text-luz">
+                <strong className="font-semibold text-foco">R$ 300</strong> pelo site no ar
+                com a primeira vitrine —{" "}
+                <strong className="font-semibold text-foco">R$ 150 pra começar</strong> e R$
+                150 na entrega. As Fases 2 e 3 a gente combina depois, com o site já
+                rodando.
+              </p>
+            </div>
+          </Visor>
           <p className="max-w-[60ch] text-[.875rem] text-prata">
             Além disso existe o custo do{" "}
             <strong className="font-semibold text-foco">domínio</strong> (o endereço{" "}

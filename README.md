@@ -22,8 +22,29 @@ aplicados, e a **página de apresentação para a Amanda** está pronta em `/apr
 Sem Payload, sem banco — decisão de escopo: Payload entra na Fase 1
 (`spec-architecture.md` §3).
 
+**Fechado em R$ 300** (R$ 150 pra começar) pelo site no ar com a primeira vitrine —
+Fases 0 e 1. Fases 2 e 3 a combinar.
+
 **Três perguntas travam todo o resto** (`spec-brand.md` §6): o domínio, o modelo de preço,
 e para quem aponta o botão de WhatsApp. Estão nos slides 14–15 da apresentação, marcadas.
+
+## Endereço
+
+`https://trision.vercel.app` — em `src/lib/site-config.ts`, com barra final normalizada
+numa função só. Sobrescreva com `NEXT_PUBLIC_SITE_URL` quando o domínio próprio chegar
+(`spec-brand.md` §6, pergunta 4).
+
+## Marca, favicon e OG
+
+Os oito paths do símbolo vivem em `src/lib/marca-paths.ts` e são a **única** fonte:
+o cabeçalho, o favicon (`src/app/icon.tsx`), o apple-touch (`apple-icon.tsx`) e o card
+social (`opengraph-image.tsx`, reusado por `twitter-image.tsx`) leem todos dali, então
+o favicon não tem como divergir da marca.
+
+O card social é composto com as instâncias estáticas em `src/assets/*.ttf` — o Satori
+não usa a fonte variável que o `next/font` serve. As estrelas do card são semeadas
+(`estrelas()`), então a imagem é byte-estável entre builds: um card que muda a cada
+deploy invalida todo cache social.
 
 ## Rodar
 
@@ -40,6 +61,9 @@ pnpm lint
 |---|---|
 | `/` | Página de espera. A home de verdade é Fase 0 e depende das fotos e dos dados da Amanda |
 | `/apresentacao` | A proposta para a Amanda — 16 seções, pt-BR, `noindex` |
+| `/icon`, `/apple-icon` | Favicon e apple-touch gerados do símbolo |
+| `/opengraph-image`, `/twitter-image` | Card social 1200×630 |
+| `/robots.txt`, `/sitemap.xml` | `/apresentacao` e `/ir/` ficam fora do índice |
 
 ## Componentes da marca
 
