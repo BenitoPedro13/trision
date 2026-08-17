@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+/* ============================================================================
+   Trísion Eyewear — design tokens.
+   docs/spec-design.md §4.1, verbatim. Values marked ● are ffmpeg samples from
+   Amanda's own material; every ratio below is a computed WCAG figure, not an
+   estimate. If you change a token, recompute the table in the spec.
+
+   Dark only, single committed world (spec-design.md §2). There is no light-mode
+   toggle and no prefers-color-scheme swap.
+   ========================================================================== */
+:root {
+  /* ground — the turquoise driven to its dark extreme */
+  --vazio:          #070B0C;  /* the void behind the starfield                        */
+  --noite:          #0C1214;  /* ● page ground (from #0F1012 / #0D1111)               */
+  --fumo:           #131A1D;  /* elevated surface: cards, sheets                       */
+  --petroleo:       #0A2A31;  /* ● tinted panel (her portrait's rim light, #091E24)    */
+  --aro:            #242E32;  /* hairlines. "the rim"                                  */
+
+  /* ink */
+  --cinza:          #78858A;  /* muted            4.96 on --noite   AA                 */
+  --prata:          #A6B2B6;  /* secondary        8.69 on --noite   AA                 */
+  --luz:            #E6EBEC;  /* body            15.70 on --noite   AA                 */
+  --foco:           #FFFFFF;  /* RESERVED: in focus. NOT a text colour. 18.88          */
+
+  /* the light plate — where product photography lives */
+  --lente:          #E8EBEC;
+  --lente-tinta:    #0C1214;  /* 15.76 on --lente  AA                                  */
+
+  /* the accent — one hue, three sources (spec-brand.md §1.4) */
+  --turquesa:       #17ABB8;  /* ● her frame's browline    6.79 on --noite  AA         */
+  --turquesa-claro: #4FD8E2;  /* ● the lit edge           11.02 on --noite  AA         */
+  --turquesa-fundo: #0C5D66;  /* accent for the light plate 6.32 on --lente AA         */
+  --indigo:         #1B2E8C;  /* ● AR-coating flash — gradient stop ONLY, never UI     */
+
+  /* geometry — the mark is square, so the system is square (spec-design.md §3.2) */
+  --radius: 0px;
+  --radius-lente: 2px;        /* the ONE exception, named so it cannot spread          */
+}
+
+@theme inline {
+  --color-vazio: var(--vazio);
+  --color-noite: var(--noite);
+  --color-fumo: var(--fumo);
+  --color-petroleo: var(--petroleo);
+  --color-aro: var(--aro);
+  --color-cinza: var(--cinza);
+  --color-prata: var(--prata);
+  --color-luz: var(--luz);
+  --color-foco: var(--foco);
+  --color-lente: var(--lente);
+  --color-turquesa: var(--turquesa);
+  --color-turquesa-claro: var(--turquesa-claro);
+  --color-turquesa-fundo: var(--turquesa-fundo);
+  --font-sans: var(--font-archivo);
+  --font-mono: var(--font-plex-mono);
+  --radius: 0px;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--vazio);
+  color: var(--luz);
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-variation-settings: "wdth" 100;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The mark IS the focus ring — spec-design.md §3.1. The brand device and the
+   WCAG 2.4.7 requirement are the same object. */
+:focus-visible {
+  outline: none;
+}
+.foco-visor { position: relative; }
+.foco-visor:focus-visible::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--turquesa), var(--turquesa)) 0    0    / 1.5px 14px no-repeat,
+    linear-gradient(var(--turquesa), var(--turquesa)) 0    0    / 14px 1.5px no-repeat,
+    linear-gradient(var(--turquesa), var(--turquesa)) 100% 0    / 1.5px 14px no-repeat,
+    linear-gradient(var(--turquesa), var(--turquesa)) 100% 0    / 14px 1.5px no-repeat,
+    linear-gradient(var(--turquesa), var(--turquesa)) 0    100% / 1.5px 14px no-repeat,
+    linear-gradient(var(--turquesa), var(--turquesa)) 0    100% / 14px 1.5px no-repeat,
+    linear-gradient(var(--turquesa), var(--turquesa)) 100% 100% / 1.5px 14px no-repeat,
+    linear-gradient(var(--turquesa), var(--turquesa)) 100% 100% / 14px 1.5px no-repeat;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    transition-duration: .001ms !important;
+  }
+}

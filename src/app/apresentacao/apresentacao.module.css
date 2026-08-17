@@ -1,0 +1,164 @@
+/* Slide mechanics + type scale for the pitch.
+   Structure ported from ../fa-moveis/docs/apresentacao/deck-fatima.html — 13
+   scroll-snapped slides shown next to a live demo, which is the format Fátima
+   signed after. Tokens are docs/spec-design.md §4.1, inherited, not re-decided. */
+
+.deck { scroll-snap-type: y mandatory; overflow-y: auto; height: 100dvh; }
+
+.slide {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  min-height: 100dvh;
+  padding: var(--pad);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(18px, 3vh, 38px);
+  position: relative;
+  background: var(--noite);
+  border-bottom: 1px solid var(--aro);
+  --pad: clamp(24px, 5vw, 88px);
+}
+.slide > * { position: relative; z-index: 1; }
+.escuro { background: var(--vazio); }
+.petroleo { background: var(--petroleo); }
+
+/* ---- type ---- */
+.display {
+  font-size: clamp(2.3rem, 6.6vw, 5.2rem); line-height: .95; letter-spacing: -.035em;
+  font-weight: 700; font-variation-settings: "wdth" 118; text-wrap: balance;
+  margin: 0; color: var(--foco);
+}
+.h1 {
+  font-size: clamp(1.85rem, 4.6vw, 3.4rem); line-height: 1.03; letter-spacing: -.03em;
+  font-weight: 700; font-variation-settings: "wdth" 112; text-wrap: balance;
+  margin: 0; color: var(--foco);
+}
+.h3 { font-size: 1.0625rem; font-weight: 650; line-height: 1.3; margin: 0; color: var(--luz); }
+.lede {
+  font-size: clamp(1.05rem, 1vw + .85rem, 1.35rem); line-height: 1.5; color: var(--prata);
+  max-width: min(60ch, 100%); margin: 0; text-wrap: pretty;
+}
+.p { margin: 0; max-width: min(60ch, 100%); color: var(--prata); text-wrap: pretty; overflow-wrap: break-word; }
+.chapeu {
+  display: flex; align-items: center; gap: 14px; font-size: .6875rem; font-weight: 600;
+  letter-spacing: .2em; text-transform: uppercase; color: var(--cinza); margin: 0;
+}
+.chapeu b { font-family: var(--font-plex-mono); color: var(--turquesa); font-weight: 400; letter-spacing: .06em; }
+.contador {
+  position: absolute; right: var(--pad); bottom: calc(var(--pad) * .62);
+  font-family: var(--font-plex-mono); font-size: .6875rem; color: var(--cinza);
+  letter-spacing: .08em; z-index: 2;
+}
+.contador b { color: var(--turquesa); font-weight: 400; }
+
+/* ---- grids ---- */
+.quatro {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(184px, 1fr));
+  gap: 1px; background: var(--aro); border: 1px solid var(--aro);
+}
+.quatro > div { background: var(--noite); padding: 22px 20px; display: flex; flex-direction: column; gap: 9px; }
+.escuro .quatro > div { background: var(--vazio); }
+.rotulo {
+  font-family: var(--font-plex-mono); font-size: .625rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--turquesa);
+}
+.quatro p { font-size: .9375rem; color: var(--cinza); margin: 0; }
+.duas { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: clamp(22px, 3.5vw, 54px); align-items: start; }
+
+/* ---- cor ---- */
+.corBloco { display: grid; grid-template-columns: minmax(140px, 220px) 1fr; gap: clamp(20px, 3vw, 40px); align-items: center; }
+@media (max-width: 620px) { .corBloco { grid-template-columns: 1fr; } }
+.corChip { aspect-ratio: 1; background: var(--turquesa); display: flex; align-items: flex-end; padding: 14px; }
+.corChip span { font-family: var(--font-plex-mono); font-size: .75rem; color: var(--noite); }
+.fontes { display: flex; flex-direction: column; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.fontes li { display: flex; gap: 14px; align-items: baseline; color: var(--prata); font-size: .9375rem; }
+.bolinha { width: 9px; height: 9px; background: var(--turquesa); flex: none; transform: translateY(1px); }
+
+/* ---- produtos ---- */
+.etiqueta {
+  display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-plex-mono);
+  font-size: .625rem; letter-spacing: .14em; text-transform: uppercase; color: var(--noite);
+  background: var(--turquesa); padding: 5px 10px; align-self: flex-start;
+}
+.prateleira { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: clamp(16px, 2.6vw, 32px); }
+.produto { display: flex; flex-direction: column; gap: 12px; }
+.placa {
+  background: var(--lente); border-radius: var(--radius-lente); aspect-ratio: 4/3;
+  display: flex; align-items: center; justify-content: center; padding: 14px;
+}
+.placa svg { width: 84%; height: auto; }
+.nomeProduto { color: var(--luz); font-weight: 650; font-size: .9375rem; }
+.fichaLinha { font-size: .75rem; color: var(--cinza); }
+
+/* ---- diagrama ---- */
+.plataforma { border: 1px solid var(--aro); }
+.camada { padding: 20px clamp(14px, 2.5vw, 24px); border-bottom: 1px solid var(--aro); background: var(--noite); }
+.escuro .camada { background: var(--vazio); }
+.camada:last-child { border-bottom: 0; }
+.camada .rotulo { margin-bottom: 12px; display: block; }
+.lojas { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 10px; }
+.loja { border: 1px solid var(--aro); padding: 12px; display: flex; flex-direction: column; gap: 7px; }
+.dominio { font-family: var(--font-plex-mono); font-size: .6875rem; color: var(--turquesa); word-break: break-all; }
+.cidade { font-size: .75rem; color: var(--cinza); }
+.pontos { display: flex; gap: 4px; flex-wrap: wrap; }
+.pt { width: 9px; height: 9px; border: 1px solid var(--aro); }
+.ptOn { background: var(--turquesa); border-color: var(--turquesa); }
+.catalogo { display: flex; gap: 5px; flex-wrap: wrap; }
+.catalogo .pt { width: 12px; height: 12px; background: var(--aro); border-color: var(--aro); }
+
+/* ---- mensagem ---- */
+.zap {
+  border: 1px solid var(--aro); background: var(--fumo); padding: clamp(18px, 2.6vw, 28px);
+  font-family: var(--font-plex-mono); font-size: .875rem; line-height: 1.8; color: var(--prata);
+}
+.zap b { color: var(--foco); font-weight: 400; }
+.zap i { color: var(--turquesa); font-style: normal; }
+
+/* ---- fases ---- */
+.fases { display: grid; gap: 1px; background: var(--aro); border: 1px solid var(--aro); }
+.fase {
+  background: var(--noite); padding: 18px clamp(14px, 2.4vw, 24px); display: grid;
+  grid-template-columns: minmax(96px, 132px) 1fr minmax(96px, 150px);
+  gap: clamp(12px, 2vw, 26px); align-items: baseline;
+}
+.escuro .fase { background: var(--vazio); }
+.fase .id { font-family: var(--font-plex-mono); font-size: .75rem; color: var(--turquesa); letter-spacing: .08em; }
+.fase .oq { color: var(--prata); font-size: .9375rem; }
+.fase .oq b { color: var(--foco); font-weight: 650; display: block; margin-bottom: 2px; }
+.fase .val { font-family: var(--font-plex-mono); font-size: .8125rem; color: var(--cinza); text-align: right; }
+@media (max-width: 640px) { .fase { grid-template-columns: 1fr; gap: 6px; } .fase .val { text-align: left; } }
+
+/* ---- perguntas ---- */
+.perguntas { display: grid; grid-template-columns: repeat(auto-fit, minmax(268px, 1fr)); gap: clamp(18px, 2.6vw, 38px); }
+.blocoP { display: flex; flex-direction: column; gap: 14px; }
+.tituloP {
+  font-family: var(--font-plex-mono); font-size: .625rem; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--turquesa); border-bottom: 1px solid var(--aro); padding-bottom: 10px;
+}
+.blocoP ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 13px; counter-reset: q; }
+.blocoP li {
+  display: grid; grid-template-columns: 26px 1fr; gap: 10px; font-size: .9375rem;
+  color: var(--prata); line-height: 1.5; counter-increment: q;
+}
+.blocoP li::before {
+  content: counter(q, decimal-leading-zero); font-family: var(--font-plex-mono);
+  font-size: .6875rem; color: var(--cinza); padding-top: 3px;
+}
+.blocoP li b { color: var(--foco); font-weight: 650; }
+.blocoP li i { font-style: normal; color: var(--cinza); font-size: .8125rem; display: block; margin-top: 3px; }
+.trava {
+  display: inline-block; font-family: var(--font-plex-mono); font-size: .5625rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--noite);
+  background: var(--turquesa); padding: 2px 6px; margin-left: 6px; vertical-align: 2px;
+}
+
+/* ---- fechamento ---- */
+.passos { display: flex; flex-direction: column; border-top: 1px solid var(--turquesa); }
+.passo {
+  display: grid; grid-template-columns: minmax(52px, 68px) 1fr; gap: clamp(12px, 2vw, 24px);
+  padding: 18px 0; border-bottom: 1px solid var(--turquesa); align-items: baseline;
+}
+.passo .i { font-family: var(--font-plex-mono); font-size: .75rem; color: var(--turquesa-claro); }
+.passo .t { color: var(--prata); font-size: .9375rem; }
+.passo .t b { color: var(--foco); font-weight: 650; display: block; margin-bottom: 2px; }
