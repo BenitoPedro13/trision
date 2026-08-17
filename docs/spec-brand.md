@@ -86,6 +86,34 @@ be read programmatically — ask Amanda for a screenshot or for the text. It nam
 we currently know nothing about, and "Atendimento Exclusivo" may be the single most
 important page on the new site.]`
 
+### 1.5b CONTESTADO — a cor da marca é dourado, segundo a Amanda
+
+**Amanda, por WhatsApp, 2026-08-17:** *"A nossa cor é essa: Dourado com preto. No insta eu
+tenho usado preto com branco porque acho que facilita a leitura."*
+
+Isto **contradiz diretamente** o turquesa de §1.4 e a tese de `spec-design.md` §2, que rejeita
+o dourado por ser a posição mais lotada do mercado de óculos. A declaração dela é um **fato de
+marca** e tem precedência sobre a nossa amostragem — o turquesa foi inferido do material, o
+dourado foi afirmado pela dona.
+
+Duas coisas que a fala dela entrega de graça, e que valem mais que a discórdia:
+
+1. **O dourado já falhou na prática, por legibilidade** — ela mesma migrou para preto e branco
+   no Instagram *"porque facilita a leitura"*. Ou seja: o problema não é o dourado como
+   identidade, é o dourado como tinta de texto. Isso é resolvível e é exatamente o tipo de
+   coisa que um sistema de design existe para resolver.
+2. **Ela nunca abandonou o preto.** O fundo escuro sobrevive intacto, e com ele o céu
+   estrelado (§1.3), que é a parte mais forte e mais consistente do material dela.
+
+**Bloqueado em:** o valor exato. Ela disse "essa cor" junto de uma imagem que ainda não chegou
+até este repositório. **Não escolher um dourado de memória** — `#D4AF37` e afins são o dourado
+genérico de estoque, e usá-lo aqui repetiria o erro que §2 do design spec acusa. Pedir o
+arquivo, ou o hex, ou a arte onde ela usa.
+
+**Enquanto não resolver:** os tokens em `spec-design.md` §4.1 continuam como estão, e nenhuma
+tela nova deve ser construída assumindo turquesa *ou* dourado como definitivo. Ver
+`TASK-paleta-dourada.md` quando existir.
+
 ### 1.6 The find
 
 Three things in her material are the same thing:
