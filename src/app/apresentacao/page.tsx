@@ -8,7 +8,9 @@ import { VisorCursor } from "@/components/visor-cursor";
 
 /* A pitch, not a public page. */
 export const metadata: Metadata = {
-  title: "Trísion, Uma vitrine para cada revendedor",
+  /* `absolute` keeps Benito's wording exactly and opts out of the layout's
+     "%s · Trísion Eyewear" template, which would otherwise print the brand twice. */
+  title: { absolute: "Trísion, Uma vitrine para cada revendedor" },
   description:
     "Proposta de site e plataforma para a Trísion Eyewear. Um catálogo, muitas vitrines.",
   robots: { index: false, follow: false },
