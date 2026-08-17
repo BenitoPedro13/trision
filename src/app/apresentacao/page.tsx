@@ -8,7 +8,7 @@ import { VisorCursor } from "@/components/visor-cursor";
 
 /* A pitch, not a public page. */
 export const metadata: Metadata = {
-  title: "Trísion — Uma vitrine para cada revendedor",
+  title: "Trísion, Uma vitrine para cada revendedor",
   description:
     "Proposta de site e plataforma para a Trísion Eyewear. Um catálogo, muitas vitrines.",
   robots: { index: false, follow: false },
@@ -28,7 +28,7 @@ const Chapeu = ({ n, children }: { n: number; children: React.ReactNode }) => (
 );
 
 /* Example frames. Deliberately named `Modelo A/B/C` and labelled `exemplo` on the
-   slide itself — TASK-scaffold-e-apresentacao.md §2.7 forbids presenting invented
+   slide itself, TASK-scaffold-e-apresentacao.md §2.7 forbids presenting invented
    product names to a client as if they were hers. */
 const EXEMPLOS = [
   { nome: "Modelo A", material: "acetato", aro: 52, ponte: 18, haste: 145, desenho: "quadrado" },
@@ -109,7 +109,7 @@ export default function Apresentacao() {
           </h2>
           <p className={s.lede}>
             A Trísion tem 24 anos e já tem tudo o que uma marca precisa ter. Só nunca
-            teve um site que usasse isso. Estas quatro coisas são suas — eu só fui
+            teve um site que usasse isso. Estas quatro coisas são suas, eu só fui
             atrás delas:
           </p>
           <div className={s.quatro}>
@@ -118,7 +118,7 @@ export default function Apresentacao() {
               <h3 className={s.h3}>Os quatro cantinhos</h3>
               <p>
                 Aqueles colchetes em volta do <span className="font-mono">Tr</span> não
-                são enfeite. São um visor — o mesmo desenho do foco de uma câmera. E de
+                são enfeite. São um visor, o mesmo desenho do foco de uma câmera. E de
                 uma armação.
               </p>
             </div>
@@ -161,7 +161,7 @@ export default function Apresentacao() {
           <div className={s.duas}>
             <p className={s.lede}>
               O seu logo é um aro em volta de uma letra. O óculos é um aro em volta de um
-              olho. E o seu negócio é um aro em volta de um catálogo — cada revendedor
+              olho. E o seu negócio é um aro em volta de um catálogo, cada revendedor
               mostra um recorte do seu estoque.
             </p>
             <p className={s.lede}>
@@ -190,7 +190,7 @@ export default function Apresentacao() {
             <div>
               <p className={`${s.lede} mb-5`}>
                 Eu não escolhi um turquesa. Eu tirei o turquesa de dentro da foto do seu
-                perfil — e ele aparece{" "}
+                perfil, e ele aparece{" "}
                 <strong className="font-semibold text-foco">três vezes</strong> lá:
               </p>
               <ul className={s.fontes}>
@@ -247,7 +247,7 @@ export default function Apresentacao() {
             {[
               ["em volta do produto", "Cada óculos aparece dentro de um visor, não dentro de uma caixinha."],
               ["em volta da seção", "Abre cada parte da página, carregando o número dela."],
-              ["em volta do que está ativo", "Quem navega pelo teclado enxerga onde está — pelo seu próprio logo."],
+              ["em volta do que está ativo", "Quem navega pelo teclado enxerga onde está, pelo seu próprio logo."],
               ["seguindo o mouse", "No computador, o visor acompanha o cursor e encaixa no que dá pra clicar."],
             ].map(([r, t]) => (
               <div key={r} data-alvo style={{ background: "var(--petroleo)" }}>
@@ -263,7 +263,7 @@ export default function Apresentacao() {
         <section className={s.slide}>
           <Chapeu n={5}>O produto na tela</Chapeu>
           <span className={s.etiqueta}>
-            Exemplo — nomes, medidas e fotos são só demonstração
+            Exemplo, nomes, medidas e fotos são só demonstração
           </span>
           <h2 className={s.h1}>
             Cada óculos ganha
@@ -292,7 +292,7 @@ export default function Apresentacao() {
           <p className={s.lede}>
             Aquele número —{" "}
             <Numeracao aro={52} ponte={18} haste={145} cor="var(--turquesa)" className="text-turquesa" />{" "}
-            — já vem gravado dentro da haste de todo óculos. É o tamanho do aro, da ponte
+           , já vem gravado dentro da haste de todo óculos. É o tamanho do aro, da ponte
             e da haste. Todo mundo tem esse número e ninguém mostra.{" "}
             <strong className="font-semibold text-foco">Na Trísion vai aparecer.</strong>
           </p>
@@ -315,7 +315,7 @@ export default function Apresentacao() {
           </p>
           <div className={s.plataforma}>
             <div className={s.camada}>
-              <span className={s.rotulo}>o catálogo — só você cadastra</span>
+              <span className={s.rotulo}>o catálogo, só você cadastra</span>
               <div className={s.catalogo}>
                 {Array.from({ length: 24 }, (_, i) => (
                   <span key={i} className={s.pt} />
@@ -324,7 +324,7 @@ export default function Apresentacao() {
             </div>
             <div className={s.camada}>
               <span className={s.rotulo}>
-                as vitrines — cada uma mostra um recorte · exemplo
+                as vitrines, cada uma mostra um recorte · exemplo
               </span>
               <div className={s.lojas}>
                 {[
@@ -354,8 +354,8 @@ export default function Apresentacao() {
           <div className={s.duas}>
             <div className="flex flex-col gap-4">
               <p className={s.lede}>
-                Você entra num painel, cadastra o modelo uma vez — foto, cor, material,
-                medida, descrição — e ele fica disponível para toda a rede.
+                Você entra num painel, cadastra o modelo uma vez, foto, cor, material,
+                medida, descrição, e ele fica disponível para toda a rede.
               </p>
               <p className={s.p}>
                 Se você trocar a foto, ela troca{" "}
@@ -413,7 +413,7 @@ export default function Apresentacao() {
             <strong className="font-semibold text-foco">
               Essa separação é o coração do sistema.
             </strong>{" "}
-            O catálogo é seu. O que o revendedor tem é uma seleção dele — nunca uma cópia
+            O catálogo é seu. O que o revendedor tem é uma seleção dele, nunca uma cópia
             que ele possa alterar.
           </p>
           <Contador n={9} />
@@ -428,7 +428,7 @@ export default function Apresentacao() {
             de loja pra loja.
           </h2>
           <p className={s.lede}>
-            Cada revendedor tem o endereço dele e o nome dele aparece com destaque — mas a
+            Cada revendedor tem o endereço dele e o nome dele aparece com destaque, mas a
             marca continua sendo a sua, igual em todas.
           </p>
           <div className={s.plataforma}>
@@ -453,7 +453,7 @@ export default function Apresentacao() {
             <strong className="font-semibold text-foco">
               trinta lojas sem virar trinta marcas
             </strong>
-            . No sistema não existe nem a opção de trocar a cor — não é uma regra que
+            . No sistema não existe nem a opção de trocar a cor, não é uma regra que
             alguém precisa lembrar de seguir, simplesmente não existe esse botão.
           </p>
           <Contador n={10} />
@@ -470,7 +470,7 @@ export default function Apresentacao() {
           <div className={s.duas}>
             <p className={s.lede}>
               Sem carrinho, sem cartão, sem frete, sem cadastro. O cliente acha o óculos,
-              vê a ficha, clica no botão e cai no WhatsApp — do jeito que já funciona hoje.
+              vê a ficha, clica no botão e cai no WhatsApp, do jeito que já funciona hoje.
             </p>
             <div className={s.quatro} style={{ gridTemplateColumns: "1fr" }}>
               <div>
@@ -478,7 +478,7 @@ export default function Apresentacao() {
                 <p style={{ color: "var(--prata)" }}>
                   Loja virtual com pagamento é outro projeto, outro custo e outro tipo de
                   venda. Óculos se vende conversando. A gente começa pelo que já dá certo
-                  — e loja online continua possível depois, se fizer sentido.
+                 , e loja online continua possível depois, se fizer sentido.
                 </p>
               </div>
             </div>
@@ -494,13 +494,13 @@ export default function Apresentacao() {
             <br />o cliente veio.
           </h2>
           <p className={s.lede}>
-            Toda mensagem chega já dizendo de onde veio. Você lê e responde normal — mas
+            Toda mensagem chega já dizendo de onde veio. Você lê e responde normal, mas
             agora sabe quem está trabalhando de verdade:
           </p>
           <div className={s.zap}>
             Olá! Vim pela loja da <b>Ótica Exemplo</b> (cidade) e quero saber
             <br />
-            sobre o Modelo A — solar, acetato preto,{" "}
+            sobre o Modelo A, solar, acetato preto,{" "}
             <Numeracao aro={52} ponte={18} haste={145} cor="var(--prata)" />.{" "}
             <i>[TRI-EXEMPLO-K4M2]</i>
           </div>
@@ -555,7 +555,7 @@ export default function Apresentacao() {
             Além disso existe o custo do{" "}
             <strong className="font-semibold text-foco">domínio</strong> (o endereço{" "}
             <span className="font-mono">trision.com.br</span>) e, a partir da Fase 1, a
-            hospedagem — os dois são pagos direto aos serviços, não a mim. Valores
+            hospedagem, os dois são pagos direto aos serviços, não a mim. Valores
             confirmados antes de começar.
           </p>
           <Contador n={13} />
@@ -563,7 +563,7 @@ export default function Apresentacao() {
 
         {/* 14 ───────────────────────────────── */}
         <section className={s.slide}>
-          <Chapeu n={13}>O que eu preciso saber — parte 1</Chapeu>
+          <Chapeu n={13}>O que eu preciso saber, parte 1</Chapeu>
           <h2 className={s.h1}>
             Sobre a marca
             <br />e os produtos.
@@ -576,7 +576,7 @@ export default function Apresentacao() {
                   <span>
                     <b>Você tem o arquivo original do logo?</b>
                     <i>
-                      De preferência .ai, .eps, .cdr, .pdf ou .svg — o que o designer usou.
+                      De preferência .ai, .eps, .cdr, .pdf ou .svg, o que o designer usou.
                       Só com a imagem, o logo fica limitado de tamanho.
                     </i>
                   </span>
@@ -586,7 +586,7 @@ export default function Apresentacao() {
                     <b>O que tem na página “Atendimento Exclusivo”?</b>
                     <i>
                       Está no seu link do Instagram. É um serviço que você já vende e que
-                      eu não conheço — pode ser uma parte importante do site.
+                      eu não conheço, pode ser uma parte importante do site.
                     </i>
                   </span>
                 </li>
@@ -616,7 +616,7 @@ export default function Apresentacao() {
                 <li>
                   <span>
                     <b>Quantos modelos você tem hoje?</b>
-                    <i>Dez, cem, quinhentos — muda bastante o tamanho do trabalho.</i>
+                    <i>Dez, cem, quinhentos, muda bastante o tamanho do trabalho.</i>
                   </span>
                 </li>
                 <li>
@@ -646,7 +646,7 @@ export default function Apresentacao() {
 
         {/* 15 ───────────────────────────────── */}
         <section className={s.slide}>
-          <Chapeu n={14}>O que eu preciso saber — parte 2</Chapeu>
+          <Chapeu n={14}>O que eu preciso saber, parte 2</Chapeu>
           <h2 className={s.h1}>
             Sobre os revendedores
             <br />e o dinheiro.
@@ -670,7 +670,7 @@ export default function Apresentacao() {
                     <span className={s.trava}>trava o projeto</span>
                     <i>
                       Com você, ou com o revendedor? Nos dois casos você continua vendo de
-                      onde veio — mas eu preciso saber antes de montar.
+                      onde veio, mas eu preciso saber antes de montar.
                     </i>
                   </span>
                 </li>
@@ -701,7 +701,7 @@ export default function Apresentacao() {
                     <span className={s.trava}>trava o projeto</span>
                     <i>
                       Tipo <span className="font-mono">trision.com.br</span>. Se não tiver,
-                      é a primeira coisa a comprar — sem ele não dá pra dar um endereço
+                      é a primeira coisa a comprar, sem ele não dá pra dar um endereço
                       próprio pra cada revendedor. É barato e leva minutos, mas precisa
                       estar no seu nome.
                     </i>
@@ -711,7 +711,7 @@ export default function Apresentacao() {
                   <span>
                     <b>Já existe alguma conta de Trísion em serviço de site?</b>
                     <i>
-                      Loja Integrada, Wix, Nuvemshop, Canva — qualquer coisa. Só pra não
+                      Loja Integrada, Wix, Nuvemshop, Canva, qualquer coisa. Só pra não
                       duplicar nem perder nada.
                     </i>
                   </span>
