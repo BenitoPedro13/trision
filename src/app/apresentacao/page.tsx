@@ -4,6 +4,7 @@ import { Ceu } from "@/components/ceu";
 import { Visor } from "@/components/visor";
 import { Numeracao } from "@/components/numeracao";
 import { MarcaLockup, MarcaSimbolo } from "@/components/marca";
+import { VisorCursor } from "@/components/visor-cursor";
 
 /* A pitch, not a public page. */
 export const metadata: Metadata = {
@@ -77,6 +78,7 @@ export default function Apresentacao() {
   return (
     <>
       <Ceu />
+      <VisorCursor />
       <div className={s.deck}>
         {/* 01 ───────────────────────────────── */}
         <section className={`${s.slide} ${s.escuro}`}>
@@ -181,7 +183,7 @@ export default function Apresentacao() {
           </h2>
           <div className={s.corBloco}>
             <Visor>
-              <div className={s.corChip}>
+              <div className={s.corChip} data-alvo>
                 <span>#17ABB8</span>
               </div>
             </Visor>
@@ -248,7 +250,7 @@ export default function Apresentacao() {
               ["em volta do que está ativo", "Quem navega pelo teclado enxerga onde está — pelo seu próprio logo."],
               ["seguindo o mouse", "No computador, o visor acompanha o cursor e encaixa no que dá pra clicar."],
             ].map(([r, t]) => (
-              <div key={r} style={{ background: "var(--petroleo)" }}>
+              <div key={r} data-alvo style={{ background: "var(--petroleo)" }}>
                 <span className={s.rotulo} style={{ color: "var(--turquesa-claro)" }}>{r}</span>
                 <p style={{ color: "var(--prata)" }}>{t}</p>
               </div>
@@ -270,7 +272,7 @@ export default function Apresentacao() {
           </h2>
           <div className={s.prateleira}>
             {EXEMPLOS.map((e) => (
-              <div key={e.nome} className={s.produto}>
+              <div key={e.nome} className={s.produto} data-alvo>
                 <Visor>
                   <div className={s.placa}>
                     <Armacao tipo={e.desenho} />
@@ -330,7 +332,7 @@ export default function Apresentacao() {
                   ["loja2", [0, 1, 1, 1, 1, 0, 0, 1, 0, 0]],
                   ["loja3", [1, 0, 0, 1, 1, 1, 1, 1, 0, 0]],
                 ].map(([nome, mapa]) => (
-                  <div key={nome as string} className={s.loja}>
+                  <div key={nome as string} className={s.loja} data-alvo>
                     <span className={s.dominio}>{nome as string}.trision.com.br</span>
                     <span className={s.cidade}>Ótica exemplo · cidade</span>
                     <Pontos mapa={(mapa as number[]).map(Boolean)} />

@@ -3,7 +3,14 @@
    scroll-snapped slides shown next to a live demo, which is the format Fátima
    signed after. Tokens are docs/spec-design.md §4.1, inherited, not re-decided. */
 
-.deck { scroll-snap-type: y mandatory; overflow-y: auto; height: 100dvh; }
+.deck {
+  scroll-snap-type: y mandatory;
+  overflow-y: auto;
+  height: 100dvh;
+  /* above the fixed starfield canvas, which sits at z-0 */
+  position: relative;
+  z-index: 1;
+}
 
 .slide {
   scroll-snap-align: start;
@@ -15,13 +22,13 @@
   justify-content: center;
   gap: clamp(18px, 3vh, 38px);
   position: relative;
-  background: var(--noite);
+  background: color-mix(in srgb, var(--noite) 80%, transparent);
   border-bottom: 1px solid var(--aro);
   --pad: clamp(24px, 5vw, 88px);
 }
 .slide > * { position: relative; z-index: 1; }
-.escuro { background: var(--vazio); }
-.petroleo { background: var(--petroleo); }
+.escuro { background: color-mix(in srgb, var(--vazio) 70%, transparent); }
+.petroleo { background: color-mix(in srgb, var(--petroleo) 88%, transparent); }
 
 /* ---- type ---- */
 .display {

@@ -29,13 +29,13 @@ export function Ceu() {
       h = cv.height = window.innerHeight * dpr;
       cv.style.width = "100%";
       cv.style.height = "100%";
-      const n = Math.min(560, Math.round((window.innerWidth * window.innerHeight) / 2600));
+      const n = Math.min(700, Math.round((window.innerWidth * window.innerHeight) / 2200));
       estrelas = Array.from({ length: n }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
-        r: (Math.random() * 1.25 + 0.25) * dpr,
-        a: Math.random() * 0.7 + 0.12,
-        v: Math.random() * 0.012 + 0.003,
+        r: (Math.random() * 1.35 + 0.3) * dpr,
+        a: Math.random() * 0.72 + 0.28,
+        v: Math.random() * 0.02 + 0.004,
         f: Math.random() * Math.PI * 2,
       }));
     };
@@ -43,7 +43,7 @@ export function Ceu() {
     const pintar = (t: number) => {
       ctx.clearRect(0, 0, w, h);
       for (const s of estrelas) {
-        const al = parado ? s.a : s.a * (0.62 + 0.38 * Math.sin(t * s.v + s.f));
+        const al = parado ? s.a : s.a * (0.42 + 0.58 * Math.sin(t * s.v + s.f));
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(232,235,236,${al.toFixed(3)})`;

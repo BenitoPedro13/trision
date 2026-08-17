@@ -48,7 +48,8 @@ pnpm lint
 | `src/components/visor.tsx` | Os quatro colchetes. O único ornamento do sistema |
 | `src/components/numeracao.tsx` | `52□18-145` a partir de três números em mm; o `□` é SVG |
 | `src/components/marca.tsx` | Símbolo + lockup. **Redesenho aproximado** — depende do vetor original |
-| `src/components/ceu.tsx` | O céu estrelado dela, em canvas. Estático sob `prefers-reduced-motion` |
+| `src/components/visor-cursor.tsx` | Os colchetes seguindo o ponteiro e encaixando no que é `data-alvo`. Só em ponteiro fino, desligado sob `prefers-reduced-motion` |
+| `src/components/ceu.tsx` | O céu estrelado dela, em canvas, piscando. Estático sob `prefers-reduced-motion` |
 
 ## Deploy
 
