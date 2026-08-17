@@ -191,7 +191,7 @@ export default function Apresentacao() {
             </Visor>
             <div>
               <p className={`${s.lede} mb-5`}>
-                Esse é o dourado da Trísion, tirado do seu próprio logo — não é um dourado
+                Esse é o dourado da Trísion, tirado do seu próprio logo, não é um dourado
                 genérico de catálogo. Você me disse que no Instagram passou a usar preto e
                 branco{" "}
                 <strong className="font-semibold text-foco">porque facilita a leitura</strong>.
@@ -202,7 +202,7 @@ export default function Apresentacao() {
                   <i className={s.bolinha} />
                   <span>
                     Dourado sobre <strong className="font-semibold text-foco">branco</strong>:
-                    contraste 2,24 — <strong className="font-semibold text-foco">reprova</strong>{" "}
+                    contraste 2,24, <strong className="font-semibold text-foco">reprova</strong>{" "}
                     no padrão de acessibilidade.
                   </span>
                 </li>
