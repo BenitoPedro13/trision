@@ -22,8 +22,8 @@ aplicados, e a **página de apresentação para a Amanda** está pronta em `/apr
 Sem Payload, sem banco — decisão de escopo: Payload entra na Fase 1
 (`spec-architecture.md` §3).
 
-**Fechado em R$ 300** (R$ 150 pra começar) pelo site no ar com a primeira vitrine —
-Fases 0 e 1. Fases 2 e 3 a combinar.
+**Fechado em R$ 300** (R$ 150 pra começar) pelas Fases 0, 1 e 2 — site no ar, primeira
+vitrine e atribuição de lead por loja. Só a Fase 3 fica a combinar.
 
 **Três perguntas travam todo o resto** (`spec-brand.md` §6): o domínio, o modelo de preço,
 e para quem aponta o botão de WhatsApp. Estão nos slides 14–15 da apresentação, marcadas.
