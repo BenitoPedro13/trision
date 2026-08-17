@@ -105,7 +105,13 @@ Duas coisas que a fala dela entrega de graça, e que valem mais que a discórdia
 2. **Ela nunca abandonou o preto.** O fundo escuro sobrevive intacto, e com ele o céu
    estrelado (§1.3), que é a parte mais forte e mais consistente do material dela.
 
-**Bloqueado em:** o valor exato. Ela disse "essa cor" junto de uma imagem que ainda não chegou
+**RESOLVIDO 2026-08-17.** O lockup horizontal dourado chegou. Amostrado com `ffmpeg`: a moda
+sobre 821 px é **`#CCA866`**, e os traços cheios do símbolo e do logotipo leem `#D2AE6D` /
+`#D2B171` — mesma família. **O ouro da Trísion é `#CCA866`**, amostrado, não escolhido.
+De quebra, a arte prova que o lockup horizontal **já existe** — §4 dizia que ele faltava, e
+isso estava errado.
+
+**~~Bloqueado em:~~** o valor exato. Ela disse "essa cor" junto de uma imagem que ainda não chegou
 até este repositório. **Não escolher um dourado de memória** — `#D4AF37` e afins são o dourado
 genérico de estoque, e usá-lo aqui repetiria o erro que §2 do design spec acusa. Pedir o
 arquivo, ou o hex, ou a arte onde ela usa.
@@ -206,8 +212,8 @@ That is enough to feel like theirs and cannot break anything.
 
 | | Decision |
 |---|---|
-| **Keep** | The name, accent included. The bracket mark and its interlock. The `Tr` ligature. The starfield ground. `Since 2002`. `Eyewear Addict`. First-person voice. The turquoise. |
-| **Refine** | Redraw the mark as clean SVG at its existing proportions — the current asset is a low-resolution raster with soft bracket corners. Anchor the ground to a defined value instead of a JPEG average. Build a horizontal lockup for the site header (mark + wordmark on one line), which does not currently exist. |
+| **Keep** | The name, accent included. The bracket mark and its interlock. The `Tr` ligature. The starfield ground. `Since 2002`. `Eyewear Addict`. First-person voice. **The gold, `#CCA866`.** The horizontal lockup — it exists (§1.5b); an earlier draft of this table wrongly said it had to be built. |
+| **Refine** | Redraw the mark as clean SVG at its existing proportions — the current asset is a low-resolution raster with soft bracket corners. Anchor the ground to a defined value instead of a JPEG average. Redraw the existing horizontal lockup as clean SVG at its own proportions. |
 | **Retire** | The glitter *texture* as a literal JPEG. The starfield stays; it gets rebuilt as a live field (`spec-design.md` §7.1) so it is sharp at every size and does not ship a 1.5 MB tile. The rounded pill buttons on the link-in-bio page — they belong to Linklist's template, not to Trísion. |
 | **Add** | Only what the brand lacked because it never had a real site: a type system, a tested palette with contrast numbers, the measurement language (`spec-design.md` §5), and the viewfinder as a working interaction rather than a static logo. |
 | **Never** | Re-set the wordmark in a substitute typeface. If the vector cannot be recovered, it gets **redrawn by hand from the raster** and shipped as SVG — see `[VERIFICAR]` in §1.2. A near-miss font is worse than no wordmark. |

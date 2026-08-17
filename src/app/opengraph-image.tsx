@@ -24,7 +24,7 @@ export default async function OG() {
     ...pos,
     ...lados,
   });
-  const risco = "2px solid #17ABB8";
+  const risco = "2px solid #CCA866";
 
   return new ImageResponse(
     (
@@ -94,7 +94,7 @@ export default async function OG() {
               borderLeft: "1px solid #242E32",
               fontSize: 17,
               letterSpacing: 5,
-              color: "#17ABB8",
+              color: "#CCA866",
             }}
           >
             DESDE {SITE.desde}

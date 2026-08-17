@@ -179,54 +179,48 @@ export default function Apresentacao() {
         <section className={s.slide}>
           <Chapeu n={3}>A cor</Chapeu>
           <h2 className={s.h1}>
-            A sua cor já estava
+            O seu dourado nunca foi
             <br />
-            na sua foto.
+            ilegível. O branco que era.
           </h2>
           <div className={s.corBloco}>
             <Visor>
-              <div className={s.corChip} data-alvo>
-                <span>#17ABB8</span>
+              <div className={s.corChip}>
+                <span>#CCA866</span>
               </div>
             </Visor>
             <div>
               <p className={`${s.lede} mb-5`}>
-                Eu não escolhi um turquesa. Eu tirei o turquesa de dentro da foto do seu
-                perfil, e ele aparece{" "}
-                <strong className="font-semibold text-foco">três vezes</strong> lá:
+                Esse é o dourado da Trísion, tirado do seu próprio logo — não é um dourado
+                genérico de catálogo. Você me disse que no Instagram passou a usar preto e
+                branco{" "}
+                <strong className="font-semibold text-foco">porque facilita a leitura</strong>.
+                Você estava certa, e dá pra medir o porquê:
               </p>
               <ul className={s.fontes}>
                 <li>
                   <i className={s.bolinha} />
                   <span>
-                    Na <strong className="font-semibold text-foco">armação</strong> que
-                    você está usando na foto.
+                    Dourado sobre <strong className="font-semibold text-foco">branco</strong>:
+                    contraste 2,24 — <strong className="font-semibold text-foco">reprova</strong>{" "}
+                    no padrão de acessibilidade.
                   </span>
                 </li>
                 <li>
                   <i className={s.bolinha} />
                   <span>
-                    Na <strong className="font-semibold text-foco">luz</strong> que
-                    ilumina a foto por trás.
-                  </span>
-                </li>
-                <li>
-                  <i className={s.bolinha} />
-                  <span>
-                    No{" "}
-                    <strong className="font-semibold text-foco">
-                      reflexo do antirreflexo
-                    </strong>{" "}
-                    da lente.
+                    Dourado sobre o{" "}
+                    <strong className="font-semibold text-foco">preto do site</strong>: 8,42 —
+                    passa com folga.
                   </span>
                 </li>
               </ul>
             </div>
           </div>
           <p className={s.lede}>
-            Olhando os concorrentes: todo mundo é preto, branco, cinza ou dourado.{" "}
+            Ou seja: o problema nunca foi o dourado, foi o fundo branco.{" "}
             <strong className="font-semibold text-foco">
-              O turquesa é seu e ninguém está usando.
+              Aqui você recupera a cor da marca, no único fundo em que ela sempre funcionou.
             </strong>
           </p>
           <Contador n={4} />
@@ -245,7 +239,7 @@ export default function Apresentacao() {
             moldura de cada óculos, o começo de cada seção, e o contorno do que está
             selecionado.
           </p>
-          <div className={s.quatro} style={{ borderColor: "var(--turquesa)", background: "var(--turquesa)" }}>
+          <div className={s.quatro} style={{ borderColor: "var(--ouro)", background: "var(--ouro)" }}>
             {[
               ["em volta do produto", "Cada óculos aparece dentro de um visor, não dentro de uma caixinha."],
               ["em volta da seção", "Abre cada parte da página, carregando o número dela."],
@@ -253,7 +247,7 @@ export default function Apresentacao() {
               ["seguindo o mouse", "No computador, o visor acompanha o cursor e encaixa no que dá pra clicar."],
             ].map(([r, t]) => (
               <div key={r} data-alvo style={{ background: "var(--petroleo)" }}>
-                <span className={s.rotulo} style={{ color: "var(--turquesa-claro)" }}>{r}</span>
+                <span className={s.rotulo} style={{ color: "var(--ouro-claro)" }}>{r}</span>
                 <p style={{ color: "var(--prata)" }}>{t}</p>
               </div>
             ))}
@@ -293,7 +287,7 @@ export default function Apresentacao() {
           </div>
           <p className={s.lede}>
             Aquele número —{" "}
-            <Numeracao aro={52} ponte={18} haste={145} cor="var(--turquesa)" className="text-turquesa" />{" "}
+            <Numeracao aro={52} ponte={18} haste={145} cor="var(--ouro)" className="text-ouro" />{" "}
            , já vem gravado dentro da haste de todo óculos. É o tamanho do aro, da ponte
             e da haste. Todo mundo tem esse número e ninguém mostra.{" "}
             <strong className="font-semibold text-foco">Na Trísion vai aparecer.</strong>
@@ -551,14 +545,14 @@ export default function Apresentacao() {
                 </span>
                 <span
                   className={s.val}
-                  style={v === "combinado" ? { color: "var(--turquesa)" } : undefined}
+                  style={v === "combinado" ? { color: "var(--ouro)" } : undefined}
                 >
                   {v}
                 </span>
               </div>
             ))}
           </div>
-          <Visor cor="var(--turquesa)">
+          <Visor cor="var(--ouro)">
             <div className="flex flex-col gap-1 bg-[color-mix(in_srgb,var(--fumo)_88%,transparent)] p-[clamp(16px,2.4vw,26px)]">
               <span className={s.rotulo}>o combinado</span>
               <p className="max-w-none text-luz">
@@ -773,8 +767,8 @@ export default function Apresentacao() {
           <div className="mt-3 flex flex-wrap items-center gap-[clamp(16px,3vw,32px)]">
             <MarcaSimbolo className="w-14 shrink-0 text-foco" />
             <div
-              className="flex items-center self-stretch border-l pl-4 font-mono text-[.6875rem] uppercase tracking-[.24em] text-turquesa-claro"
-              style={{ borderColor: "var(--turquesa)" }}
+              className="flex items-center self-stretch border-l pl-4 font-mono text-[.6875rem] uppercase tracking-[.24em] text-ouro-claro"
+              style={{ borderColor: "var(--ouro)" }}
             >
               Desde 2002
             </div>

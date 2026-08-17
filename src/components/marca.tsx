@@ -39,7 +39,7 @@ export function MarcaLockup({
         </span>
       </div>
       {desde && (
-        <div className="flex items-center self-stretch border-l border-aro pl-4 font-mono text-[.6875rem] uppercase tracking-[.24em] text-turquesa">
+        <div className="flex items-center self-stretch border-l border-aro pl-4 font-mono text-[.6875rem] uppercase tracking-[.24em] text-ouro">
           Desde 2002
         </div>
       )}

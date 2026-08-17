@@ -27,11 +27,11 @@
   --lente:          #E8EBEC;
   --lente-tinta:    #0C1214;  /* 15.76 on --lente  AA                                  */
 
-  /* the accent — one hue, three sources (spec-brand.md §1.4) */
-  --turquesa:       #17ABB8;  /* ● her frame's browline    6.79 on --noite  AA         */
-  --turquesa-claro: #4FD8E2;  /* ● the lit edge           11.02 on --noite  AA         */
-  --turquesa-fundo: #0C5D66;  /* accent for the light plate 6.32 on --lente AA         */
-  --indigo:         #1B2E8C;  /* ● AR-coating flash — gradient stop ONLY, never UI     */
+  /* the accent — her gold, sampled from the lockup (spec-brand.md §1.5b) */
+  --ouro:       #CCA866;  /* ● amostrado do lockup    8.42 on --noite  AA         */
+  --ouro-claro: #E0C48F;  /* lit edge                11.20 on --noite  AA         */
+  --ouro-fundo: #7D6029;  /* accent for the light plate 4.90 on --lente AA         */
+  /* --indigo retirado: pertencia à história do turquesa */  /* ● AR-coating flash — gradient stop ONLY, never UI     */
 
   /* geometry — the mark is square, so the system is square (spec-design.md §3.2) */
   --radius: 0px;
@@ -49,9 +49,9 @@
   --color-luz: var(--luz);
   --color-foco: var(--foco);
   --color-lente: var(--lente);
-  --color-turquesa: var(--turquesa);
-  --color-turquesa-claro: var(--turquesa-claro);
-  --color-turquesa-fundo: var(--turquesa-fundo);
+  --color-ouro: var(--ouro);
+  --color-ouro-claro: var(--ouro-claro);
+  --color-ouro-fundo: var(--ouro-fundo);
   --font-sans: var(--font-archivo);
   --font-mono: var(--font-plex-mono);
   --radius: 0px;
@@ -84,14 +84,14 @@ body {
   inset: -6px;
   pointer-events: none;
   background:
-    linear-gradient(var(--turquesa), var(--turquesa)) 0    0    / 1.5px 14px no-repeat,
-    linear-gradient(var(--turquesa), var(--turquesa)) 0    0    / 14px 1.5px no-repeat,
-    linear-gradient(var(--turquesa), var(--turquesa)) 100% 0    / 1.5px 14px no-repeat,
-    linear-gradient(var(--turquesa), var(--turquesa)) 100% 0    / 14px 1.5px no-repeat,
-    linear-gradient(var(--turquesa), var(--turquesa)) 0    100% / 1.5px 14px no-repeat,
-    linear-gradient(var(--turquesa), var(--turquesa)) 0    100% / 14px 1.5px no-repeat,
-    linear-gradient(var(--turquesa), var(--turquesa)) 100% 100% / 1.5px 14px no-repeat,
-    linear-gradient(var(--turquesa), var(--turquesa)) 100% 100% / 14px 1.5px no-repeat;
+    linear-gradient(var(--ouro), var(--ouro)) 0    0    / 1.5px 14px no-repeat,
+    linear-gradient(var(--ouro), var(--ouro)) 0    0    / 14px 1.5px no-repeat,
+    linear-gradient(var(--ouro), var(--ouro)) 100% 0    / 1.5px 14px no-repeat,
+    linear-gradient(var(--ouro), var(--ouro)) 100% 0    / 14px 1.5px no-repeat,
+    linear-gradient(var(--ouro), var(--ouro)) 0    100% / 1.5px 14px no-repeat,
+    linear-gradient(var(--ouro), var(--ouro)) 0    100% / 14px 1.5px no-repeat,
+    linear-gradient(var(--ouro), var(--ouro)) 100% 100% / 1.5px 14px no-repeat,
+    linear-gradient(var(--ouro), var(--ouro)) 100% 100% / 14px 1.5px no-repeat;
 }
 
 @media (prefers-reduced-motion: reduce) {

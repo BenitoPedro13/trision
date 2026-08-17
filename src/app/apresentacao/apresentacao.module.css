@@ -51,13 +51,13 @@
   display: flex; align-items: center; gap: 14px; font-size: .6875rem; font-weight: 600;
   letter-spacing: .2em; text-transform: uppercase; color: var(--cinza); margin: 0;
 }
-.chapeu b { font-family: var(--font-plex-mono); color: var(--turquesa); font-weight: 400; letter-spacing: .06em; }
+.chapeu b { font-family: var(--font-plex-mono); color: var(--ouro); font-weight: 400; letter-spacing: .06em; }
 .contador {
   position: absolute; right: var(--pad); bottom: calc(var(--pad) * .62);
   font-family: var(--font-plex-mono); font-size: .6875rem; color: var(--cinza);
   letter-spacing: .08em; z-index: 2;
 }
-.contador b { color: var(--turquesa); font-weight: 400; }
+.contador b { color: var(--ouro); font-weight: 400; }
 
 /* ---- grids ---- */
 .quatro {
@@ -68,7 +68,7 @@
 .escuro .quatro > div { background: var(--vazio); }
 .rotulo {
   font-family: var(--font-plex-mono); font-size: .625rem; letter-spacing: .14em;
-  text-transform: uppercase; color: var(--turquesa);
+  text-transform: uppercase; color: var(--ouro);
 }
 .quatro p { font-size: .9375rem; color: var(--cinza); margin: 0; }
 .duas { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: clamp(22px, 3.5vw, 54px); align-items: start; }
@@ -76,17 +76,17 @@
 /* ---- cor ---- */
 .corBloco { display: grid; grid-template-columns: minmax(140px, 220px) 1fr; gap: clamp(20px, 3vw, 40px); align-items: center; }
 @media (max-width: 620px) { .corBloco { grid-template-columns: 1fr; } }
-.corChip { aspect-ratio: 1; background: var(--turquesa); display: flex; align-items: flex-end; padding: 14px; }
+.corChip { aspect-ratio: 1; background: var(--ouro); display: flex; align-items: flex-end; padding: 14px; }
 .corChip span { font-family: var(--font-plex-mono); font-size: .75rem; color: var(--noite); }
 .fontes { display: flex; flex-direction: column; gap: 14px; margin: 0; padding: 0; list-style: none; }
 .fontes li { display: flex; gap: 14px; align-items: baseline; color: var(--prata); font-size: .9375rem; }
-.bolinha { width: 9px; height: 9px; background: var(--turquesa); flex: none; transform: translateY(1px); }
+.bolinha { width: 9px; height: 9px; background: var(--ouro); flex: none; transform: translateY(1px); }
 
 /* ---- produtos ---- */
 .etiqueta {
   display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-plex-mono);
   font-size: .625rem; letter-spacing: .14em; text-transform: uppercase; color: var(--noite);
-  background: var(--turquesa); padding: 5px 10px; align-self: flex-start;
+  background: var(--ouro); padding: 5px 10px; align-self: flex-start;
 }
 .prateleira { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: clamp(16px, 2.6vw, 32px); }
 .produto { display: flex; flex-direction: column; gap: 12px; }
@@ -106,11 +106,11 @@
 .camada .rotulo { margin-bottom: 12px; display: block; }
 .lojas { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 10px; }
 .loja { border: 1px solid var(--aro); padding: 12px; display: flex; flex-direction: column; gap: 7px; }
-.dominio { font-family: var(--font-plex-mono); font-size: .6875rem; color: var(--turquesa); word-break: break-all; }
+.dominio { font-family: var(--font-plex-mono); font-size: .6875rem; color: var(--ouro); word-break: break-all; }
 .cidade { font-size: .75rem; color: var(--cinza); }
 .pontos { display: flex; gap: 4px; flex-wrap: wrap; }
 .pt { width: 9px; height: 9px; border: 1px solid var(--aro); }
-.ptOn { background: var(--turquesa); border-color: var(--turquesa); }
+.ptOn { background: var(--ouro); border-color: var(--ouro); }
 .catalogo { display: flex; gap: 5px; flex-wrap: wrap; }
 .catalogo .pt { width: 12px; height: 12px; background: var(--aro); border-color: var(--aro); }
 
@@ -120,7 +120,7 @@
   font-family: var(--font-plex-mono); font-size: .875rem; line-height: 1.8; color: var(--prata);
 }
 .zap b { color: var(--foco); font-weight: 400; }
-.zap i { color: var(--turquesa); font-style: normal; }
+.zap i { color: var(--ouro); font-style: normal; }
 
 /* ---- fases ---- */
 .fases { display: grid; gap: 1px; background: var(--aro); border: 1px solid var(--aro); }
@@ -130,7 +130,7 @@
   gap: clamp(12px, 2vw, 26px); align-items: baseline;
 }
 .escuro .fase { background: var(--vazio); }
-.fase .id { font-family: var(--font-plex-mono); font-size: .75rem; color: var(--turquesa); letter-spacing: .08em; }
+.fase .id { font-family: var(--font-plex-mono); font-size: .75rem; color: var(--ouro); letter-spacing: .08em; }
 .fase .oq { color: var(--prata); font-size: .9375rem; }
 .fase .oq b { color: var(--foco); font-weight: 650; display: block; margin-bottom: 2px; }
 .fase .val { font-family: var(--font-plex-mono); font-size: .8125rem; color: var(--cinza); text-align: right; }
@@ -141,7 +141,7 @@
 .blocoP { display: flex; flex-direction: column; gap: 14px; }
 .tituloP {
   font-family: var(--font-plex-mono); font-size: .625rem; letter-spacing: .15em;
-  text-transform: uppercase; color: var(--turquesa); border-bottom: 1px solid var(--aro); padding-bottom: 10px;
+  text-transform: uppercase; color: var(--ouro); border-bottom: 1px solid var(--aro); padding-bottom: 10px;
 }
 .blocoP ol { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 13px; counter-reset: q; }
 .blocoP li {
@@ -157,15 +157,15 @@
 .trava {
   display: inline-block; font-family: var(--font-plex-mono); font-size: .5625rem;
   letter-spacing: .1em; text-transform: uppercase; color: var(--noite);
-  background: var(--turquesa); padding: 2px 6px; margin-left: 6px; vertical-align: 2px;
+  background: var(--ouro); padding: 2px 6px; margin-left: 6px; vertical-align: 2px;
 }
 
 /* ---- fechamento ---- */
-.passos { display: flex; flex-direction: column; border-top: 1px solid var(--turquesa); }
+.passos { display: flex; flex-direction: column; border-top: 1px solid var(--ouro); }
 .passo {
   display: grid; grid-template-columns: minmax(52px, 68px) 1fr; gap: clamp(12px, 2vw, 24px);
-  padding: 18px 0; border-bottom: 1px solid var(--turquesa); align-items: baseline;
+  padding: 18px 0; border-bottom: 1px solid var(--ouro); align-items: baseline;
 }
-.passo .i { font-family: var(--font-plex-mono); font-size: .75rem; color: var(--turquesa-claro); }
+.passo .i { font-family: var(--font-plex-mono); font-size: .75rem; color: var(--ouro-claro); }
 .passo .t { color: var(--prata); font-size: .9375rem; }
 .passo .t b { color: var(--foco); font-weight: 650; display: block; margin-bottom: 2px; }

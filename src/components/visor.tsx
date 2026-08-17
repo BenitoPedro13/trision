@@ -10,7 +10,7 @@
 export function Visor({
   children,
   className = "",
-  cor = "var(--turquesa)",
+  cor = "var(--ouro)",
   tamanho = 14,
   folga = 8,
 }: {

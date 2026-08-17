@@ -77,7 +77,7 @@ export function VisorCursor() {
     };
   }, []);
 
-  const risco = "1.5px solid var(--turquesa-claro)";
+  const risco = "1.5px solid var(--ouro-claro)";
   const base: React.CSSProperties = { position: "absolute", width: 11, height: 11 };
 
   return (

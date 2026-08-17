@@ -38,10 +38,16 @@ What survives the critique, and why:
   default that happens to coincide with it.
 - **The serif is rejected.** Trísion's wordmark is a squared geometric sans in the Eurostile
   lineage. A luxury serif would contradict the one piece of type the brand actually owns.
-- **The gold accent is rejected outright.** Warm-metallic is the single most crowded
-  position in eyewear (`casa-lunara`, `Gold Square`, most of the category). Amanda's own
-  material has a colour already and it is **turquoise** — sampled three times from her own
-  portrait, and effectively absent from every competitor in the reference set.
+- **The accent is gold, because it is hers.** This section previously rejected gold as the
+  most crowded position in eyewear and proposed a turquoise sampled from Amanda's portrait.
+  **That was wrong and is reversed** (`spec-brand.md` §1.5b): she states the brand colour is
+  gold with black, and an owner's statement outranks our inference. The gold is `#CCA866`,
+  **sampled from her own lockup**, not picked from the stock-gold shelf — which is the part
+  of the original objection that survives.
+- **Her gold has only ever failed on white.** She moved to black-and-white on Instagram
+  "porque facilita a leitura", and the measurement explains why: `#CCA866` is **2.24 on
+  white — a fail** — and **8.42 on `--noite` — a comfortable AA**. The ground this site
+  already had is the only one her real brand colour has ever worked on.
 - **`#000000` and `#FFFFFF` are both rejected as surfaces.** Her ground samples at `#0F1012`
   and `#0D1111`; her portrait's ground is petrol-tinted. The palette in §4 descends from
   that, so every surface on the site is the turquoise driven to its dark extreme, and the
@@ -49,9 +55,11 @@ What survives the critique, and why:
 - **`#FFFFFF` survives with one job only** — see §4.2. It is not a text colour. It is the
   colour of the thing in focus.
 
-**The risk taken:** committing a 24-year-old eyewear label to a cyan-turquoise accent, and
-to a mark-derived interaction (§3) as the site's entire ornamental system. Justified because
-both are already hers and neither has ever been used.
+**The risk taken:** committing the site to a mark-derived interaction (§3) as its entire
+ornamental system, and to gold used strictly as *light* — hairlines, edges, small marks on
+the dark ground — never as a field and never on the light plate (§4.2). Justified because
+the mark and the gold are both hers, and because the discipline is what separates this from
+the gold-on-black cliché the category is full of.
 
 ---
 
@@ -68,7 +76,7 @@ It is the site's:
 
 | Role | Behaviour |
 |---|---|
-| **Focus indicator** | `:focus-visible` draws the four brackets around the element, `--turquesa`, 1.5px, 8px arms, 3px offset. **The mark is the accessibility affordance.** This is the single best idea in the system: the brand device and the WCAG 2.4.7 requirement are the same object. |
+| **Focus indicator** | `:focus-visible` draws the four brackets around the element, `--ouro`, 1.5px, 8px arms, 3px offset. **The mark is the accessibility affordance.** This is the single best idea in the system: the brand device and the WCAG 2.4.7 requirement are the same object. |
 | **Hover / pointer** | The brackets track the cursor and *snap* onto interactive targets (ReactBits `TargetCursor`, §7.2). Disabled on coarse pointers and under `prefers-reduced-motion`. |
 | **Product card** | Each frame in a grid sits inside brackets, not inside a box. Corners only — the card has no border. |
 | **Hero crop** | Brackets at the viewport's inner margin, marking the composition, exactly as Oakley's guides do (`frames/oakley/004.jpg`). |
@@ -122,11 +130,11 @@ Brand-sampled values are marked ●. All ratios computed against the stated grou
   --lente:          #E8EBEC;  /* the plate                                            */
   --lente-tinta:    #0C1214;  /* text on the plate      15.76           AA            */
 
-  /* the accent — one hue, three sources (spec-brand.md §1.4) */
-  --turquesa:       #17ABB8;  /* ● THE accent            6.79 on --noite  AA          */
-  --turquesa-claro: #4FD8E2;  /* ● bright edge          11.02 on --noite  AA          */
-  --turquesa-fundo: #0C5D66;  /* accent for the plate    6.32 on --lente  AA          */
-  --indigo:         #1B2E8C;  /* ● AR-coating flash — gradient stop ONLY, never UI    */
+  /* the accent — her gold, sampled from the lockup (spec-brand.md §1.5b) */
+  --ouro:           #CCA866;  /* ● THE accent            8.42 on --noite  AA          */
+  --ouro-claro:     #E0C48F;  /* lit edge               11.20 on --noite  AA          */
+  --ouro-fundo:     #7D6029;  /* accent for the plate    4.90 on --lente  AA          */
+  /* --indigo (the AR-coating flash) is retired: it belonged to the turquoise story  */
 }
 ```
 
@@ -137,14 +145,14 @@ Brand-sampled values are marked ●. All ratios computed against the stated grou
    screen at a time. That single reservation is what makes the page read as an optical
    instrument rather than a dark theme: something is always *in focus*, and it is literally
    brighter than everything else.
-2. **`--turquesa` may not appear on `--lente`.** Measured 2.32 — it fails. On the light
-   plate the accent is `--turquesa-fundo` (6.32). This is a hard constraint and it is
+2. **`--ouro` may not appear on `--lente`.** Measured 1.87 — it fails. On the light
+   plate the accent is `--ouro-fundo` (4.90). This is a hard constraint and it is
    welcome: it means the accent belongs to the dark, and the light plate belongs to the
    product.
-3. **Text on a `--turquesa` fill is `--noite`** (6.79), never white (2.78 — fails). A
-   turquoise button is dark-on-bright. There is exactly one on any given page.
-4. **`--indigo` never touches UI.** It is one stop in the coating gradient (§7.3) and
-   nothing else. It has not been contrast-tested because nothing legible will ever sit on it.
+3. **Text on an `--ouro` fill is `--noite`** (8.42), never white (2.24 — fails). A gold
+   button is dark-on-bright. There is exactly one on any given page.
+4. **Gold is light, not paint.** Hairlines, edges, small marks, one button. It never fills
+   a large field — a gold plane is the exact cliché §2 is steering around.
 5. **The product photograph is the only saturated thing on the page.** Everything else is the
    greyscale ramp plus a strictly rationed turquoise. If a screen looks flat, the fix is a
    better photograph, never a second accent colour.
@@ -245,14 +253,14 @@ Corner brackets that follow the pointer and snap onto interactive targets. This 
 Amanda's logo*, moving. It is the strongest single decision in the design: the brand mark
 stops being a sticker in the corner and becomes how the site behaves.
 
-Retune to spec: `--turquesa`, 1.5px arms, snap `120ms` `cubic-bezier(.2,.8,.2,1)`. Pointer-fine
+Retune to spec: `--ouro`, 1.5px arms, snap `120ms` `cubic-bezier(.2,.8,.2,1)`. Pointer-fine
 only; on touch the brackets are static on cards. Off under `prefers-reduced-motion`, where
 `:focus-visible` brackets (§3.1) do the same job without motion.
 
 ### 7.3 `Iridescence` / `MetallicPaint` — the coating
 
 The anti-reflective flash, sampled from her own lens at `#10247C` and running to
-`--turquesa-claro`. Used on **exactly one element per page** — the primary CTA's edge, or the
+`--ouro-claro`. Used on **exactly one element per page** — the primary CTA's edge, or the
 collection card in view. It is the only place two hues meet, and it is the reason the site
 does not need a second accent colour.
 
