@@ -19,7 +19,7 @@ How to work in this repo: [`AGENTS.md`](AGENTS.md).
 | `docs/identidade.html` | Internal identity board (not client-facing material) |
 | `docs/tasks/` | Task docs — no code before one of these (`AGENTS.md` §1) |
 
-## Status (2026-08-17)
+## Status (2026-08-18)
 
 **Fase 0, in progress.** Next.js 16.3.1 scaffolded, `spec-design.md` §4.1 tokens applied,
 and the **pitch page for Amanda** is live at `/apresentacao`
@@ -31,9 +31,14 @@ Fase-0 storefront stand-in at `/loja/[rev]` all render — every product and res
 marked `exemplo`. No real photography exists yet, so every gallery shows the honest
 "sem foto" state rather than an invented photo. The motion layer (`Revela`, `FocoVerdadeiro`,
 `.iridescencia`) now covers the catalogue and storefront routes too, not just `/apresentacao`
-(`TASK-motion-vitrine.md`). AlignUI/React Bits aren't installed yet, so filter chips and
-other interaction chrome are hand-written on the token system, not their eventual polished
-versions.
+(`TASK-motion-vitrine.md`).
+
+**AlignUI foundation vendored** (`TASK-alignui-vendoring.md`): `src/utils/{cn,tv,polymorphic,
+recursive-clone-children}` + `Drawer` (and its `CompactButton` dependency) in
+`src/components/ui/`, logged in `SOURCES.md`. `FiltroDrawer` now runs on Radix Dialog —
+focus trap + Escape-to-close. Token bridge in `globals.css` maps only the AlignUI names
+those files use; the CLI theme generator was not run. Everything else (filter chips,
+`BotaoWhatsApp`, `ProdutoCard`, `FichaTecnica`) stays hand-written per `spec-design.md` §8.
 
 No Payload, no database — a scope decision: Payload enters in Fase 1
 (`spec-architecture.md` §3).
@@ -57,6 +62,7 @@ Versions here are a snapshot, not a pin — see `AGENTS.md` §2.0 before adding 
 | Catalogue | TS modules in `content/` behind `lib/catalog/` (Fase 0) | wired into `/`, `/catalogo`, `/oculos/[slug]`, `/colecoes` |
 | Tenancy | Mirrors the catalogue seam: `lib/tenant/` + `lib/tenant/scope.ts` (Fase 0, mock data) | one mock reseller, `/loja/[rev]` path stand-in |
 | State | Zustand (client UI state, e.g. the filter drawer) + URL search params (filters). TanStack Query deliberately not installed yet | see `AGENTS.md` "State management" |
+| UI primitives | AlignUI foundation + `Drawer` vendored (`src/components/ui/`, `src/utils/`) | `Drawer` only — rest deferred per real need |
 | CMS | Payload 3, in the same app, at `/admin` (Fase 1) | not yet |
 | Data | Postgres + Vercel Blob (Fase 1) | not yet |
 | Conversion | `wa.me` via `lib/lead/link.ts`, no cart (`spec-architecture.md` §2) | direct link, no `/ir/` attribution yet |
@@ -140,7 +146,9 @@ motion task docs. Run with `pnpm build && PORT=3001 pnpm start` then
 | `src/components/marca.tsx` | Symbol + lockup. **Approximate redraw** — pending the original vector |
 | `src/components/visor-cursor.tsx` | The brackets following the pointer and snapping onto `data-alvo`. Fine pointer only, off under `prefers-reduced-motion` |
 | `src/components/ceu.tsx` | Her starfield, on canvas, blinking. Static under `prefers-reduced-motion` |
-| `src/components/produto/*` | `ProdutoCard`, `GaleriaProduto`, `FichaTecnica`, `BotaoWhatsApp`, `OndeComprar`, `GradeProdutos`, `Filtros`, `FiltroToggle`/`FiltroDrawer` (Zustand-backed) |
+| `src/components/produto/*` | `ProdutoCard`, `GaleriaProduto`, `FichaTecnica`, `BotaoWhatsApp`, `OndeComprar`, `GradeProdutos`, `Filtros`, `FiltroToggle`/`FiltroDrawer` (Zustand-backed; drawer chrome is AlignUI `Drawer`) |
+| `src/components/ui/drawer.tsx` | AlignUI `Drawer` — vendored, Radix Dialog. Powers `FiltroDrawer` |
+| `src/utils/cn.ts`, `tv.ts`, `polymorphic.ts`, `recursive-clone-children.tsx` | AlignUI foundation utils — vendored byte-identical |
 | `src/components/colecao/colecao-card.tsx` | Editorial tile for a collection |
 | `src/components/revendedor/revendedor-endosso.tsx` | The attribution line — `spec-brand.md` §3 |
 | `src/components/marca/cabecalho.tsx` | Shared nav for the marca routes |
@@ -151,7 +159,8 @@ motion task docs. Run with `pnpm build && PORT=3001 pnpm start` then
 src/app/                 routes: /, /catalogo, /colecoes, /oculos/[slug], /loja/[rev],
                           /apresentacao, icon/og/robots/sitemap
 src/app/globals.css      spec-design.md §4.1 tokens
-src/components/          visor, visor-cursor, numeracao, marca, ceu, produto/, colecao/, revendedor/
+src/components/          visor, visor-cursor, numeracao, marca, ceu, produto/, colecao/, revendedor/, ui/
+src/utils/               AlignUI foundation (cn, tv, polymorphic, recursive-clone-children)
 src/lib/site-config.ts   SITE_URL, normalised once
 src/lib/marca-paths.ts   the eight paths of the symbol
 src/lib/numeracao.ts     mm → "52□18-145" string, shared by the component and lib/lead/link.ts
