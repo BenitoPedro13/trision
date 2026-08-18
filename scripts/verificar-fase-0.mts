@@ -20,7 +20,13 @@ import { chromium } from "playwright";
 import AxeBuilder from "@axe-core/playwright";
 
 const BASE_URL = process.argv[2] ?? "http://localhost:3000";
-const PAGES = ["/", "/apresentacao"];
+const PAGES = [
+  "/",
+  "/apresentacao",
+  "/catalogo",
+  "/oculos/TRI-MOD-A",
+  "/loja/otica-exemplo/mostruario",
+];
 const LIGHTHOUSE_RUNS = 3;
 
 function median(nums: number[]): number {
@@ -79,6 +85,15 @@ function measurePage(pathname: string) {
   };
 }
 
+/** Dark-only site: axe and keyboard checks run only after tokens are on the DOM. */
+async function waitForReady(page: import("playwright").Page) {
+  await page.waitForFunction(() => {
+    if (!document.documentElement.classList.contains("dark")) return false;
+    const bg = getComputedStyle(document.body).backgroundColor;
+    return bg !== "rgba(0, 0, 0, 0)" && bg !== "rgb(255, 255, 255)";
+  });
+}
+
 async function contrastViolations(page: import("playwright").Page) {
   const results = await new AxeBuilder({ page }).withTags(["wcag2aa"]).analyze();
   return results.violations.filter((v) => v.id === "color-contrast");
@@ -86,7 +101,8 @@ async function contrastViolations(page: import("playwright").Page) {
 
 async function keyboardPass(page: import("playwright").Page) {
   const focused: string[] = [];
-  for (let i = 0; i < 20; i++) {
+  const failures: string[] = [];
+  for (let i = 0; i < 40; i++) {
     await page.keyboard.press("Tab");
     const info = await page.evaluate(() => {
       const el = document.activeElement;
@@ -94,12 +110,15 @@ async function keyboardPass(page: import("playwright").Page) {
       return {
         tag: el.tagName.toLowerCase(),
         hasFocoVisor: el.classList.contains("foco-visor"),
+        text: (el.textContent ?? "").trim().slice(0, 40),
       };
     });
     if (!info) break;
-    focused.push(`${info.tag}${info.hasFocoVisor ? " (.foco-visor bracket)" : " — NO BRACKET STYLE"}`);
+    const label = `${info.tag}${info.hasFocoVisor ? " (.foco-visor bracket)" : " — NO BRACKET STYLE"} — ${info.text}`;
+    focused.push(label);
+    if (!info.hasFocoVisor) failures.push(label);
   }
-  return focused;
+  return { focused, failures };
 }
 
 async function ceuIsStaticUnderReducedMotion(context: import("playwright").BrowserContext, url: string) {
@@ -118,35 +137,38 @@ async function ceuIsStaticUnderReducedMotion(context: import("playwright").Brows
   return frame1 === frame2 ? "static (matches spec §7.1/§7.5)" : "STILL ANIMATING under reduced-motion";
 }
 
-async function visorCursorOff(context: import("playwright").BrowserContext, url: string, opts: {
-  reducedMotion?: boolean;
-}) {
+async function visorCursorOff(context: import("playwright").BrowserContext, url: string) {
   const page = await context.newPage();
-  if (opts.reducedMotion) await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto(url, { waitUntil: "networkidle" });
+  await waitForReady(page);
+  const visor = page.locator('div.fixed.z-50.pointer-events-none[aria-hidden="true"]');
+  if ((await visor.count()) === 0) {
+    await page.close();
+    return "no VisorCursor element found";
+  }
   await page.mouse.move(200, 200);
-  await page.mouse.move(240, 240); // a second move so the mousemove listener (if bound) fires
+  await page.mouse.move(240, 240);
   await page.waitForTimeout(150);
-  const opacity = await page
-    .locator("div[aria-hidden='true']")
-    .filter({ has: page.locator("span") })
-    .first()
-    .evaluate((el) => getComputedStyle(el).opacity)
-    .catch(() => "no VisorCursor element found");
+  const opacity = await visor.evaluate((el) => getComputedStyle(el).opacity);
   await page.close();
   return opacity === "0" ? "off (correct)" : `opacity=${opacity} — STILL ON`;
 }
 
 async function main() {
   console.log(`Base URL: ${BASE_URL}\n`);
+  let failed = false;
 
   console.log("## Lighthouse (median of 3 runs)\n");
   console.log("| Page | LCP (s) | budget ≤2.0s | CLS | budget ≤0.05 | JS transfer (KB) | budget ≤180KB |");
   console.log("|---|---|---|---|---|---|---|");
   for (const p of PAGES) {
     const m = measurePage(p);
+    const lcpPass = m.lcpS <= 2.0;
+    const clsPass = m.cls <= 0.05;
+    const jsPass = m.jsKb <= 180;
+    if (!lcpPass || !clsPass || !jsPass) failed = true;
     console.log(
-      `| \`${p}\` | ${m.lcpS.toFixed(2)} | ${m.lcpS <= 2.0 ? "PASS" : "FAIL"} | ${m.cls.toFixed(3)} | ${m.cls <= 0.05 ? "PASS" : "FAIL"} | ${m.jsKb.toFixed(1)} | ${m.jsKb <= 180 ? "PASS" : "FAIL"} |`,
+      `| \`${p}\` | ${m.lcpS.toFixed(2)} | ${lcpPass ? "PASS" : "FAIL"} | ${m.cls.toFixed(3)} | ${clsPass ? "PASS" : "FAIL"} | ${m.jsKb.toFixed(1)} | ${jsPass ? "PASS" : "FAIL"} |`,
     );
   }
 
@@ -158,8 +180,11 @@ async function main() {
   for (const p of PAGES) {
     const page = await checkCtx.newPage();
     await page.goto(`${BASE_URL}${p}`, { waitUntil: "networkidle" });
+    await waitForReady(page);
     const violations = await contrastViolations(page);
-    console.log(`\`${p}\`: ${violations.length === 0 ? "PASS — no color-contrast violations" : `FAIL — ${violations.length} violation(s)`}`);
+    const pass = violations.length === 0;
+    if (!pass) failed = true;
+    console.log(`\`${p}\`: ${pass ? "PASS — no color-contrast violations" : `FAIL — ${violations.length} violation(s)`}`);
     for (const v of violations) {
       for (const node of v.nodes) console.log(`  - ${node.target.join(" ")}: ${node.failureSummary}`);
     }
@@ -170,10 +195,30 @@ async function main() {
   for (const p of PAGES) {
     const page = await checkCtx.newPage();
     await page.goto(`${BASE_URL}${p}`, { waitUntil: "networkidle" });
-    const focused = await keyboardPass(page);
-    console.log(`\`${p}\`: ${focused.length === 0 ? "no focusable elements found" : focused.join(", ")}`);
+    await waitForReady(page);
+    const { focused, failures } = await keyboardPass(page);
+    if (failures.length) failed = true;
+    console.log(
+      `\`${p}\`: ${focused.length === 0 ? "no focusable elements found" : focused.join(", ")}`,
+    );
+    if (failures.length) console.log(`  FAIL — ${failures.length} stop(s) without .foco-visor`);
     await page.close();
   }
+
+  const mobileCtx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const mobilePage = await mobileCtx.newPage();
+  await mobilePage.goto(`${BASE_URL}/catalogo`, { waitUntil: "networkidle" });
+  await waitForReady(mobilePage);
+  const mobileKb = await keyboardPass(mobilePage);
+  if (mobileKb.failures.length) failed = true;
+  console.log(
+    `\`/catalogo\` (mobile 390px): ${mobileKb.focused.length === 0 ? "no focusable elements" : mobileKb.focused.join(", ")}`,
+  );
+  if (mobileKb.failures.length) {
+    console.log(`  FAIL — ${mobileKb.failures.length} stop(s) without .foco-visor`);
+  }
+  await mobilePage.close();
+  await mobileCtx.close();
   await checkCtx.close();
 
   console.log("\n## prefers-reduced-motion — Ceu\n");
@@ -184,19 +229,19 @@ async function main() {
   await ctx1.close();
 
   console.log("\n## VisorCursor off under reduced-motion\n");
-  const ctx2 = await browser.newContext();
+  const ctx2 = await browser.newContext({ reducedMotion: "reduce" });
   for (const p of PAGES) {
-    console.log(`\`${p}\`: ${await visorCursorOff(ctx2, `${BASE_URL}${p}`, { reducedMotion: true })}`);
+    console.log(`\`${p}\`: ${await visorCursorOff(ctx2, `${BASE_URL}${p}`)}`);
   }
   await ctx2.close();
 
   console.log("\n## VisorCursor off under coarse pointer\n");
-  // (hover: hover) and (pointer: fine) only evaluates false under real touch-capability
-  // emulation in Chromium — CDP's Emulation.setEmulatedMedia does not support the
-  // pointer/hover interaction features (verified: it silently no-ops), only prefers-*.
-  const ctx3 = await browser.newContext({ hasTouch: true, viewport: { width: 390, height: 844 } });
+  const ctx3 = await browser.newContext({
+    hasTouch: true,
+    viewport: { width: 390, height: 844 },
+  });
   for (const p of PAGES) {
-    console.log(`\`${p}\`: ${await visorCursorOff(ctx3, `${BASE_URL}${p}`, {})}`);
+    console.log(`\`${p}\`: ${await visorCursorOff(ctx3, `${BASE_URL}${p}`)}`);
   }
   await ctx3.close();
 
@@ -204,6 +249,11 @@ async function main() {
   console.log("N/A this build — Ceu uses a 2D canvas context only; no WebGL component exists yet (React Bits deferred, AGENTS.md §0).");
 
   await browser.close();
+
+  if (failed) {
+    console.error("\nOne or more checks failed.");
+    process.exit(1);
+  }
 }
 
 main().catch((err) => {

@@ -122,6 +122,46 @@
 .zap b { color: var(--foco); font-weight: 400; }
 .zap i { color: var(--ouro); font-style: normal; }
 
+/* ---- combinado (iridescência) ---- */
+/* docs/spec-design.md §7.3 — the AR-coating flash, used on exactly one element:
+   this panel is the pitch's commercial ask, its closest thing to a primary CTA.
+   Stops sampled from her lens flash (globals.css --indigo comment, #10247C) running to
+   --ouro-claro; §4.2 rule 6 permits this because it is explicitly the coating, not a
+   second brand accent. Pure CSS — no `motion` needed for a looping gradient sweep. */
+.iridescencia {
+  position: relative;
+}
+.iridescencia::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--angulo, 0deg),
+    var(--ouro-claro),
+    #10247c,
+    var(--ouro-claro),
+    #10247c,
+    var(--ouro-claro)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: girar 8s linear infinite;
+  pointer-events: none;
+}
+@property --angulo {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes girar {
+  to { --angulo: 360deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .iridescencia::before { animation: none; --angulo: 45deg; }
+}
+
 /* ---- fases ---- */
 .fases { display: grid; gap: 1px; background: var(--aro); border: 1px solid var(--aro); }
 .fase {

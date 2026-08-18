@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
+import { MotionConfig } from "motion/react";
 import s from "./apresentacao.module.css";
 import { Ceu } from "@/components/ceu";
 import { Visor } from "@/components/visor";
 import { Numeracao } from "@/components/numeracao";
 import { MarcaLockup, MarcaSimbolo } from "@/components/marca";
 import { VisorCursor } from "@/components/visor-cursor";
+import { Deck } from "@/components/deck";
+import { Revela } from "@/components/revela";
+import { FocoVerdadeiro } from "@/components/foco-verdadeiro";
 
 /* A pitch, not a public page. */
 export const metadata: Metadata = {
@@ -86,20 +90,25 @@ export default function Apresentacao() {
           (spec-design.md §3.1: "the mark IS the focus ring"), not a silent gap where
           `:focus-visible { outline: none }` (globals.css) would otherwise leave nothing
           to see. Found by docs/tasks/TASK-verificacao-fase-0.md's keyboard pass. */}
-      <div className={`${s.deck} foco-visor`} aria-label="Apresentação — use as setas para navegar">
+      <MotionConfig reducedMotion="user">
+      <Deck className={`${s.deck} foco-visor`} ariaLabel="Apresentação — use as setas para navegar">
         {/* 01 ───────────────────────────────── */}
         <section className={`${s.slide} ${s.escuro}`}>
           <MarcaLockup />
-          <h1 className={s.display}>
-            Uma vitrine para
-            <br />
-            cada revendedor.
-            <br />
-            Um catálogo só.
-          </h1>
-          <p className={s.lede}>
-            Proposta de site e plataforma para a Trísion Eyewear.
-          </p>
+          <Revela secao>
+            <h1 className={s.display}>
+              Uma vitrine para
+              <br />
+              cada revendedor.
+              <br />
+              Um catálogo só.
+            </h1>
+          </Revela>
+          <Revela atraso={0.12}>
+            <p className={s.lede}>
+              Proposta de site e plataforma para a Trísion Eyewear.
+            </p>
+          </Revela>
           <p className="mt-auto text-[.8125rem] text-cinza">
             Benito Pedro · agosto de 2026
           </p>
@@ -109,50 +118,60 @@ export default function Apresentacao() {
         {/* 02 ───────────────────────────────── */}
         <section className={s.slide}>
           <Chapeu n={1}>O ponto de partida</Chapeu>
-          <h2 className={s.h1}>
-            Não vim inventar
-            <br />
-            uma marca nova.
-          </h2>
+          <Revela secao>
+            <h2 className={s.h1}>
+              Não vim inventar
+              <br />
+              uma marca nova.
+            </h2>
+          </Revela>
           <p className={s.lede}>
             A Trísion tem 24 anos e já tem tudo o que uma marca precisa ter. Só nunca
             teve um site que usasse isso. Estas quatro coisas são suas, eu só fui
             atrás delas:
           </p>
           <div className={s.quatro}>
-            <div>
-              <span className={s.rotulo}>o logo</span>
-              <h3 className={s.h3}>Os quatro cantinhos</h3>
-              <p>
-                Aqueles colchetes em volta do <span className="font-mono">Tr</span> não
-                são enfeite. São um visor, o mesmo desenho do foco de uma câmera. E de
-                uma armação.
-              </p>
-            </div>
-            <div>
-              <span className={s.rotulo}>o fundo</span>
-              <h3 className={s.h3}>O céu estrelado</h3>
-              <p>
-                Está no seu logo, no fundo do seu perfil e atrás da sua foto. Três
-                lugares, o mesmo fundo. Já é a sua assinatura.
-              </p>
-            </div>
-            <div>
-              <span className={s.rotulo}>a história</span>
-              <h3 className={s.h3}>Desde 2002</h3>
-              <p>
-                Vinte e quatro anos. Praticamente todo concorrente parece ter aberto ano
-                passado. Isso não se compra.
-              </p>
-            </div>
-            <div>
-              <span className={s.rotulo}>a voz</span>
-              <h3 className={s.h3}>Eyewear Addict</h3>
-              <p>
-                Uma marca de óculos com uma pessoa apaixonada por óculos na frente. Isso
-                vende mais que qualquer slogan bonito.
-              </p>
-            </div>
+            <Revela atraso={0}>
+              <div>
+                <span className={s.rotulo}>o logo</span>
+                <h3 className={s.h3}>Os quatro cantinhos</h3>
+                <p>
+                  Aqueles colchetes em volta do <span className="font-mono">Tr</span> não
+                  são enfeite. São um visor, o mesmo desenho do foco de uma câmera. E de
+                  uma armação.
+                </p>
+              </div>
+            </Revela>
+            <Revela atraso={0.08}>
+              <div>
+                <span className={s.rotulo}>o fundo</span>
+                <h3 className={s.h3}>O céu estrelado</h3>
+                <p>
+                  Está no seu logo, no fundo do seu perfil e atrás da sua foto. Três
+                  lugares, o mesmo fundo. Já é a sua assinatura.
+                </p>
+              </div>
+            </Revela>
+            <Revela atraso={0.16}>
+              <div>
+                <span className={s.rotulo}>a história</span>
+                <h3 className={s.h3}>Desde 2002</h3>
+                <p>
+                  Vinte e quatro anos. Praticamente todo concorrente parece ter aberto ano
+                  passado. Isso não se compra.
+                </p>
+              </div>
+            </Revela>
+            <Revela atraso={0.24}>
+              <div>
+                <span className={s.rotulo}>a voz</span>
+                <h3 className={s.h3}>Eyewear Addict</h3>
+                <p>
+                  Uma marca de óculos com uma pessoa apaixonada por óculos na frente. Isso
+                  vende mais que qualquer slogan bonito.
+                </p>
+              </div>
+            </Revela>
           </div>
           <Contador n={2} />
         </section>
@@ -161,9 +180,7 @@ export default function Apresentacao() {
         <section className={`${s.slide} ${s.escuro}`}>
           <Chapeu n={2}>A ideia que segura tudo</Chapeu>
           <h2 className={s.display}>
-            Um aro é uma decisão
-            <br />
-            sobre o que você olha.
+            <FocoVerdadeiro texto="Um aro é uma decisão sobre o que você olha." />
           </h2>
           <div className={s.duas}>
             <p className={s.lede}>
@@ -183,11 +200,13 @@ export default function Apresentacao() {
         {/* 04 ───────────────────────────────── */}
         <section className={s.slide}>
           <Chapeu n={3}>A cor</Chapeu>
-          <h2 className={s.h1}>
-            O seu dourado nunca foi
-            <br />
-            ilegível. O branco que era.
-          </h2>
+          <Revela secao>
+            <h2 className={s.h1}>
+              O seu dourado nunca foi
+              <br />
+              ilegível. O branco que era.
+            </h2>
+          </Revela>
           <div className={s.corBloco}>
             <Visor>
               <div className={s.corChip}>
@@ -234,11 +253,13 @@ export default function Apresentacao() {
         {/* 05 ───────────────────────────────── */}
         <section className={`${s.slide} ${s.petroleo}`}>
           <Chapeu n={4}>A assinatura</Chapeu>
-          <h2 className={s.h1}>
-            O seu logo vira
-            <br />
-            o jeito do site inteiro.
-          </h2>
+          <Revela secao>
+            <h2 className={s.h1}>
+              O seu logo vira
+              <br />
+              o jeito do site inteiro.
+            </h2>
+          </Revela>
           <p className={`${s.lede} text-luz`}>
             Aqueles quatro cantinhos passam a marcar tudo o que importa na tela: a
             moldura de cada óculos, o começo de cada seção, e o contorno do que está
@@ -250,11 +271,13 @@ export default function Apresentacao() {
               ["em volta da seção", "Abre cada parte da página, carregando o número dela."],
               ["em volta do que está ativo", "Quem navega pelo teclado enxerga onde está, pelo seu próprio logo."],
               ["seguindo o mouse", "No computador, o visor acompanha o cursor e encaixa no que dá pra clicar."],
-            ].map(([r, t]) => (
-              <div key={r} data-alvo style={{ background: "var(--petroleo)" }}>
-                <span className={s.rotulo} style={{ color: "var(--ouro-claro)" }}>{r}</span>
-                <p style={{ color: "var(--prata)" }}>{t}</p>
-              </div>
+            ].map(([r, t], i) => (
+              <Revela key={r} atraso={i * 0.08} style={{ background: "var(--petroleo)" }}>
+                <div data-alvo style={{ background: "var(--petroleo)" }}>
+                  <span className={s.rotulo} style={{ color: "var(--ouro-claro)" }}>{r}</span>
+                  <p style={{ color: "var(--prata)" }}>{t}</p>
+                </div>
+              </Revela>
             ))}
           </div>
           <Contador n={5} />
@@ -266,28 +289,32 @@ export default function Apresentacao() {
           <span className={s.etiqueta}>
             Exemplo, nomes, medidas e fotos são só demonstração
           </span>
-          <h2 className={s.h1}>
-            Cada óculos ganha
-            <br />
-            ficha de verdade.
-          </h2>
+          <Revela secao>
+            <h2 className={s.h1}>
+              Cada óculos ganha
+              <br />
+              ficha de verdade.
+            </h2>
+          </Revela>
           <div className={s.prateleira}>
-            {EXEMPLOS.map((e) => (
-              <div key={e.nome} className={s.produto} data-alvo>
-                <Visor>
-                  <div className={s.placa}>
-                    <Armacao tipo={e.desenho} />
-                  </div>
-                </Visor>
-                <div>
-                  <div className={s.nomeProduto}>{e.nome}</div>
-                  <div className={s.fichaLinha}>
-                    <Numeracao aro={e.aro} ponte={e.ponte} haste={e.haste} cor="var(--cinza)" />
-                    {" · "}
-                    {e.material}
+            {EXEMPLOS.map((e, i) => (
+              <Revela key={e.nome} atraso={i * 0.1}>
+                <div className={s.produto} data-alvo>
+                  <Visor>
+                    <div className={s.placa}>
+                      <Armacao tipo={e.desenho} />
+                    </div>
+                  </Visor>
+                  <div>
+                    <div className={s.nomeProduto}>{e.nome}</div>
+                    <div className={s.fichaLinha}>
+                      <Numeracao aro={e.aro} ponte={e.ponte} haste={e.haste} cor="var(--cinza)" />
+                      {" · "}
+                      {e.material}
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Revela>
             ))}
           </div>
           <p className={s.lede}>
@@ -303,11 +330,13 @@ export default function Apresentacao() {
         {/* 07 ───────────────────────────────── */}
         <section className={`${s.slide} ${s.escuro}`}>
           <Chapeu n={6}>O que a gente resolve</Chapeu>
-          <h2 className={s.h1}>
-            Um catálogo.
-            <br />
-            Muitas vitrines.
-          </h2>
+          <Revela secao>
+            <h2 className={s.h1}>
+              Um catálogo.
+              <br />
+              Muitas vitrines.
+            </h2>
+          </Revela>
           <p className={s.lede}>
             Você cadastra o óculos{" "}
             <strong className="font-semibold text-foco">uma vez</strong>. Cada revendedor
@@ -315,32 +344,36 @@ export default function Apresentacao() {
             da Trísion.
           </p>
           <div className={s.plataforma}>
-            <div className={s.camada}>
-              <span className={s.rotulo}>o catálogo, só você cadastra</span>
-              <div className={s.catalogo}>
-                {Array.from({ length: 24 }, (_, i) => (
-                  <span key={i} className={s.pt} />
-                ))}
+            <Revela>
+              <div className={s.camada}>
+                <span className={s.rotulo}>o catálogo, só você cadastra</span>
+                <div className={s.catalogo}>
+                  {Array.from({ length: 24 }, (_, i) => (
+                    <span key={i} className={s.pt} />
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className={s.camada}>
-              <span className={s.rotulo}>
-                as vitrines, cada uma mostra um recorte · exemplo
-              </span>
-              <div className={s.lojas}>
-                {[
-                  ["loja1", [1, 1, 0, 1, 0, 1, 1, 0, 0, 1]],
-                  ["loja2", [0, 1, 1, 1, 1, 0, 0, 1, 0, 0]],
-                  ["loja3", [1, 0, 0, 1, 1, 1, 1, 1, 0, 0]],
-                ].map(([nome, mapa]) => (
-                  <div key={nome as string} className={s.loja} data-alvo>
-                    <span className={s.dominio}>{nome as string}.trision.com.br</span>
-                    <span className={s.cidade}>Ótica exemplo · cidade</span>
-                    <Pontos mapa={(mapa as number[]).map(Boolean)} />
-                  </div>
-                ))}
+            </Revela>
+            <Revela atraso={0.1}>
+              <div className={s.camada}>
+                <span className={s.rotulo}>
+                  as vitrines, cada uma mostra um recorte · exemplo
+                </span>
+                <div className={s.lojas}>
+                  {[
+                    ["loja1", [1, 1, 0, 1, 0, 1, 1, 0, 0, 1]],
+                    ["loja2", [0, 1, 1, 1, 1, 0, 0, 1, 0, 0]],
+                    ["loja3", [1, 0, 0, 1, 1, 1, 1, 1, 0, 0]],
+                  ].map(([nome, mapa]) => (
+                    <div key={nome as string} className={s.loja} data-alvo>
+                      <span className={s.dominio}>{nome as string}.trision.com.br</span>
+                      <span className={s.cidade}>Ótica exemplo · cidade</span>
+                      <Pontos mapa={(mapa as number[]).map(Boolean)} />
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            </Revela>
           </div>
           <Contador n={7} />
         </section>
@@ -348,10 +381,12 @@ export default function Apresentacao() {
         {/* 08 ───────────────────────────────── */}
         <section className={s.slide}>
           <Chapeu n={7}>Do seu lado</Chapeu>
-          <h2 className={s.h1}>
-            Você nunca cadastra
-            <br />o mesmo óculos duas vezes.
-          </h2>
+          <Revela secao>
+            <h2 className={s.h1}>
+              Você nunca cadastra
+              <br />o mesmo óculos duas vezes.
+            </h2>
+          </Revela>
           <div className={s.duas}>
             <div className="flex flex-col gap-4">
               <p className={s.lede}>
@@ -389,26 +424,32 @@ export default function Apresentacao() {
         {/* 09 ───────────────────────────────── */}
         <section className={`${s.slide} ${s.escuro}`}>
           <Chapeu n={8}>Do lado do revendedor</Chapeu>
-          <h2 className={s.h1}>Ele só liga e desliga.</h2>
+          <Revela secao>
+            <h2 className={s.h1}>Ele só liga e desliga.</h2>
+          </Revela>
           <p className={s.lede}>
             O revendedor entra, vê o catálogo inteiro e marca o que tem na loja dele.
             Leva minutos, funciona no celular, dá pra fazer entre um cliente e outro.
           </p>
           <div className={s.quatro}>
-            <div>
-              <span className={s.rotulo}>ele pode</span>
-              <p style={{ color: "var(--prata)" }}>
-                Marcar quais modelos tem · destacar os favoritos dele · pôr o WhatsApp, o
-                endereço e o horário da loja · pôr uma foto da loja
-              </p>
-            </div>
-            <div>
-              <span className={s.rotulo}>ele não pode</span>
-              <p>
-                Criar produto · mudar foto · mudar descrição · mudar preço · mudar a cor,
-                a fonte ou o logo do site
-              </p>
-            </div>
+            <Revela>
+              <div>
+                <span className={s.rotulo}>ele pode</span>
+                <p style={{ color: "var(--prata)" }}>
+                  Marcar quais modelos tem · destacar os favoritos dele · pôr o WhatsApp, o
+                  endereço e o horário da loja · pôr uma foto da loja
+                </p>
+              </div>
+            </Revela>
+            <Revela atraso={0.08}>
+              <div>
+                <span className={s.rotulo}>ele não pode</span>
+                <p>
+                  Criar produto · mudar foto · mudar descrição · mudar preço · mudar a cor,
+                  a fonte ou o logo do site
+                </p>
+              </div>
+            </Revela>
           </div>
           <p className={s.lede}>
             <strong className="font-semibold text-foco">
@@ -423,31 +464,37 @@ export default function Apresentacao() {
         {/* 10 ───────────────────────────────── */}
         <section className={s.slide}>
           <Chapeu n={9}>Controle da marca</Chapeu>
-          <h2 className={s.h1}>
-            Sua marca não muda
-            <br />
-            de loja pra loja.
-          </h2>
+          <Revela secao>
+            <h2 className={s.h1}>
+              Sua marca não muda
+              <br />
+              de loja pra loja.
+            </h2>
+          </Revela>
           <p className={s.lede}>
             Cada revendedor tem o endereço dele e o nome dele aparece com destaque, mas a
             marca continua sendo a sua, igual em todas.
           </p>
           <div className={s.plataforma}>
-            <div className={s.camada}>
-              <span className={s.rotulo}>o que muda de uma loja pra outra</span>
-              <p className="max-w-none text-prata">
-                O nome da ótica · a cidade · o WhatsApp · o endereço e o horário · a foto
-                da loja ·{" "}
-                <strong className="font-semibold text-foco">quais óculos aparecem</strong>
-              </p>
-            </div>
-            <div className={s.camada}>
-              <span className={s.rotulo}>o que nunca muda</span>
-              <p className="max-w-none text-luz">
-                O logo · as cores · as fontes · o jeito das páginas · as fotos dos
-                produtos · os textos dos produtos
-              </p>
-            </div>
+            <Revela>
+              <div className={s.camada}>
+                <span className={s.rotulo}>o que muda de uma loja pra outra</span>
+                <p className="max-w-none text-prata">
+                  O nome da ótica · a cidade · o WhatsApp · o endereço e o horário · a foto
+                  da loja ·{" "}
+                  <strong className="font-semibold text-foco">quais óculos aparecem</strong>
+                </p>
+              </div>
+            </Revela>
+            <Revela atraso={0.1}>
+              <div className={s.camada}>
+                <span className={s.rotulo}>o que nunca muda</span>
+                <p className="max-w-none text-luz">
+                  O logo · as cores · as fontes · o jeito das páginas · as fotos dos
+                  produtos · os textos dos produtos
+                </p>
+              </div>
+            </Revela>
           </div>
           <p className={s.lede}>
             É por isso que dá pra ter{" "}
@@ -463,11 +510,13 @@ export default function Apresentacao() {
         {/* 11 ───────────────────────────────── */}
         <section className={`${s.slide} ${s.escuro}`}>
           <Chapeu n={10}>Do lado do cliente</Chapeu>
-          <h2 className={s.h1}>
-            Termina onde
-            <br />
-            você já vende.
-          </h2>
+          <Revela secao>
+            <h2 className={s.h1}>
+              Termina onde
+              <br />
+              você já vende.
+            </h2>
+          </Revela>
           <div className={s.duas}>
             <p className={s.lede}>
               Sem carrinho, sem cartão, sem frete, sem cadastro. O cliente acha o óculos,
@@ -490,10 +539,12 @@ export default function Apresentacao() {
         {/* 12 ───────────────────────────────── */}
         <section className={s.slide}>
           <Chapeu n={11}>A parte que ninguém tem</Chapeu>
-          <h2 className={s.h1}>
-            Você vê de qual loja
-            <br />o cliente veio.
-          </h2>
+          <Revela secao>
+            <h2 className={s.h1}>
+              Você vê de qual loja
+              <br />o cliente veio.
+            </h2>
+          </Revela>
           <p className={s.lede}>
             Toda mensagem chega já dizendo de onde veio. Você lê e responde normal, mas
             agora sabe quem está trabalhando de verdade:
@@ -527,11 +578,13 @@ export default function Apresentacao() {
         {/* 13 ───────────────────────────────── */}
         <section className={`${s.slide} ${s.escuro}`}>
           <Chapeu n={12}>Como a gente faz</Chapeu>
-          <h2 className={s.h1}>
-            Por fases.
-            <br />
-            Uma coisa de cada vez.
-          </h2>
+          <Revela secao>
+            <h2 className={s.h1}>
+              Por fases.
+              <br />
+              Uma coisa de cada vez.
+            </h2>
+          </Revela>
           <p className={s.lede}>
             Cada fase funciona sozinha. Você vê no ar antes de decidir a próxima.
           </p>
@@ -541,8 +594,9 @@ export default function Apresentacao() {
               ["FASE 1", "A primeira vitrine", "O painel de cadastro, os endereços por revendedor, e um revendedor de verdade funcionando ponta a ponta.", "combinado"],
               ["FASE 2", "Saber de onde vem", "Toda mensagem identificada por loja, com o painel pra você acompanhar.", "combinado"],
               ["FASE 3", "Crescer", "Domínio próprio por revendedor, cadastro de loja nova sem depender de mim, importação do catálogo em planilha.", "a combinar"],
-            ].map(([id, t, d, v]) => (
-              <div key={id} className={s.fase}>
+            ].map(([id, t, d, v], i) => (
+              <Revela key={id} atraso={i * 0.06}>
+              <div className={s.fase}>
                 <span className={s.id}>{id}</span>
                 <span className={s.oq}>
                   <b>{t}</b>
@@ -555,10 +609,11 @@ export default function Apresentacao() {
                   {v}
                 </span>
               </div>
+              </Revela>
             ))}
           </div>
           <Visor cor="var(--ouro)">
-            <div className="flex flex-col gap-1 bg-[color-mix(in_srgb,var(--fumo)_88%,transparent)] p-[clamp(16px,2.4vw,26px)]">
+            <div className={`${s.iridescencia} flex flex-col gap-1 bg-[color-mix(in_srgb,var(--fumo)_88%,transparent)] p-[clamp(16px,2.4vw,26px)]`}>
               <span className={s.rotulo}>o combinado</span>
               <p className="max-w-none text-luz">
                 <strong className="font-semibold text-foco">R$ 300</strong> pelo site no ar,
@@ -582,11 +637,14 @@ export default function Apresentacao() {
         {/* 14 ───────────────────────────────── */}
         <section className={s.slide}>
           <Chapeu n={13}>O que eu preciso saber, parte 1</Chapeu>
-          <h2 className={s.h1}>
-            Sobre a marca
-            <br />e os produtos.
-          </h2>
+          <Revela secao>
+            <h2 className={s.h1}>
+              Sobre a marca
+              <br />e os produtos.
+            </h2>
+          </Revela>
           <div className={s.perguntas}>
+            <Revela>
             <div className={s.blocoP}>
               <div className={s.tituloP}>A marca</div>
               <ol>
@@ -622,6 +680,8 @@ export default function Apresentacao() {
                 </li>
               </ol>
             </div>
+            </Revela>
+            <Revela atraso={0.1}>
             <div className={s.blocoP}>
               <div className={s.tituloP}>Os produtos</div>
               <ol>
@@ -658,6 +718,7 @@ export default function Apresentacao() {
                 </li>
               </ol>
             </div>
+            </Revela>
           </div>
           <Contador n={14} />
         </section>
@@ -665,11 +726,14 @@ export default function Apresentacao() {
         {/* 15 ───────────────────────────────── */}
         <section className={s.slide}>
           <Chapeu n={14}>O que eu preciso saber, parte 2</Chapeu>
-          <h2 className={s.h1}>
-            Sobre os revendedores
-            <br />e o dinheiro.
-          </h2>
+          <Revela secao>
+            <h2 className={s.h1}>
+              Sobre os revendedores
+              <br />e o dinheiro.
+            </h2>
+          </Revela>
           <div className={s.perguntas}>
+            <Revela>
             <div className={s.blocoP}>
               <div className={s.tituloP}>Os revendedores</div>
               <ol>
@@ -710,6 +774,8 @@ export default function Apresentacao() {
                 </li>
               </ol>
             </div>
+            </Revela>
+            <Revela atraso={0.1}>
             <div className={s.blocoP}>
               <div className={s.tituloP}>O endereço na internet</div>
               <ol>
@@ -741,6 +807,7 @@ export default function Apresentacao() {
                 respondendo no caminho.
               </p>
             </div>
+            </Revela>
           </div>
           <Contador n={15} />
         </section>
@@ -748,25 +815,29 @@ export default function Apresentacao() {
         {/* 16 ───────────────────────────────── */}
         <section className={`${s.slide} ${s.petroleo}`}>
           <Chapeu n={15}>Próximo passo</Chapeu>
-          <h2 className={s.display}>
-            Vamos começar
-            <br />
-            pela Fase 0.
-          </h2>
+          <Revela secao>
+            <h2 className={s.display}>
+              Vamos começar
+              <br />
+              pela Fase 0.
+            </h2>
+          </Revela>
           <div className={s.passos}>
             {[
               ["01", "Você responde as três perguntas que travam", "o domínio, o preço e para quem vai o WhatsApp."],
               ["02", "Você me manda o logo e as fotos que tiver", "do jeito que estiverem. Eu digo o que dá pra usar."],
               ["03", "Eu monto a Fase 0 e te mando o link", "você abre no seu celular, com óculos de verdade, e me diz o que acha."],
               ["04", "Aí a gente decide a Fase 1", "com o site já no ar, não no papel."],
-            ].map(([i, t, d]) => (
-              <div key={i} className={s.passo}>
-                <span className={s.i}>{i}</span>
-                <span className={s.t}>
-                  <b>{t}</b>
-                  {d}
-                </span>
-              </div>
+            ].map(([i, t, d], idx) => (
+              <Revela key={i} atraso={idx * 0.08}>
+                <div className={s.passo}>
+                  <span className={s.i}>{i}</span>
+                  <span className={s.t}>
+                    <b>{t}</b>
+                    {d}
+                  </span>
+                </div>
+              </Revela>
             ))}
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-[clamp(16px,3vw,32px)]">
@@ -780,7 +851,8 @@ export default function Apresentacao() {
           </div>
           <Contador n={16} />
         </section>
-      </div>
+      </Deck>
+      </MotionConfig>
     </>
   );
 }

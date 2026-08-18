@@ -10,6 +10,7 @@
     "verificar-fase-0": "tsx scripts/verificar-fase-0.mts"
   },
   "dependencies": {
+    "motion": "^13.1.0",
     "next": "16.3.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",

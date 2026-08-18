@@ -2,13 +2,14 @@
 
 ## 1. Current scenario
 
-`TASK-scaffold-e-apresentacao.md` shipped `/` and `/apresentacao` but its own document has
-no §5 Verification section — a gap against `AGENTS.md` §1.1, which requires one on every
-task doc. `spec-design.md` §12 and `spec-architecture.md` §13 already state numeric budgets
-for exactly this build (LCP, CLS, contrast, motion, keyboard, `prefers-reduced-motion`), but
-none of them have been measured against the live pages. The contrast ratios in
-`globals.css`'s comments are computed from the token values in isolation, not verified
-against the rendered DOM.
+The first pass (2026-08-17) measured only `/` and `/apresentacao` from
+`TASK-scaffold-e-apresentacao.md`. `TASK-frontend-fase-0.md` has since landed five more
+routes (`/catalogo`, `/colecoes`, `/oculos/[slug]`, `/loja/[rev]`, `/loja/[rev]/mostruario`)
+and replaced the holding page at `/`. §5 below still records the original two-page numbers;
+**this extension re-runs the same budgets against the routes that now matter** — especially
+the product page (LCP, `spec-design.md` §12) and the storefront mostruário (JS transfer,
+§12 "storefront route"). Manual checks from `TASK-frontend-fase-0.md` §6 (`tsc`/`lint`/`build`
++ curl + keyboard) passed; they are not a substitute for measured LCP/CLS/JS/contrast.
 
 This work needs none of Amanda's input — no photos, no product data, no domain, no pricing
 answer. It only touches what's already built and already shipped.
@@ -23,14 +24,14 @@ found and changed (`AGENTS.md` §1.2, "keep it in sync").
 
 | Check | Target | Source | Page(s) |
 |---|---|---|---|
-| LCP | ≤ 2.0s, 4G, mid-range Android, median of repeated runs | `spec-design.md` §12, NFR-5 | `/`, `/apresentacao` |
-| CLS | ≤ 0.05 | `spec-design.md` §12 | `/`, `/apresentacao` |
-| Main-thread JS | ≤ 180 KB gzipped | `spec-design.md` §12 | `/apresentacao` (the heavier route) |
-| Contrast | every text token ≥ 4.5:1 **as rendered**, not just as computed in the CSS comment | `spec-design.md` §12 | both |
-| Keyboard | every interactive element reachable; focus state is the bracket, not a browser outline | `spec-design.md` §3.1, §12 | `/apresentacao` (has interactive slides) |
-| `prefers-reduced-motion` | `Ceu` goes static, `VisorCursor` disabled, page stays complete | `spec-design.md` §7.1, §7.5, `AGENTS.md` §0 | `/apresentacao` |
-| Coarse pointer | `VisorCursor` off | `spec-design.md` §7.2 | `/apresentacao` |
-| No-WebGL | page fully legible if canvas never initializes | `AGENTS.md` §0 | `/apresentacao` |
+| LCP | ≤ 2.0s, 4G, mid-range Android, median of repeated runs | `spec-design.md` §12, NFR-5 | `/`, `/apresentacao`, `/catalogo`, `/oculos/TRI-MOD-A`, `/loja/otica-exemplo/mostruario` |
+| CLS | ≤ 0.05 | `spec-design.md` §12 | same |
+| Main-thread JS | ≤ 180 KB gzipped (transfer size) | `spec-design.md` §12 | all of the above; **storefront budget** checked on `/loja/otica-exemplo/mostruario` |
+| Contrast | every text token ≥ 4.5:1 **as rendered**, not just as computed in the CSS comment | `spec-design.md` §12 | same |
+| Keyboard | every interactive element reachable; focus state is the bracket, not a browser outline | `spec-design.md` §3.1, §12 | same + mobile viewport on `/catalogo` (filter drawer toggle) |
+| `prefers-reduced-motion` | `Ceu` goes static, `VisorCursor` disabled, page stays complete | `spec-design.md` §7.1, §7.5, `AGENTS.md` §0 | every page that mounts `Ceu` |
+| Coarse pointer | `VisorCursor` off | `spec-design.md` §7.2 | every page that mounts `VisorCursor` |
+| No-WebGL | page fully legible if canvas never initializes | `AGENTS.md` §0 | unchanged — still N/A |
 
 ### 2.2 Tooling — automated with Playwright + axe-core, not manual DevTools
 
@@ -83,7 +84,8 @@ change, record that as a follow-up rather than silently shipping past it.
 
 ### 2.4 Explicitly out of scope
 
-- **No new pages, no new content.** This task only verifies what's shipped.
+- **No new pages, no new content.** This task only verifies what's shipped — including the
+  routes added by `TASK-frontend-fase-0.md`, not routes still deferred (`/sobre`, `/ir/`, etc.).
 - **No CI/GitHub Actions setup.** Out of scope for this task; Vercel's own build already
   gates on type errors and lint on every deploy. Worth a separate, explicitly-named task if
   wanted, not bundled here.

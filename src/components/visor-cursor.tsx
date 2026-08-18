@@ -29,22 +29,35 @@ export function VisorCursor() {
     let alvo: Element | null = null;
     let x = -100;
     let y = -100;
+    let raf = 0;
 
     const posicionar = () => {
       if (alvo) {
         const r = alvo.getBoundingClientRect();
-        el.style.transition = "all .18s cubic-bezier(.2,.8,.2,1)";
+        el.style.transition = "all .12s cubic-bezier(.2,.8,.2,1)";
         el.style.left = `${r.left - 9}px`;
         el.style.top = `${r.top - 9}px`;
         el.style.width = `${r.width + 18}px`;
         el.style.height = `${r.height + 18}px`;
       } else {
-        el.style.transition = "all .09s linear";
+        el.style.transition = "all .06s linear";
         el.style.left = `${x - 19}px`;
         el.style.top = `${y - 19}px`;
         el.style.width = "38px";
         el.style.height = "38px";
       }
+    };
+
+    /* A snapped target's rect isn't only disturbed by scroll — `Revela`
+       (components/revela.tsx) animates content into place over up to 760ms, and a
+       one-shot mousemove/scroll reading taken while a card is still sliding freezes
+       the bracket at that card's pre-settle position, detached from where it lands.
+       Re-reading the rect every frame while a target is set keeps the bracket locked
+       to it regardless of what's moving it — cheap, since it's one
+       `getBoundingClientRect()` call, only while `alvo` is set. */
+    const laco = () => {
+      if (alvo) posicionar();
+      raf = requestAnimationFrame(laco);
     };
 
     const mover = (e: MouseEvent) => {
@@ -57,23 +70,18 @@ export function VisorCursor() {
       posicionar();
     };
 
-    /* The snapped rect is viewport-relative, so it must be re-read while the deck
-       scrolls under it — otherwise the brackets detach from what they are framing. */
-    const rolar = () => {
-      if (alvo) posicionar();
-    };
     const sair = () => {
       el.style.opacity = "0";
     };
 
     window.addEventListener("mousemove", mover, { passive: true });
-    window.addEventListener("scroll", rolar, { passive: true, capture: true });
     document.addEventListener("mouseleave", sair);
+    raf = requestAnimationFrame(laco);
 
     return () => {
       window.removeEventListener("mousemove", mover);
-      window.removeEventListener("scroll", rolar, { capture: true });
       document.removeEventListener("mouseleave", sair);
+      cancelAnimationFrame(raf);
     };
   }, []);
 

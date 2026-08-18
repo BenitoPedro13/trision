@@ -10,7 +10,10 @@ const archivo = Archivo({
   variable: "--font-archivo",
   subsets: ["latin"],
   axes: ["wdth"],
-  display: "swap",
+  // optional: swap measured 0.074 CLS on `/` (collections section reflow when Archivo
+  // landed). optional uses the face only if it is ready for first paint — next/font
+  // preloads it, so it still wins on a normal load, without a post-paint swap.
+  display: "optional",
 });
 
 /* The technical layer: numeração, SKUs, lead codes, prices. */

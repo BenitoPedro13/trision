@@ -230,12 +230,22 @@ misspelling of the brand, including in `<title>`, OG tags and the WhatsApp messa
 
 ## 7. Motion and the live layer
 
-Where the differentiation lives. Three ReactBits components, **each justified by a brand fact
-rather than by looking good** — the test any addition must pass.
+Where the differentiation lives. Three components, **each justified by a brand fact rather
+than by looking good** — the test any addition must pass.
 
-Install: `npx shadcn@latest add @react-bits/<Name>-TS-TW` (React Bits publishes a shadcn
-registry — verified against its README). Vendored into `components/bits/` and recorded in
-`SOURCES.md` with a sha256, exactly as Flora does for AlignUI.
+**Source, updated `TASK-motion-apresentacao.md`:** React Bits (`npx shadcn@latest add
+@react-bits/<Name>-TS-TW`, vendored into `components/bits/`, `SOURCES.md` + sha256, exactly as
+Flora does for AlignUI) is the first thing to reach for. It is **not mandatory** when the team
+already owns a verified, correct alternative — `Ceu` (§7.1) and `VisorCursor` (§7.2) were
+hand-written from the start rather than pulled from the registry, and `foco-verdadeiro.tsx`
+(§7.4) and the scroll-reveal primitive (`components/revela.tsx`) followed the same path,
+built on `motion` (npm package `motion`, the current release of what was `framer-motion` —
+verified via `npm view`, not assumed from memory) instead. Either source is acceptable as long
+as the result matches the named budget in §7.5 and each piece still carries the one-sentence
+brand justification in §7.4. Un-vendored, hand-written motion is not a shortcut that skips
+verification — the same `[VERIFICAR: provider behaviour]` discipline in `AGENTS.md` §2.2
+applies to a hand-built effect as much as to a registry package: check current API, don't
+assume.
 
 ### 7.1 `Galaxy` / `Particles` — the ground
 
@@ -281,8 +291,16 @@ sentence explaining which brand fact it carries.** "It looks incredible" is not 
 
 ### 7.5 Motion budget
 
-- **Durations:** `120ms` (state), `240ms` (element), `480ms` (section). Nothing longer.
-- **Easing:** `cubic-bezier(.2,.8,.2,1)` for entrances, `cubic-bezier(.4,0,.2,1)` for exits.
+- **Durations:** `120ms` (state), `240ms` (element), `480ms` (section). Nothing longer — **for
+  interaction states**: `VisorCursor`'s snap, `:focus-visible`, anything responding directly to
+  a pointer or key. These stay snappy because they are confirming an input, not being watched.
+- **Content-entrance budget, added `TASK-motion-apresentacao.md` 2026-08-18:** `560ms`
+  (element) / `760ms` (section), easing `cubic-bezier(.16,1,.3,1)` (expo-out). A scroll-
+  triggered reveal of a slide-sized block of content is not an interaction state — at 240ms it
+  read as a flicker rather than a reveal (Benito, reviewing the first pass). Use this budget
+  for anything built with `Revela` (`components/revela.tsx`) or the same shape of effect;
+  keep the interaction-state figures above for anything responding to a click, hover, or key.
+- **Easing:** `cubic-bezier(.2,.8,.2,1)` for interaction entrances, `cubic-bezier(.4,0,.2,1)` for exits.
 - **One rAF loop.** If more than two components end up scroll-driven, port `frame-loop.ts`
   from `blessed-moon` (reads before writes) rather than letting each own a loop. This has
   already been paid for once.
@@ -298,7 +316,7 @@ sentence explaining which brand fact it carries.** "It looks incredible" is not 
 |---|---|---|
 | **AlignUI** (primary) | Everything with state and semantics: `Button`, `Input`, `Label`, `Hint`, `Select`, `Modal`, `Badge`, `Divider`, `Tooltip`, `Dropdown`, `FileUpload`, `Avatar`, `Kbd`, `Table`. Plus `utils/cn.ts`, `tv.ts`, `polymorphic.ts` | Vendored **byte-identical from its docs pages** into `components/ui/`, logged in `components/ui/SOURCES.md` with URL + sha256. This is Flora's established pattern (`flora/apps/web/components/ui/SOURCES.md`, AlignUI v1.2) — reuse it, do not re-invent it. Restyle **only** through the token layer. |
 | **shadcn/ui** (gap-filler) | Only what AlignUI does not ship and we actually need — likely `sheet`, `accordion`, `chart` (the leads dashboard) | `npx shadcn@latest add <name>` |
-| **React Bits** (the differentiator) | §7 only | `npx shadcn@latest add @react-bits/<Name>-TS-TW` → `components/bits/` |
+| **React Bits** (the differentiator) | §7 only | `npx shadcn@latest add @react-bits/<Name>-TS-TW` → `components/bits/` — or a verified hand-built equivalent on `motion`, see §7 |
 | **Hand-written** | `Visor` (the brackets), `Numeracao`, `ProdutoCard`, `FichaTecnica`, `BotaoWhatsApp`, `MarcaLockup`, `Revendedor*` | No generator produces these; they are the brand |
 
 **Rule:** one primitive, one source. If AlignUI ships a `Button`, shadcn's `button` is not
