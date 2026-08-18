@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Ceu } from "@/components/ceu";
 import { BotaoWhatsApp } from "@/components/produto/botao-whatsapp";
 import { FichaTecnica } from "@/components/produto/ficha-tecnica";
 import { GaleriaProduto } from "@/components/produto/galeria-produto";
 import { Revela } from "@/components/revela";
-import { RevendedorEndosso } from "@/components/revendedor/revendedor-endosso";
-import { VisorCursor } from "@/components/visor-cursor";
 import { marca } from "@/content/marca";
 import { escopoRevendedor, revendedoresAtivos } from "@/lib/tenant/scope";
 
@@ -59,54 +56,43 @@ export default async function ProdutoLojaPage({
   const { produto } = item;
 
   return (
-    <>
-      <Ceu />
-      <VisorCursor />
-      <div className="relative z-10">
-        <header className="px-[clamp(24px,5vw,88px)] py-6">
-          <Revela secao>
-            <RevendedorEndosso revendedor={revendedor} />
-          </Revela>
-        </header>
-        <main className="px-[clamp(24px,5vw,88px)] pb-[clamp(64px,10vh,160px)]">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
-            <GaleriaProduto produto={produto} />
-            <Revela secao className="flex flex-col gap-6">
-              <div>
-                <h1 className="text-[clamp(1.75rem,3.5vw,2.5rem)] font-semibold tracking-[-0.02em] text-foco">
-                  {produto.nome}
-                </h1>
-                <p className="mt-1 font-mono text-[.8125rem] text-cinza">{produto.sku}</p>
-                {produto.exemplo && (
-                  <p className="mt-2 font-mono text-[.6875rem] uppercase tracking-[.16em] text-cinza">
-                    exemplo — não faz parte do catálogo real da Trísion
-                  </p>
-                )}
-              </div>
-              <p className="text-[1.0625rem] leading-relaxed text-luz">{produto.descricao}</p>
-              <p className="font-mono text-lg text-luz">
-                {produto.precoSugerido != null
-                  ? `R$ ${produto.precoSugerido.toLocaleString("pt-BR")}`
-                  : "Consulte o valor"}
+    <main className="px-[clamp(24px,5vw,88px)] pb-[clamp(64px,10vh,160px)]">
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
+        <GaleriaProduto produto={produto} />
+        <Revela secao className="flex flex-col gap-6">
+          <div>
+            <h1 className="text-[clamp(1.75rem,3.5vw,2.5rem)] font-semibold tracking-[-0.02em] text-foco">
+              {produto.nome}
+            </h1>
+            <p className="mt-1 font-mono text-[.8125rem] text-cinza">{produto.sku}</p>
+            {produto.exemplo && (
+              <p className="mt-2 font-mono text-[.6875rem] uppercase tracking-[.16em] text-cinza">
+                exemplo — não faz parte do catálogo real da Trísion
               </p>
-              <FichaTecnica produto={produto} />
-              <BotaoWhatsApp
-                dados={{
-                  numero: marca.whatsapp,
-                  revendedorNome: revendedor.nome,
-                  cidade: revendedor.cidade,
-                  uf: revendedor.uf,
-                  produtoNome: produto.nome,
-                  categoria: produto.categoria,
-                  material: produto.material,
-                  cor: produto.cor,
-                  medidas: produto.medidas,
-                }}
-              />
-            </Revela>
+            )}
           </div>
-        </main>
+          <p className="text-[1.0625rem] leading-relaxed text-luz">{produto.descricao}</p>
+          <p className="font-mono text-lg text-luz">
+            {produto.precoSugerido != null
+              ? `R$ ${produto.precoSugerido.toLocaleString("pt-BR")}`
+              : "Consulte o valor"}
+          </p>
+          <FichaTecnica produto={produto} />
+          <BotaoWhatsApp
+            dados={{
+              numero: marca.whatsapp,
+              revendedorNome: revendedor.nome,
+              cidade: revendedor.cidade,
+              uf: revendedor.uf,
+              produtoNome: produto.nome,
+              categoria: produto.categoria,
+              material: produto.material,
+              cor: produto.cor,
+              medidas: produto.medidas,
+            }}
+          />
+        </Revela>
       </div>
-    </>
+    </main>
   );
 }
