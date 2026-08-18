@@ -425,6 +425,11 @@ second package emerges. Payload, when it lands, is mounted *inside* this app
   commit messages and specs are English, except where a domain term has no useful
   translation — keep `mostruário`, `revenda oficial`, `aro` / `ponte` / `haste`,
   `Consulte o valor`, `Fale comigo` as-is.
+  **Enforced strictly going forward (decided 2026-08-17):** every commit message and
+  every file under `docs/` — specs, task docs, `README.md` — is written in English, no
+  exceptions beyond the domain terms above. Earlier commits in this repo's history are
+  in Portuguese; that was a mistake, not a precedent. Do not follow it. This does not
+  change customer-facing copy, which stays pt-BR.
 - **Package manager:** **pnpm**, never mixed.
 - **Styling:** Tailwind v4 tokens in `globals.css`. Don't introduce a second styling
   system (CSS-in-JS, another component library) alongside it. AlignUI/shadcn land
