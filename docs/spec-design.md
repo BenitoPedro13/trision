@@ -311,6 +311,10 @@ sentence explaining which brand fact it carries.** "It looks incredible" is not 
   read as a flicker rather than a reveal (Benito, reviewing the first pass). Use this budget
   for anything built with `Revela` (`components/revela.tsx`) or the same shape of effect;
   keep the interaction-state figures above for anything responding to a click, hover, or key.
+  **`FocoVerdadeiro` moved onto this budget `TASK-motion-vitrine.md` 2026-08-18** — it had
+  shipped on the `240ms` interaction-state figure by oversight; it's a scroll-triggered,
+  once-only reveal, the same shape of effect as `Revela`, so it now uses `560ms`/`140ms`
+  stagger, expo-out.
 - **Easing:** `cubic-bezier(.2,.8,.2,1)` for interaction entrances, `cubic-bezier(.4,0,.2,1)` for exits.
 - **One rAF loop.** If more than two components end up scroll-driven, port `frame-loop.ts`
   from `blessed-moon` (reads before writes) rather than letting each own a loop. This has

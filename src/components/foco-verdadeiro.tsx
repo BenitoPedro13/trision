@@ -27,9 +27,9 @@ export function FocoVerdadeiro({ texto }: { texto: string }) {
             initial={{ filter: "blur(6px)", opacity: 0.35 }}
             animate={emVista ? { filter: "blur(0px)", opacity: 1 } : undefined}
             transition={{
-              duration: 0.24,
-              delay: i * 0.09,
-              ease: [0.2, 0.8, 0.2, 1],
+              duration: 0.56,
+              delay: i * 0.14,
+              ease: [0.16, 1, 0.3, 1],
             }}
             style={{ display: "inline-block" }}
           >
@@ -40,8 +40,8 @@ export function FocoVerdadeiro({ texto }: { texto: string }) {
             initial={{ opacity: 0 }}
             animate={emVista ? { opacity: [0, 1, 1, 0] } : undefined}
             transition={{
-              duration: 0.3,
-              delay: i * 0.09,
+              duration: 0.42,
+              delay: i * 0.14,
               times: [0, 0.2, 0.75, 1],
               ease: "linear",
             }}

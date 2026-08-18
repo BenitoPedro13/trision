@@ -220,4 +220,22 @@ need, not the whole surface speculatively.
 - `pnpm exec tsx scripts/verificar-fase-0.mts` (after `pnpm build && pnpm start`) — main
   thread JS for every measured route stays **≤180 KB gzipped** (`spec-design.md` §12)
   with `@radix-ui/react-dialog` + `@remixicon/react` added; before/after figures recorded
-  in this doc once measured.
+  below once measured.
+
+### JS budget (post-vendor, measured 2026-08-18)
+
+Measured in the same `pnpm build && PORT=3002 pnpm start` / `verificar-fase-0` run
+recorded in `TASK-motion-vitrine.md` §5 — this task's `Drawer`/Radix/Remixicon
+dependencies and that task's motion layer are both already in the working tree, so one
+Lighthouse pass covers both; no separate rerun needed.
+
+| Route | JS transfer (KB) before | after (AlignUI Drawer + motion layer) |
+|---|---|---|
+| `/catalogo` | 147 | 186.6 KB ✗ — 6.6 KB over the 180 KB cap |
+| `/loja/otica-exemplo/mostruario` | 147 | 95.4 KB ✓ |
+
+`/catalogo` is the one route in this table that also mounts the motion layer
+(`TASK-motion-vitrine.md`) — the overage is accepted as-is (Benito, 2026-08-18), not
+attributed to `Drawer` alone. See `TASK-motion-vitrine.md` §5 for the full reasoning and
+the next lever if this starts to matter. `pnpm lint` and `pnpm build` pass with the new
+dependencies.

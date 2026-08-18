@@ -25,7 +25,7 @@ export default async function ColecoesPage() {
           </Revela>
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {colecoes.map((colecao, i) => (
-              <Revela key={colecao.slug} atraso={Math.min(i * 0.05, 0.3)}>
+              <Revela key={colecao.slug} atraso={Math.min(i * 0.08, 0.56)}>
                 <ColecaoCard colecao={colecao} />
               </Revela>
             ))}

@@ -47,14 +47,13 @@ Two hard constraints carry over unchanged from the prior task:
 
 ## 2. Planned changes
 
-### 2.1 One reduced-motion boundary, moved to the root layout
+### 2.1 One reduced-motion boundary — scoped to routes that mount `FocoVerdadeiro`
 
-`src/app/layout.tsx` wraps `{children}` in `<MotionConfig reducedMotion="user">` (client
-component, but Server Component children can still be passed through it — same pattern already
-used for `Ceu`/`VisorCursor` islands on every page). This becomes the **one** reduced-motion
-boundary for the whole app, matching the "one `wa.me` builder / one tenancy scope" pattern in
-`AGENTS.md` §4 rather than repeating a local wrap per route. `apresentacao/page.tsx`'s existing
-local `<MotionConfig>` is removed — behaviourally identical, one source instead of a duplicate.
+`ProvedorMotion` (`components/provedor-motion.tsx`) wraps `<MotionConfig reducedMotion="user">`
+around `/` and `/apresentacao` only — **not** `layout.tsx`. The original plan (one boundary in
+the root layout) was attempted first; it pulled the `motion` runtime onto every route including
+`/catalogo`, and Lighthouse measured **212 KB** script transfer there (budget ≤180 KB). `Revela`
+handles its own reduced motion in `globals.css` and does not need `MotionConfig`.
 
 ### 2.2 `.iridescencia`, promoted from a page module to `globals.css`
 
@@ -75,6 +74,12 @@ the "prateleira" stagger idiom `TASK-motion-apresentacao.md` §2.2 already estab
 `GradeProdutos` is the single shared component behind `/catalogo`, `/colecoes/[slug]`,
 `/loja/[rev]` and `/loja/[rev]/mostruario`, this one edit is the entrance motion for all four —
 no per-route grid logic to duplicate.
+
+**Implementation note:** first pass used `motion` for `Revela` (matching
+`TASK-motion-apresentacao.md`); verification showed that pulled ~50 KB of runtime onto every
+grid route. `Revela` was rewritten as a **Server Component** with CSS scroll-driven animation
+(`animation-timeline: view()` in `globals.css`) — same visual idiom, zero JS, opacity stays 1
+from first paint (LCP-safe). Browsers without scroll-driven animation support get a static layout.
 
 ### 2.4 `src/app/page.tsx` — the actual target of `FocoVerdadeiro`
 
@@ -153,10 +158,10 @@ constraints (JS budget, no real photography yet) instead of assuming either one 
 
 | File | Change type | Notes |
 |---|---|---|
-| `src/app/layout.tsx` | modified | wraps `{children}` in `<MotionConfig reducedMotion="user">` — one reduced-motion boundary for the app (§2.1) |
-| `src/app/apresentacao/page.tsx` | modified | removes the now-redundant local `<MotionConfig>` wrap |
+| `src/components/provedor-motion.tsx` | new | `<MotionConfig reducedMotion="user">` wrapper for `/` and `/apresentacao` only (§2.1) |
+| `src/app/apresentacao/page.tsx` | modified | uses `ProvedorMotion` instead of inline `<MotionConfig>`; combinado panel repointed at global `.iridescencia` |
 | `src/app/apresentacao/apresentacao.module.css` | modified | `.iridescencia` + `@property --angulo` + `girar` keyframes removed, moved to `globals.css` (§2.2) |
-| `src/app/globals.css` | modified | adds the shared `.iridescencia` utility, ported verbatim |
+| `src/app/globals.css` | modified | adds shared `.iridescencia`, `.revela` scroll-entrance utilities |
 | `src/components/produto/grade-produtos.tsx` | modified | wraps each `ProdutoCard` in `Revela`, index-based stagger (§2.3) |
 | `src/app/page.tsx` | modified | `FocoVerdadeiro` on the thesis line, `Revela` on CTA row + colecoes grid, `.iridescencia` on "Ver o catálogo" (§2.4) |
 | `src/app/colecoes/page.tsx` | modified | `Revela` on heading + collection cards (§2.5) |
@@ -167,6 +172,44 @@ constraints (JS budget, no real photography yet) instead of assuming either one 
 | `scripts/verificar-fase-0.mts` | modified | `PAGES` extended to cover `/colecoes`, a `/colecoes/[slug]` example, and `/loja/otica-exemplo` (not just `/mostruario`), so the routes this task touches are actually measured |
 | `docs/spec-design.md` | modified | §7.4 note reconciling `FocoVerdadeiro` on `/` (the table's named target) with its existing `/apresentacao` use; §7.3 note recording `.iridescencia`'s two live instances |
 | `README.md` | modified | Status section: motion layer extended past `/apresentacao` to the catalogue/storefront routes |
+
+## 4a. Deviations found during verification
+
+Kept in sync per §1.2 — the plan below changed after the first implementation pass, once
+real measurement and review pushed back on it.
+
+- **`Revela` rewritten from Intersection Observer to CSS `animation-timeline: view()`.**
+  §2.1's original plan (`components/revela.tsx` as client-side IO + a CSS class toggle)
+  blew the `≤180 KB` JS budget once mounted once per grid card across four routes.
+  `Revela` is now a zero-JS Server Component: `@supports (animation-timeline: view())`
+  drives the entrance purely in CSS (`globals.css`), and the fallback for browsers
+  without that support is a static, fully-visible layout — no IntersectionObserver
+  anywhere in this repo any more. `§2.1`'s root-layout `<MotionConfig>` plan was also
+  narrowed: `ProvedorMotion` wraps only `/` and `/apresentacao` (the two routes that
+  mount `FocoVerdadeiro`, the one thing in this task still on the `motion` runtime), not
+  `layout.tsx` — putting `motion` in the root layout pulled the runtime onto routes that
+  only need CSS `Revela`.
+- **Timing tuned down after a visual pass (Benito, 2026-08-18):** three effects read as
+  too fast once seen live across real routes, not just `/apresentacao`.
+  - `FocoVerdadeiro`'s per-word blur→focus tween was still on the **interaction-state**
+    figures (`240ms` duration, `90ms` stagger, `cubic-bezier(.2,.8,.2,1)`) — the exact
+    `240ms` figure `spec-design.md` §7.5 already named as reading like "a flicker rather
+    than a reveal" for `Revela`. `FocoVerdadeiro` is content-entrance by the same §7.5
+    rule ("anything built with `Revela`... or the same shape of effect") but had never
+    been moved onto that budget. Now `560ms` duration / `140ms` stagger / expo-out
+    `cubic-bezier(.16,1,.3,1)`, matching `Revela`'s own element figure; the aria-hidden
+    bracket-flash overlay scaled with it, `300ms` → `420ms`.
+  - The grid stagger (`grade-produtos.tsx`, `page.tsx`'s coleções grid,
+    `colecoes/page.tsx`) went from `Math.min(i * 0.05, 0.3)` to
+    `Math.min(i * 0.08, 0.56)` — the old `50ms` step read as near-simultaneous on a
+    6+ item grid; `80ms`/`560ms`-cap gives a visibly slower cascade without a large grid
+    taking unreasonably long to finish entering.
+  - `.iridescencia`'s conic-gradient sweep (`globals.css`) went from an `8s` to a `16s`
+    loop — ambient, ungated by any interaction, so the slower pace has no functional
+    cost, just a calmer sweep on the one CTA per page it decorates.
+  - `VisorCursor`'s `120ms` snap was reviewed and left unchanged — that figure is
+    `spec-design.md` §7.5's own named interaction-state budget, not a per-component
+    guess, so it wasn't in scope for this pass.
 
 ## 5. Verification
 
@@ -187,3 +230,23 @@ constraints (JS budget, no real photography yet) instead of assuming either one 
 - Visual: thesis line on `/` resolves into focus once on scroll into view; product/collection
   grids stagger in; `BotaoWhatsApp` and "Ver o catálogo" each show a visible edge sweep; no
   route shows more than one sweeping element.
+
+**Measured 2026-08-18** (`pnpm build && PORT=3002 pnpm start`, median of 3 Lighthouse runs):
+
+| Route | LCP | JS transfer | Notes |
+|---|---|---|---|
+| `/` | 1.59s ✓ | 183.4 KB ✗ | +40 KB vs pre-task `/` (143 KB) — `FocoVerdadeiro`/`motion`; 3.4 KB over budget |
+| `/catalogo` | 1.55s ✓ | 186.6 KB ✗ | filter drawer + zustand baseline; `Revela` is CSS-only (no motion chunk) |
+| `/colecoes` | 1.53s ✓ | 183.4 KB ✗ | Ceu + VisorCursor baseline; same figure as `/` without `motion` |
+| `/oculos/TRI-MOD-A` | 1.42s ✓ | 96.5 KB ✓ | |
+| `/loja/otica-exemplo` | 1.36s ✓ | 95.1 KB ✓ | |
+| `/loja/otica-exemplo/mostruario` | 1.38s ✓ | 95.4 KB ✓ | |
+| `/apresentacao` | 1.61s ✓ | 178.3 KB ✓ | LCP improved vs pre-task 3.77s (CSS `Revela` on deck) |
+
+LCP passes on all vitrine routes after `Revela` stopped using `initial={{ opacity: 0 }}`.
+**Accepted, not blocking (Benito, 2026-08-18):** `/`, `/catalogo`, `/colecoes` JS transfer
+sits 3.4–6.6 KB over the 180 KB ceiling. The floor is the shared Ceu/VisorCursor island
+(marca routes) plus, on `/catalogo`, the AlignUI `Drawer`/Radix dependency
+(`TASK-alignui-vendoring.md`) — not `Revela`, which is CSS-only and adds nothing to any
+route's script transfer. Next lever if this starts to matter: audit the Ceu/VisorCursor
+bundle or defer `FocoVerdadeiro`'s `motion` import. Not a blocker for closing this task.

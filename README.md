@@ -31,7 +31,9 @@ Fase-0 storefront stand-in at `/loja/[rev]` all render — every product and res
 marked `exemplo`. No real photography exists yet, so every gallery shows the honest
 "sem foto" state rather than an invented photo. The motion layer (`Revela`, `FocoVerdadeiro`,
 `.iridescencia`) now covers the catalogue and storefront routes too, not just `/apresentacao`
-(`TASK-motion-vitrine.md`).
+(`TASK-motion-vitrine.md`). Measured with `pnpm verificar-fase-0` — `/oculos` and `/loja/*`
+pass the 180 KB JS budget; `/`, `/catalogo`, `/colecoes` are 3–7 KB over, accepted as-is
+(figures and reasoning in that task doc §5).
 
 **AlignUI foundation vendored** (`TASK-alignui-vendoring.md`): `src/utils/{cn,tv,polymorphic,
 recursive-clone-children}` + `Drawer` (and its `CompactButton` dependency) in

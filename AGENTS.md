@@ -62,9 +62,9 @@ enters in Fase 1 (`spec-architecture.md` §3).
 Fase-0 storefront stand-in at `/loja/[rev]` all render, every product/reseller marked
 `exemplo`. No real photography exists yet (`TASK-normalizar-imagens.md` is written but
 not built), so every gallery shows the honest "sem foto" empty state, not an invented
-photograph. AlignUI/shadcn/React Bits are still not installed — the CTA, filter chips
-and thesis line are hand-written on the existing tokens, not the polished versions
-`spec-design.md` §7/§8 describe.
+photograph. AlignUI foundation + `Drawer` are vendored (`TASK-alignui-vendoring.md`); filter
+chips and other brand-owned surfaces stay hand-written on the token system. shadcn/React Bits
+are still not installed.
 
 The live URL is `https://trision.vercel.app` (`src/lib/site-config.ts`). Wildcard
 subdomains — and therefore every multi-tenant route — wait on the apex domain. Amanda
@@ -101,7 +101,7 @@ confirmed 2026-08-17 that she owns one; the exact domain and DNS/registrar acces
 | Framework | **Next.js** (App Router, TypeScript, `src/` dir, `@/*` alias) — **≥ 16.2.0 required** (Payload will not support 15.5–16.1.x). Always the current stable major, never a pinned number (see §2.0) | scaffolded, 16.3.1 |
 | Styling | Tailwind v4, CSS-first in `src/app/globals.css`. Tokens mapped 1:1 to `spec-design.md` §4.1. Dark only — no light-mode toggle, no `prefers-color-scheme` swap | built |
 | Brand components | Hand-written: `Visor`, `VisorCursor`, `Numeracao`, `Marca`/`MarcaLockup`, `Ceu` (`src/components/`). No generator produces these; they are the brand | built |
-| Components (later) | AlignUI (vendored, primary) → shadcn (gaps only) → React Bits (`spec-design.md` §8). **Not installed yet.** Do not add them in a task that does not name them | deferred |
+| Components (later) | AlignUI (vendored, primary) → shadcn (gaps only) → React Bits (`spec-design.md` §8). **Foundation utils + `Drawer` vendored** (`src/utils/`, `src/components/ui/drawer.tsx`); rest deferred per real need | partial — `Drawer` only |
 | Catalogue, Fase 0 | Typed TS modules in `content/` behind the same domain types Payload will later implement. **The seam is `lib/catalog/source.*.ts`.** Nothing outside those files imports a Payload type | wired — `/`, `/colecoes`, `/catalogo`, `/oculos/[slug]` render it, example data, `TASK-frontend-fase-0.md` |
 | Tenancy seam, Fase 0 | Mirrors the catalogue seam: `lib/tenant/source.*.ts` + **`lib/tenant/scope.ts`**, the one place that reads `revendedores`/`mostruario` (`spec-architecture.md` §6.1). One mock reseller, path-routed at `/loja/[rev]` — **not** the real subdomain shape, see the routing row below | seam scaffolded, mock data, `TASK-frontend-fase-0.md` §2.4 |
 | CMS, Fase 1 | **Payload ≥ 3.73.0**, mounted at `/admin`, `@payloadcms/plugin-multi-tenant`. Collections it does *not* list stay global — which is how `produtos` stays brand-owned | not started |
