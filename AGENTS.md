@@ -92,7 +92,7 @@ subdomains — and therefore every multi-tenant route — wait on owning the ape
 | Styling | Tailwind v4, CSS-first in `src/app/globals.css`. Tokens mapped 1:1 to `spec-design.md` §4.1. Dark only — no light-mode toggle, no `prefers-color-scheme` swap | built |
 | Brand components | Hand-written: `Visor`, `VisorCursor`, `Numeracao`, `Marca`/`MarcaLockup`, `Ceu` (`src/components/`). No generator produces these; they are the brand | built |
 | Components (later) | AlignUI (vendored, primary) → shadcn (gaps only) → React Bits (`spec-design.md` §8). **Not installed yet.** Do not add them in a task that does not name them | deferred |
-| Catalogue, Fase 0 | Typed TS modules in `content/` behind the same domain types Payload will later implement. **The seam is `lib/catalog/source.*.ts`.** Nothing outside those files imports a Payload type | not built — `/` has no catalogue yet |
+| Catalogue, Fase 0 | Typed TS modules in `content/` behind the same domain types Payload will later implement. **The seam is `lib/catalog/source.*.ts`.** Nothing outside those files imports a Payload type | seam scaffolded (`source.local.ts`), example data only — `/` not wired yet |
 | CMS, Fase 1 | **Payload ≥ 3.73.0**, mounted at `/admin`, `@payloadcms/plugin-multi-tenant`. Collections it does *not* list stay global — which is how `produtos` stays brand-owned | not started |
 | Data + files, Fase 1 | Postgres via `@payloadcms/db-postgres` (provider chosen at scaffold time, not from memory) + Vercel Blob | not started |
 | Conversion | `wa.me` deep links. **No cart, no checkout, no payments in v1.** Every URL produced by `lib/lead/link.ts` once that file exists | Fase 2 |
@@ -418,9 +418,10 @@ second package emerges. Payload, when it lands, is mounted *inside* this app
   and the icon/OG routes all import it, so the favicon cannot drift from the header.
 - **`src/lib/site-config.ts` owns `SITE_URL`.** Trailing slashes are stripped there,
   once. Empty counts as unset. Do not read `NEXT_PUBLIC_SITE_URL` anywhere else.
-- **`content/` will be the single source of truth for the catalogue**, once it exists.
-  No product data inline in a component, ever. The Fase 0 → Fase 1 seam is
-  `lib/catalog/source.*.ts` — the same boundary that paid for itself at F&A Móveis.
+- **`content/` is the single source of truth for the catalogue** (Fase 0 example data
+  only until Amanda's real products land). No product data inline in a component, ever.
+  The Fase 0 → Fase 1 seam is `lib/catalog/source.*.ts` — the same boundary that paid
+  for itself at F&A Móveis.
 - **Language.** All customer-facing copy is **Brazilian Portuguese**. Code, comments,
   commit messages and specs are English, except where a domain term has no useful
   translation — keep `mostruário`, `revenda oficial`, `aro` / `ponte` / `haste`,

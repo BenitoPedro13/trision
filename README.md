@@ -45,7 +45,7 @@ Versions here are a snapshot, not a pin — see `AGENTS.md` §2.0 before adding 
 | App | Next.js 16 (App Router, TypeScript, Turbopack, `src/`) | yes |
 | Styling | Tailwind v4, tokens in `src/app/globals.css`, dark only | yes |
 | Brand | `Visor`, `VisorCursor`, `Numeracao`, `Marca`, `Ceu` — hand-written | yes |
-| Catalogue | TS modules in `content/` (Fase 0) | not yet |
+| Catalogue | TS modules in `content/` behind `lib/catalog/` (Fase 0) | seam scaffolded, example data only |
 | CMS | Payload 3, in the same app, at `/admin` (Fase 1) | not yet |
 | Data | Postgres + Vercel Blob (Fase 1) | not yet |
 | Conversion | `wa.me`, no cart (`spec-architecture.md` §2) | Fase 2 |
