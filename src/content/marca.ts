@@ -6,5 +6,7 @@ export const marca = {
   whatsapp: "",
   // [VERIFICAR: Amanda's Instagram handle, if public and confirmed]
   instagram: "",
+  // [VERIFICAR: a confirmed contact email, if she wants one public]
+  email: "",
   desde: 2002,
 } as const satisfies Marca;

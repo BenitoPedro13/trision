@@ -60,6 +60,9 @@ export interface Marca {
   /** E.164 — [VERIFICAR: Amanda's real WhatsApp number, spec-brand.md §6 question 6] */
   whatsapp: string;
   instagram: string;
+  /** "" ⇒ not shown, same convention as `whatsapp` — [VERIFICAR: a confirmed contact
+   * email, if she wants one public; not asked in spec-brand.md §6 yet]. */
+  email: string;
   desde: number;
 }
 
