@@ -1,11 +1,23 @@
-<title>Trísion Visor</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trísion Eyewear — identity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* Tokens verbatim from docs/spec-design.md §4.1 / src/app/globals.css.
+   ● = ffmpeg sample. Contrast ratios are computed WCAG figures. */
 :root{
   --vazio:#070B0C; --noite:#0C1214; --fumo:#131A1D; --petroleo:#0A2A31; --aro:#242E32;
   --cinza:#78858A; --prata:#A6B2B6; --luz:#E6EBEC; --foco:#FFFFFF;
-  --lente:#E8EBEC; --turquesa:#17ABB8; --turquesa-claro:#4FD8E2; --turquesa-fundo:#0C5D66; --indigo:#1B2E8C;
-  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
-  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+  --lente:#E8EBEC; --lente-tinta:#0C1214;
+  --ouro:#CCA866; --ouro-claro:#E0C48F; --ouro-fundo:#7D6029;
+  --radius:0; --radius-lente:2px;
+  --sans:"Archivo",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
   --gut:clamp(20px,4vw,64px);
 }
 *{box-sizing:border-box}
@@ -13,6 +25,7 @@ html{-webkit-text-size-adjust:100%}
 body{
   margin:0; background:var(--vazio); color:var(--luz);
   font-family:var(--sans); font-size:16px; line-height:1.6;
+  font-variation-settings:"wdth" 100;
   -webkit-font-smoothing:antialiased; overflow-x:hidden;
 }
 #ceu{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
@@ -22,38 +35,38 @@ body{
 
 /* ---- type ---- */
 .sobre{font-size:.6875rem;letter-spacing:.18em;text-transform:uppercase;color:var(--cinza);font-weight:600;margin:0 0 22px;display:flex;align-items:center;gap:12px}
-.sobre b{color:var(--turquesa);font-weight:600;font-family:var(--mono);letter-spacing:.04em}
-h1{font-size:clamp(2.6rem,7.5vw,6rem);line-height:.94;letter-spacing:-.035em;font-weight:700;margin:0;text-wrap:balance}
-h2{font-size:clamp(1.6rem,3.4vw,2.6rem);line-height:1.06;letter-spacing:-.025em;font-weight:700;margin:0 0 20px;text-wrap:balance}
-h3{font-size:1.0625rem;letter-spacing:-.01em;font-weight:650;margin:0 0 8px}
+.sobre b{color:var(--ouro);font-weight:400;font-family:var(--mono);letter-spacing:.06em}
+h1{font-size:clamp(2.6rem,7.5vw,6rem);line-height:.94;letter-spacing:-.035em;font-weight:700;margin:0;text-wrap:balance;font-variation-settings:"wdth" 118;color:var(--foco)}
+h2{font-size:clamp(1.6rem,3.4vw,2.6rem);line-height:1.06;letter-spacing:-.025em;font-weight:700;margin:0 0 20px;text-wrap:balance;font-variation-settings:"wdth" 112;color:var(--foco)}
+h3{font-size:1.0625rem;letter-spacing:-.01em;font-weight:650;margin:0 0 8px;color:var(--luz)}
 p{margin:0 0 16px;max-width:64ch;color:var(--prata)}
 p.grande{font-size:clamp(1.05rem,1.7vw,1.3rem);color:var(--luz);max-width:52ch}
 .tec{font-family:var(--mono);font-size:.75rem;letter-spacing:.04em;color:var(--cinza);font-variant-numeric:tabular-nums}
 em.chave{font-style:normal;color:var(--foco)}
-a{color:var(--turquesa)}
+a{color:var(--ouro)}
 
 /* ---- o visor: the signature ---- */
 .visor{position:relative;display:block}
 .visor::before,.visor::after,.visor>.vb::before,.visor>.vb::after{
-  content:"";position:absolute;width:13px;height:13px;border:1.5px solid var(--turquesa);pointer-events:none;transition:opacity .18s
+  content:"";position:absolute;width:13px;height:13px;border:1.5px solid var(--ouro);pointer-events:none
 }
 .visor::before{top:-7px;left:-7px;border-right:0;border-bottom:0}
 .visor::after{top:-7px;right:-7px;border-left:0;border-bottom:0}
 .visor>.vb::before{bottom:-7px;left:-7px;border-right:0;border-top:0}
 .visor>.vb::after{bottom:-7px;right:-7px;border-left:0;border-top:0}
 
-/* ---- hero ---- */
+/* ---- hero / lockup — matches src/components/marca.tsx MarcaLockup ---- */
 .hero{min-height:88vh;display:flex;flex-direction:column;justify-content:center;gap:44px}
-.lockup{display:flex;align-items:center;gap:clamp(18px,3vw,34px);flex-wrap:wrap}
-.marca-svg{width:clamp(76px,9vw,116px);height:auto;flex:none}
-.wordmark{font-size:clamp(2.2rem,6vw,4.4rem);font-weight:250;letter-spacing:.02em;line-height:1;color:var(--foco);font-stretch:expanded}
-.wordmark small{display:block;font-size:.26em;font-weight:700;font-style:italic;letter-spacing:.02em;margin-top:.35em;color:var(--prata)}
-.desde{font-family:var(--mono);font-size:.6875rem;letter-spacing:.22em;color:var(--turquesa);text-transform:uppercase;border-left:1px solid var(--aro);padding-left:16px;align-self:stretch;display:flex;align-items:center}
+.lockup{display:flex;align-items:center;gap:clamp(16px,3vw,32px);flex-wrap:wrap}
+.marca-svg{width:clamp(64px,7.5vw,104px);height:auto;flex:none;color:var(--foco)}
+.wordmark{font-size:clamp(2rem,5.4vw,4rem);font-weight:300;letter-spacing:.02em;line-height:1;color:var(--foco);font-variation-settings:"wdth" 125}
+.wordmark small{display:block;font-size:.26em;font-weight:700;font-style:italic;letter-spacing:.02em;margin-top:.4em;color:var(--prata);font-variation-settings:"wdth" 110}
+.desde{font-family:var(--mono);font-size:.6875rem;letter-spacing:.24em;color:var(--ouro);text-transform:uppercase;border-left:1px solid var(--aro);padding-left:16px;align-self:stretch;display:flex;align-items:center}
 
 /* ---- grids ---- */
 .tres{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:1px;background:var(--aro);border:1px solid var(--aro)}
 .tres>div{background:var(--noite);padding:26px 22px}
-.tres .n{font-family:var(--mono);font-size:.75rem;color:var(--turquesa);margin-bottom:14px;display:block}
+.tres .n{font-family:var(--mono);font-size:.75rem;color:var(--ouro);margin-bottom:14px;display:block}
 .tres p{font-size:.9375rem;margin:0;color:var(--cinza)}
 
 /* ---- palette ---- */
@@ -64,78 +77,90 @@ a{color:var(--turquesa)}
 .tom .info{padding:11px 12px 13px;display:flex;flex-direction:column;gap:3px;background:var(--noite)}
 .tom .nome{font-family:var(--mono);font-size:.75rem;color:var(--luz)}
 .tom .fonte{font-size:.6875rem;color:var(--cinza);line-height:1.4}
-.razao{font-family:var(--mono);font-size:.6875rem;font-variant-numeric:tabular-nums;display:inline-flex;align-items:center;gap:6px;margin-top:2px}
-.pass{color:var(--turquesa-claro)}
-.fail,td .fail,td .tec.fail{color:#E0685E}
-.amostra{display:inline-block;width:7px;height:7px;background:var(--turquesa);flex:none}
+.razao{font-family:var(--mono);font-size:.6875rem;font-variant-numeric:tabular-nums;display:inline-flex;align-items:center;gap:6px;margin-top:2px;color:var(--ouro-claro)}
+.fail{color:var(--cinza)}
+.amostra{display:inline-block;width:7px;height:7px;background:var(--ouro);flex:none}
 
-/* ---- tabela ---- */
+.corBloco{display:grid;grid-template-columns:minmax(140px,220px) 1fr;gap:clamp(20px,3vw,40px);align-items:center;margin:28px 0 8px}
+@media (max-width:620px){.corBloco{grid-template-columns:1fr}}
+.corChip{aspect-ratio:1;background:var(--ouro);display:flex;align-items:flex-end;padding:14px}
+.corChip span{font-family:var(--mono);font-size:.75rem;color:var(--noite)}
+.fontes{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none}
+.fontes li{display:flex;gap:14px;align-items:baseline;color:var(--prata);font-size:.9375rem}
+.bolinha{width:9px;height:9px;background:var(--ouro);flex:none;transform:translateY(1px)}
+
+/* ---- table ---- */
 .rolagem{overflow-x:auto;border:1px solid var(--aro)}
 table{border-collapse:collapse;width:100%;min-width:600px;font-size:.875rem}
 th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--aro);vertical-align:top}
 th{font-size:.6875rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cinza);font-weight:600;background:var(--fumo)}
 td{color:var(--prata)} td:first-child{color:var(--luz)}
 tr:last-child td{border-bottom:0}
-td .tec{color:var(--turquesa)}
+td .tec{color:var(--ouro)}
 
 /* ---- product plate demo ---- */
+.etiqueta{
+  display:inline-flex;align-items:center;font-family:var(--mono);
+  font-size:.625rem;letter-spacing:.14em;text-transform:uppercase;color:var(--noite);
+  background:var(--ouro);padding:5px 10px;margin-bottom:18px
+}
 .prateleira{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:clamp(18px,3vw,34px);margin-top:34px}
 .produto{display:flex;flex-direction:column;gap:13px}
-.placa{background:var(--lente);border-radius:2px;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;padding:16px}
+.placa{background:var(--lente);border-radius:var(--radius-lente);aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;padding:16px}
 .placa svg{width:82%;height:auto}
-.produto .nome{color:var(--luz);font-weight:600;font-size:.9375rem}
+.produto .nome{color:var(--luz);font-weight:650;font-size:.9375rem}
+.ficha{font-size:.75rem;color:var(--cinza);margin-top:5px}
 
 /* ---- diagram ---- */
 .plataforma{display:grid;grid-template-columns:1fr;gap:0;border:1px solid var(--aro);margin-top:10px}
 .camada{padding:22px clamp(16px,3vw,26px);border-bottom:1px solid var(--aro);background:var(--noite)}
 .camada:last-child{border-bottom:0}
 .camada.origem{background:var(--fumo)}
-.camada .rot{font-family:var(--mono);font-size:.625rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cinza);margin-bottom:12px}
+.camada .rot{font-family:var(--mono);font-size:.625rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ouro);margin-bottom:12px}
 .lojas{display:grid;grid-template-columns:repeat(auto-fit,minmax(184px,1fr));gap:12px}
 .loja{border:1px solid var(--aro);padding:14px;display:flex;flex-direction:column;gap:7px;background:var(--vazio)}
-.loja .dom{font-family:var(--mono);font-size:.6875rem;color:var(--turquesa);word-break:break-all}
+.loja .dom{font-family:var(--mono);font-size:.6875rem;color:var(--ouro);word-break:break-all}
 .loja .qtd{font-size:.75rem;color:var(--cinza)}
 .pontos{display:flex;gap:4px;flex-wrap:wrap;margin-top:2px}
 .pt{width:9px;height:9px;border:1px solid var(--aro)}
-.pt.on{background:var(--turquesa);border-color:var(--turquesa)}
+.pt.on{background:var(--ouro);border-color:var(--ouro)}
 .catalogo{display:flex;gap:5px;flex-wrap:wrap}
 .catalogo .pt{width:13px;height:13px;background:var(--aro);border-color:var(--aro)}
 
-/* ---- buttons / focus ---- */
+/* ---- buttons / focus — the mark IS the focus ring, spec-design.md §3.1 ---- */
 .acoes{display:flex;gap:14px;flex-wrap:wrap;margin-top:26px}
 button.bt{font:inherit;font-size:.875rem;font-weight:600;padding:13px 22px;border:1px solid var(--aro);background:transparent;color:var(--luz);cursor:pointer;border-radius:0}
-button.bt.forte{background:var(--turquesa);color:var(--noite);border-color:var(--turquesa)}
+button.bt.forte{background:var(--ouro);color:var(--noite);border-color:var(--ouro)}
 button.bt:hover{border-color:var(--prata)}
-button.bt.forte:hover{background:var(--turquesa-claro);border-color:var(--turquesa-claro)}
+button.bt.forte:hover{background:var(--ouro-claro);border-color:var(--ouro-claro)}
 :focus-visible{outline:none}
 .foco-alvo:focus-visible{position:relative}
 .foco-alvo:focus-visible::after{content:"";position:absolute;inset:-6px;background:
-  linear-gradient(var(--turquesa),var(--turquesa)) 0 0/1.5px 14px no-repeat,
-  linear-gradient(var(--turquesa),var(--turquesa)) 0 0/14px 1.5px no-repeat,
-  linear-gradient(var(--turquesa),var(--turquesa)) 100% 0/1.5px 14px no-repeat,
-  linear-gradient(var(--turquesa),var(--turquesa)) 100% 0/14px 1.5px no-repeat,
-  linear-gradient(var(--turquesa),var(--turquesa)) 0 100%/1.5px 14px no-repeat,
-  linear-gradient(var(--turquesa),var(--turquesa)) 0 100%/14px 1.5px no-repeat,
-  linear-gradient(var(--turquesa),var(--turquesa)) 100% 100%/1.5px 14px no-repeat,
-  linear-gradient(var(--turquesa),var(--turquesa)) 100% 100%/14px 1.5px no-repeat;
+  linear-gradient(var(--ouro),var(--ouro)) 0 0/1.5px 14px no-repeat,
+  linear-gradient(var(--ouro),var(--ouro)) 0 0/14px 1.5px no-repeat,
+  linear-gradient(var(--ouro),var(--ouro)) 100% 0/1.5px 14px no-repeat,
+  linear-gradient(var(--ouro),var(--ouro)) 100% 0/14px 1.5px no-repeat,
+  linear-gradient(var(--ouro),var(--ouro)) 0 100%/1.5px 14px no-repeat,
+  linear-gradient(var(--ouro),var(--ouro)) 0 100%/14px 1.5px no-repeat,
+  linear-gradient(var(--ouro),var(--ouro)) 100% 100%/1.5px 14px no-repeat,
+  linear-gradient(var(--ouro),var(--ouro)) 100% 100%/14px 1.5px no-repeat;
   pointer-events:none}
 
-/* ---- cursor brackets ---- */
-#alvo{position:fixed;z-index:60;pointer-events:none;opacity:0;transition:opacity .2s}
-#alvo i{position:absolute;width:11px;height:11px;border:1.5px solid var(--turquesa-claro)}
+/* ---- cursor brackets — src/components/visor-cursor.tsx ---- */
+#alvo{position:fixed;z-index:60;pointer-events:none;opacity:0;left:-100px;top:-100px;width:38px;height:38px}
+#alvo i{position:absolute;width:11px;height:11px;border:1.5px solid var(--ouro-claro)}
 #alvo i:nth-child(1){top:0;left:0;border-right:0;border-bottom:0}
 #alvo i:nth-child(2){top:0;right:0;border-left:0;border-bottom:0}
 #alvo i:nth-child(3){bottom:0;left:0;border-right:0;border-top:0}
 #alvo i:nth-child(4){bottom:0;right:0;border-left:0;border-top:0}
-@media (hover:hover) and (pointer:fine){body.viva #alvo{opacity:1}}
 
 /* ---- numeração ---- */
-.numeracao{display:inline-flex;align-items:center;gap:.42em;font-family:var(--mono);letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.numeracao{display:inline-flex;align-items:center;gap:.4em;font-family:var(--mono);letter-spacing:.04em;font-variant-numeric:tabular-nums}
 .numeracao svg{flex:none}
 .num-demo{font-size:clamp(1.6rem,4.4vw,3rem);color:var(--luz);margin:12px 0 22px}
 .num-legenda{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:16px;margin-top:26px}
-.num-legenda div{border-top:1px solid var(--turquesa);padding-top:11px}
-.num-legenda .v{font-family:var(--mono);color:var(--turquesa);font-size:.9375rem}
+.num-legenda div{border-top:1px solid var(--ouro);padding-top:11px}
+.num-legenda .v{font-family:var(--mono);color:var(--ouro);font-size:.9375rem}
 .num-legenda .l{font-size:.8125rem;color:var(--cinza)}
 
 /* ---- type scale ---- */
@@ -145,23 +170,25 @@ button.bt.forte:hover{background:var(--turquesa-claro);border-color:var(--turque
 .linha .exemplo{color:var(--luz);flex:1;min-width:200px}
 
 /* ---- blockers ---- */
-.bloqueio{border-left:2px solid var(--turquesa);padding:4px 0 4px 20px;margin:22px 0}
+.bloqueio{border-left:2px solid var(--ouro);padding:4px 0 4px 20px;margin:22px 0}
 .bloqueio p{margin:0;color:var(--luz)}
 .bloqueio .tec{display:block;margin-top:6px}
 
 footer{padding:44px var(--gut) 72px;max-width:1320px;margin:0 auto;border-top:1px solid var(--aro);color:var(--cinza);font-size:.8125rem}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
+</head>
+<body>
 
-<canvas id="ceu"></canvas>
-<div id="alvo"><i></i><i></i><i></i><i></i></div>
+<canvas id="ceu" aria-hidden="true"></canvas>
+<div id="alvo" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 
 <div class="pagina">
 
 <section class="faixa hero">
   <div class="lockup">
     <svg class="marca-svg" viewBox="0 0 200 200" aria-label="Trísion mark">
-      <g fill="#FFFFFF">
+      <g fill="currentColor">
         <path d="M8 8h56v15H23v41H8z"/><path d="M192 8v56h-15V23h-41V8z"/>
         <path d="M8 192v-56h15v41h41v15z"/><path d="M192 192h-56v-15h41v-41h15z"/>
         <path d="M34 40h92v24H34z"/><path d="M66 40h26v122H66z"/>
@@ -196,11 +223,26 @@ footer{padding:44px var(--gut) 72px;max-width:1320px;margin:0 auto;border-top:1p
 
 <section class="faixa">
   <p class="sobre"><b>02</b> Colour · values measured, not chosen by eye</p>
-  <h2>Trísion's only colour<br>was in her photograph.</h2>
-  <p>Every value below is an <span class="tec">ffmpeg</span> sample from Amanda's own material,
-     and every contrast ratio is a WCAG figure — not an estimate. Turquoise appears
-     <em class="chave">three times</em> in her portrait: on the frame she chose to wear, in the rim
-     light, and in the anti-reflective flash on the lens.</p>
+  <h2>Her gold was never unreadable.<br>White was.</h2>
+  <p>Amanda stated the brand colour is gold with black. That outranks the turquoise we
+     inferred from her portrait (<span class="tec">spec-brand.md</span> §1.5b). The gold is
+     <em class="chave">sampled from her own lockup</em> — not picked from the stock-gold shelf.</p>
+
+  <div class="corBloco">
+    <span class="visor" data-alvo><span class="vb"></span>
+      <div class="corChip"><span>#CCA866</span></div>
+    </span>
+    <div>
+      <p>She moved Instagram to black-and-white <em class="chave">because it is easier to read</em>.
+         She was right, and it is measurable:</p>
+      <ul class="fontes">
+        <li><i class="bolinha"></i><span>Gold on <em class="chave">white</em>: 2.24 — <span class="fail">fails</span> WCAG AA.</span></li>
+        <li><i class="bolinha"></i><span>Gold on <em class="chave">--noite</em>: 8.42 — passes comfortably.</span></li>
+      </ul>
+    </div>
+  </div>
+  <p>The problem was never gold as identity. It was gold as body ink on a light field.
+     The ground this site already had is the only one her real brand colour has ever worked on.</p>
 
   <div class="paleta">
     <div class="tom"><div class="chip" style="background:#070B0C"><span style="color:#78858A">#070B0C</span></div>
@@ -209,14 +251,15 @@ footer{padding:44px var(--gut) 72px;max-width:1320px;margin:0 auto;border-top:1p
       <div class="info"><span class="nome">--noite ●</span><span class="fonte">sampled from her tile: #0F1012 and #0D1111</span></div></div>
     <div class="tom"><div class="chip" style="background:#0A2A31"><span style="color:#A6B2B6">#0A2A31</span></div>
       <div class="info"><span class="nome">--petroleo ●</span><span class="fonte">the portrait's rim light: #091E24</span></div></div>
-    <div class="tom"><div class="chip" style="background:#17ABB8"><span style="color:#0C1214">#17ABB8</span></div>
-      <div class="info"><span class="nome">--turquesa ●</span><span class="fonte">her frame: #11ABB8</span>
-        <span class="razao pass"><i class="amostra"></i>6.79 on --noite · AA</span></div></div>
-    <div class="tom"><div class="chip" style="background:#4FD8E2"><span style="color:#0C1214">#4FD8E2</span></div>
-      <div class="info"><span class="nome">--turquesa-claro ●</span><span class="fonte">the lit edge of the frame</span>
-        <span class="razao pass"><i class="amostra"></i>11.02 on --noite · AA</span></div></div>
-    <div class="tom"><div class="chip" style="background:#1B2E8C"><span style="color:#E6EBEC">#1B2E8C</span></div>
-      <div class="info"><span class="nome">--indigo ●</span><span class="fonte">the AR-coating flash: #10247C. Gradient stop only, never UI.</span></div></div>
+    <div class="tom"><div class="chip" style="background:#CCA866"><span style="color:#0C1214">#CCA866</span></div>
+      <div class="info"><span class="nome">--ouro ●</span><span class="fonte">sampled from the lockup. THE accent.</span>
+        <span class="razao"><i class="amostra"></i>8.42 on --noite · AA</span></div></div>
+    <div class="tom"><div class="chip" style="background:#E0C48F"><span style="color:#0C1214">#E0C48F</span></div>
+      <div class="info"><span class="nome">--ouro-claro</span><span class="fonte">lit edge. Hairlines, never a field.</span>
+        <span class="razao"><i class="amostra"></i>11.20 on --noite · AA</span></div></div>
+    <div class="tom"><div class="chip" style="background:#7D6029"><span style="color:#E6EBEC">#7D6029</span></div>
+      <div class="info"><span class="nome">--ouro-fundo</span><span class="fonte">the accent on the light plate. --ouro itself fails there.</span>
+        <span class="razao"><i class="amostra"></i>4.90 on --lente · AA</span></div></div>
     <div class="tom"><div class="chip" style="background:#E8EBEC"><span style="color:#0C1214">#E8EBEC</span></div>
       <div class="info"><span class="nome">--lente</span><span class="fonte">the light plate where product photography lives</span></div></div>
     <div class="tom"><div class="chip" style="background:#FFFFFF"><span style="color:#0C1214">#FFFFFF</span></div>
@@ -227,10 +270,10 @@ footer{padding:44px var(--gut) 72px;max-width:1320px;margin:0 auto;border-top:1p
     <table>
       <thead><tr><th>Rule</th><th>Measure</th><th>Consequence</th></tr></thead>
       <tbody>
-        <tr><td>Text on a turquoise button</td><td><span class="tec">--noite</span> 6.79 · white 2.78</td><td>A turquoise button is dark-on-bright. Never white.</td></tr>
-        <tr><td>Turquoise on the light plate</td><td class="fail"><span class="tec">2.32 — fail</span></td><td>The accent does not step on the plate. There it is <span class="tec">--turquesa-fundo #0C5D66</span> (6.32).</td></tr>
-        <tr><td>Pure white</td><td>18.88 on <span class="tec">--noite</span></td><td>Reserved for one element per screen: the thing in focus.</td></tr>
-        <tr><td>A second accent</td><td>—</td><td>Does not exist. A flat screen is fixed with a better photograph.</td></tr>
+        <tr><td>Text on a gold button</td><td><span class="tec">--noite</span> 8.42 · white 2.24</td><td>A gold button is dark-on-bright. Never white. Exactly one per page.</td></tr>
+        <tr><td>Gold on the light plate</td><td class="fail"><span class="tec">1.87 — fail</span></td><td>The accent does not step on the plate. There it is <span class="tec">--ouro-fundo #7D6029</span> (4.90).</td></tr>
+        <tr><td>Pure white</td><td>18.88 on <span class="tec">--noite</span></td><td>Reserved for one element per screen: the thing in focus. Body text is <span class="tec">--luz</span>.</td></tr>
+        <tr><td>A second accent</td><td>—</td><td>Does not exist. Gold is light, not paint. A flat screen is fixed with a better photograph.</td></tr>
       </tbody>
     </table>
   </div>
@@ -249,31 +292,32 @@ footer{padding:44px var(--gut) 72px;max-width:1320px;margin:0 auto;border-top:1p
     <button class="bt foco-alvo" data-alvo>Revenda oficial</button>
   </div>
 
+  <span class="etiqueta" style="margin-top:34px">Example — names and measurements are demonstration only</span>
   <div class="prateleira">
     <div class="produto"><span class="visor" data-alvo><span class="vb"></span>
       <span class="placa"><svg viewBox="0 0 260 90" aria-label="Square frame">
         <g fill="none" stroke="#0C1214" stroke-width="7">
           <rect x="14" y="20" width="92" height="56" rx="6"/><rect x="154" y="20" width="92" height="56" rx="6"/>
           <path d="M106 40h48"/><path d="M14 34 2 28"/><path d="M246 34l12-6"/></g></svg></span></span>
-      <div><div class="nome">Trísion Vega</div>
-        <div class="numeracao tec" style="margin-top:5px">52<svg width="9" height="9" viewBox="0 0 9 9"><rect x="1" y="1" width="7" height="7" fill="none" stroke="#78858A" stroke-width="1.2"/></svg>18-145</div></div></div>
+      <div><div class="nome">Modelo A</div>
+        <div class="ficha numeracao">52<svg width="9" height="9" viewBox="0 0 9 9" aria-hidden="true"><rect x="1" y="1" width="7" height="7" fill="none" stroke="#78858A" stroke-width="1.2"/></svg>18-145 · acetato</div></div></div>
 
     <div class="produto"><span class="visor" data-alvo><span class="vb"></span>
       <span class="placa"><svg viewBox="0 0 260 90" aria-label="Round frame">
         <g fill="none" stroke="#0C1214" stroke-width="7">
           <circle cx="62" cy="48" r="32"/><circle cx="198" cy="48" r="32"/>
           <path d="M94 44h72"/><path d="M30 40 4 30"/><path d="M230 40l26-10"/></g></svg></span></span>
-      <div><div class="nome">Trísion Órion</div>
-        <div class="numeracao tec" style="margin-top:5px">49<svg width="9" height="9" viewBox="0 0 9 9"><rect x="1" y="1" width="7" height="7" fill="none" stroke="#78858A" stroke-width="1.2"/></svg>21-140</div></div></div>
+      <div><div class="nome">Modelo B</div>
+        <div class="ficha numeracao">49<svg width="9" height="9" viewBox="0 0 9 9" aria-hidden="true"><rect x="1" y="1" width="7" height="7" fill="none" stroke="#78858A" stroke-width="1.2"/></svg>21-140 · metal</div></div></div>
 
     <div class="produto"><span class="visor" data-alvo><span class="vb"></span>
       <span class="placa"><svg viewBox="0 0 260 90" aria-label="Cat-eye frame">
         <g fill="none" stroke="#0C1214" stroke-width="7">
-          <path d="M16 34c30-14 78-12 92 4 6 8 2 26-12 32-22 10-62 6-76-10-6-8-8-20-4-26z"/>
-          <path d="M244 34c-30-14-78-12-92 4-6 8-2 26 12 32 22 10 62 6 76-10 6-8 8-20 4-26z"/>
-          <path d="M108 42h44"/></g></svg></span></span>
-      <div><div class="nome">Trísion Lyra</div>
-        <div class="numeracao tec" style="margin-top:5px">54<svg width="9" height="9" viewBox="0 0 9 9"><rect x="1" y="1" width="7" height="7" fill="none" stroke="#78858A" stroke-width="1.2"/></svg>17-145</div></div></div>
+          <path d="M12 30c8-8 74-14 96 2 8 6 6 28-10 36-20 10-56 8-70-6-8-8-22-26-16-32z"/>
+          <path d="M248 30c-8-8-74-14-96 2-8 6-6 28 10 36 20 10 56 8 70-6 8-8 22-26 16-32z"/>
+          <path d="M108 40h44"/></g></svg></span></span>
+      <div><div class="nome">Modelo C</div>
+        <div class="ficha numeracao">54<svg width="9" height="9" viewBox="0 0 9 9" aria-hidden="true"><rect x="1" y="1" width="7" height="7" fill="none" stroke="#78858A" stroke-width="1.2"/></svg>17-145 · acetato</div></div></div>
   </div>
 
   <div class="bloqueio">
@@ -287,7 +331,7 @@ footer{padding:44px var(--gut) 72px;max-width:1320px;margin:0 auto;border-top:1p
 <section class="faixa">
   <p class="sobre"><b>04</b> Numeração · the technical voice</p>
   <h2>The number is already stamped<br>inside the temple.</h2>
-  <div class="numeracao num-demo">52<svg width="26" height="26" viewBox="0 0 26 26"><rect x="3" y="3" width="20" height="20" fill="none" stroke="#17ABB8" stroke-width="2.4"/></svg>18-145</div>
+  <div class="numeracao num-demo">52<svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="3" y="3" width="20" height="20" fill="none" stroke="#CCA866" stroke-width="2.4"/></svg>18-145</div>
   <p>The <em>boxing</em> system marking is stamped on every pair of frames in the world. It is the
      equivalent of F&amp;A Móveis' <span class="tec">2,30 m</span>: an industry artifact that
      customers half-recognise and that no competitor treats as typography.</p>
@@ -310,17 +354,19 @@ footer{padding:44px var(--gut) 72px;max-width:1320px;margin:0 auto;border-top:1p
   <p>Setting the whole site in a techno face like Eurostile would be loud, would age badly and
      would compete with the logo. Variable <em class="chave">Archivo</em> covers everything with one width
      axis: headlines at <span class="tec">wdth 118</span> echo the logotype's extension, body at
-     <span class="tec">wdth 100</span> stays readable. One font file.</p>
+     <span class="tec">wdth 100</span> stays readable. One font file. Technical layer is
+     <em class="chave">IBM Plex Mono</em>.</p>
   <div class="escala">
-    <div class="linha"><span class="rot">--t-display<br>wdth 118 · 600</span><span class="exemplo" style="font-size:clamp(2rem,5vw,3.4rem);letter-spacing:-.03em;line-height:.94;font-weight:700">Óculos que duram</span></div>
-    <div class="linha"><span class="rot">--t-h2<br>wdth 105 · 600</span><span class="exemplo" style="font-size:1.6rem;letter-spacing:-.02em;font-weight:650">Coleção Constelação</span></div>
-    <div class="linha"><span class="rot">--t-corpo<br>wdth 100 · 400</span><span class="exemplo" style="font-size:1.0625rem">Acetato italiano, dobradiça flex, lente com tratamento antirreflexo.</span></div>
-    <div class="linha"><span class="rot">--t-sobrescrito<br>+0.16em · 500</span><span class="exemplo" style="font-size:.6875rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cinza)">Revenda oficial · Volta Redonda, RJ</span></div>
-    <div class="linha"><span class="rot">--t-tecnico<br>mono · +0.04em</span><span class="exemplo tec" style="font-size:.8125rem;color:var(--turquesa)">TRI-SILVA-K4M2 · 52□18-145 · R$ 890</span></div>
+    <div class="linha"><span class="rot">--t-display<br>wdth 118 · 600</span><span class="exemplo" style="font-size:clamp(2rem,5vw,3.4rem);letter-spacing:-.03em;line-height:.94;font-weight:700;font-variation-settings:'wdth' 118">Uma vitrine para cada revendedor</span></div>
+    <div class="linha"><span class="rot">--t-h2<br>wdth 112 · 600</span><span class="exemplo" style="font-size:1.6rem;letter-spacing:-.02em;font-weight:650;font-variation-settings:'wdth' 112">Um catálogo só.</span></div>
+    <div class="linha"><span class="rot">--t-corpo<br>wdth 100 · 400</span><span class="exemplo" style="font-size:1.0625rem">Trísion Eyewear, desde 2002. Óculos selecionados por quem é obcecada por óculos.</span></div>
+    <div class="linha"><span class="rot">--t-sobrescrito<br>+0.16em · 500</span><span class="exemplo" style="font-size:.6875rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cinza)">Revenda oficial · Ótica exemplo · cidade</span></div>
+    <div class="linha"><span class="rot">--t-tecnico<br>mono · +0.04em</span><span class="exemplo tec" style="font-size:.8125rem;color:var(--ouro)">TRI-EXEM-K4M2 · 52□18-145 · Consulte o valor</span></div>
   </div>
   <p style="margin-top:24px">The logotype is <em class="chave">never</em> set in a typeface. It ships as SVG.
-     If the original vector does not turn up, it is redrawn by hand from the raster — a near-miss
-     font is worse than no wordmark.</p>
+     The wordmark above is Archivo at <span class="tec">wdth 125</span> as a stand-in — the same
+     compromise <span class="tec">MarcaLockup</span> makes on the live site — pending the original vector
+     (<span class="tec">spec-brand.md</span> §1.2, open question #8).</p>
 </section>
 
 <section class="faixa">
@@ -339,21 +385,21 @@ footer{padding:44px var(--gut) 72px;max-width:1320px;margin:0 auto;border-top:1p
       </div>
     </div>
     <div class="camada">
-      <div class="rot">mostruario — tenant-scoped · the reseller only toggles on and off</div>
+      <div class="rot">mostruario — tenant-scoped · the reseller only toggles on and off · example</div>
       <div class="lojas">
-        <div class="loja"><span class="dom">silva.trision.com.br</span><span class="qtd">Ótica Silva · Volta Redonda, RJ</span>
+        <div class="loja" data-alvo><span class="dom">loja1.trision.com.br</span><span class="qtd">Ótica exemplo · cidade</span>
           <span class="pontos"><i class="pt on"></i><i class="pt on"></i><i class="pt"></i><i class="pt on"></i><i class="pt"></i><i class="pt on"></i><i class="pt on"></i><i class="pt"></i><i class="pt"></i><i class="pt on"></i></span></div>
-        <div class="loja"><span class="dom">visao.trision.com.br</span><span class="qtd">Ótica Visão · Barra Mansa, RJ</span>
+        <div class="loja" data-alvo><span class="dom">loja2.trision.com.br</span><span class="qtd">Ótica exemplo · cidade</span>
           <span class="pontos"><i class="pt"></i><i class="pt on"></i><i class="pt on"></i><i class="pt on"></i><i class="pt on"></i><i class="pt"></i><i class="pt"></i><i class="pt on"></i><i class="pt"></i><i class="pt"></i></span></div>
-        <div class="loja"><span class="dom">horizonte.trision.com.br</span><span class="qtd">Ótica Horizonte · Resende, RJ</span>
+        <div class="loja" data-alvo><span class="dom">loja3.trision.com.br</span><span class="qtd">Ótica exemplo · cidade</span>
           <span class="pontos"><i class="pt on"></i><i class="pt"></i><i class="pt"></i><i class="pt on"></i><i class="pt on"></i><i class="pt on"></i><i class="pt on"></i><i class="pt on"></i><i class="pt"></i><i class="pt"></i></span></div>
       </div>
     </div>
     <div class="camada">
-      <div class="rot">leads — they all land with Amanda, origin in the body of the message</div>
+      <div class="rot">leads — they all land with Amanda, origin in the body of the message · example</div>
       <p style="margin:0;font-family:var(--mono);font-size:.8125rem;line-height:1.75;color:var(--prata)">
-        Olá! Vim pela loja da <em class="chave">Ótica Silva</em> (Volta Redonda, RJ) e quero saber
-        sobre o Trísion Vega — solar, acetato preto, 52□18-145. &nbsp;<span style="color:var(--turquesa)">[TRI-SILVA-K4M2]</span>
+        Olá! Vim pela loja da <em class="chave">Ótica exemplo</em> e quero saber
+        sobre o Modelo A — solar, acetato, 52□18-145. &nbsp;<span style="color:var(--ouro)">[TRI-EXEM-K4M2]</span>
       </p>
     </div>
   </div>
@@ -373,7 +419,7 @@ footer{padding:44px var(--gut) 72px;max-width:1320px;margin:0 auto;border-top:1p
 
 <section class="faixa">
   <p class="sobre"><b>07</b> What blocks</p>
-  <h2>Two questions hold code.</h2>
+  <h2>Three questions hold code.</h2>
   <div class="bloqueio">
     <p><strong>Does Amanda own a domain?</strong> Wildcard subdomains require an apex.
        Today she is on <span class="tec">sitetrision.my.canva.site</span>, which suggests she does not.
@@ -383,10 +429,16 @@ footer{padding:44px var(--gut) 72px;max-width:1320px;margin:0 auto;border-top:1p
   <div class="bloqueio">
     <p><strong>Is price one suggested retail, or does each reseller set their own?</strong> Decides whether
        <span class="tec">mostruario.preco</span> exists — and whether "register the product once"
-       survives contact with reality.</p>
+       survives contact with reality. Do not build a per-reseller price field speculatively.</p>
     <span class="tec">spec-brand.md §6 #7</span>
   </div>
-  <p style="margin-top:26px">The other eight live in <span class="tec">spec-brand.md §6</span>, each with an owner.
+  <div class="bloqueio">
+    <p><strong>Does the WhatsApp button reach Amanda or the reseller?</strong>
+       <span class="tec">destinoLead</span> exists so this does not block the build, but it must
+       be answered before launch — it changes what the reseller thinks they bought.</p>
+    <span class="tec">spec-brand.md §6 #6</span>
+  </div>
+  <p style="margin-top:26px">The other seven live in <span class="tec">spec-brand.md §6</span>, each with an owner.
      The highest-value of them: <em class="chave">what is on the "Atendimento Exclusivo" page</em> —
      it is a service she already sells and about which we know nothing.</p>
 </section>
@@ -394,32 +446,38 @@ footer{padding:44px var(--gut) 72px;max-width:1320px;margin:0 auto;border-top:1p
 <footer>
   <p style="color:var(--cinza)">Trísion Eyewear · identity and architecture · 17 Aug 2026 —
      companion to <span class="tec">docs/spec-brand.md</span>, <span class="tec">spec-design.md</span>,
-     <span class="tec">spec-architecture.md</span>. The mark at the top is an <em class="chave">approximate redraw</em> from the raster — the final lockup depends on the original vector (spec-brand.md §1.2). Every hex is an <span class="tec">ffmpeg</span> sample
-     from Amanda's own material; every contrast ratio is a WCAG figure.</p>
+     <span class="tec">spec-architecture.md</span>, and the live routes
+     <span class="tec">/</span> and <span class="tec">/apresentacao</span>.
+     The mark at the top is an <em class="chave">approximate redraw</em> from the raster — the same paths as
+     <span class="tec">src/lib/marca-paths.ts</span>. Every hex is an <span class="tec">ffmpeg</span> sample
+     from Amanda's own material; every contrast ratio is a WCAG figure. Gold is
+     <span class="tec">#CCA866</span>, sampled from her lockup. Turquoise is retired.</p>
 </footer>
 </div>
 
 <script>
 (function(){
+  /* Starfield — same behaviour as src/components/ceu.tsx */
   var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
   var c = document.getElementById('ceu'), x = c.getContext('2d'), estrelas = [], w, h;
   function montar(){
-    w = c.width = innerWidth * devicePixelRatio; h = c.height = innerHeight * devicePixelRatio;
-    c.style.width = innerWidth+'px'; c.style.height = innerHeight+'px';
-    var n = Math.min(560, Math.round(innerWidth*innerHeight/2600));
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = c.width = innerWidth * dpr; h = c.height = innerHeight * dpr;
+    c.style.width = '100%'; c.style.height = '100%';
+    var n = Math.min(700, Math.round(innerWidth*innerHeight/2200));
     estrelas = [];
     for (var i=0;i<n;i++) estrelas.push({
       x: Math.random()*w, y: Math.random()*h,
-      r: (Math.random()*1.25+0.25)*devicePixelRatio,
-      a: Math.random()*0.7+0.12, v: Math.random()*0.012+0.003, f: Math.random()*Math.PI*2
+      r: (Math.random()*1.35+0.3)*dpr,
+      a: Math.random()*0.72+0.28, v: Math.random()*0.02+0.004, f: Math.random()*Math.PI*2
     });
   }
   function pintar(t){
     x.clearRect(0,0,w,h);
     for (var i=0;i<estrelas.length;i++){
       var s = estrelas[i];
-      var al = mq.matches ? s.a : s.a * (0.62 + 0.38*Math.sin(t*s.v + s.f));
-      x.beginPath(); x.arc(s.x, s.y, s.r, 0, 6.284);
+      var al = mq.matches ? s.a : s.a * (0.42 + 0.58*Math.sin(t*s.v + s.f));
+      x.beginPath(); x.arc(s.x, s.y, s.r, 0, Math.PI*2);
       x.fillStyle = 'rgba(232,235,236,'+al.toFixed(3)+')'; x.fill();
     }
   }
@@ -427,13 +485,12 @@ footer{padding:44px var(--gut) 72px;max-width:1320px;margin:0 auto;border-top:1p
   montar(); addEventListener('resize', montar);
   if (mq.matches) pintar(0); else requestAnimationFrame(laco);
 
-  // the visor follows the pointer and snaps onto the target
+  /* Visor cursor — same behaviour as src/components/visor-cursor.tsx */
   var fino = matchMedia('(hover:hover) and (pointer:fine)').matches;
   if (fino && !mq.matches){
-    var a = document.getElementById('alvo'), atual = null;
-    document.body.classList.add('viva');
-    function pos(el, mx, my){
-      if (el){ var r = el.getBoundingClientRect();
+    var a = document.getElementById('alvo'), atual = null, mx = -100, my = -100;
+    function pos(){
+      if (atual){ var r = atual.getBoundingClientRect();
         a.style.transition = 'all .18s cubic-bezier(.2,.8,.2,1)';
         a.style.left = (r.left-9)+'px'; a.style.top = (r.top-9)+'px';
         a.style.width = (r.width+18)+'px'; a.style.height = (r.height+18)+'px';
@@ -444,11 +501,15 @@ footer{padding:44px var(--gut) 72px;max-width:1320px;margin:0 auto;border-top:1p
       }
     }
     addEventListener('mousemove', function(e){
-      var alvo = e.target.closest && e.target.closest('[data-alvo]');
-      if (alvo !== atual) atual = alvo;
-      pos(atual, e.clientX, e.clientY);
+      mx = e.clientX; my = e.clientY;
+      atual = e.target.closest && e.target.closest('[data-alvo]');
+      a.style.opacity = '1';
+      pos();
     }, {passive:true});
-    addEventListener('scroll', function(){ if (atual) pos(atual,0,0); }, {passive:true});
+    addEventListener('scroll', function(){ if (atual) pos(); }, {passive:true, capture:true});
+    document.addEventListener('mouseleave', function(){ a.style.opacity = '0'; });
   }
 })();
 </script>
+</body>
+</html>
