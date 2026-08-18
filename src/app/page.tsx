@@ -47,7 +47,7 @@ export default async function Home() {
             <section>
               <Revela secao>
                 <p className="mb-6 font-mono text-[.6875rem] uppercase tracking-[.16em] text-ouro">
-                  ⌐ 01 — Coleções ¬
+                  01 — Coleções
                 </p>
               </Revela>
               <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
