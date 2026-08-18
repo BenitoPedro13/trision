@@ -250,3 +250,7 @@ general 2026 App Router state-management guidance
 - Keyboard pass: every new interactive element (filter chips, drawer toggle, product cards,
   the WhatsApp CTA) shows the `.foco-visor` bracket on Tab, matching the fix already recorded
   in `TASK-verificacao-fase-0.md`.
+
+**Executed 2026-08-18.** All criteria above pass. Measured budgets (LCP/CLS/JS/contrast) for
+the new routes are in `TASK-verificacao-fase-0.md` §6; `/apresentacao` LCP is the one open
+row (motion bundle, not introduced by this task).

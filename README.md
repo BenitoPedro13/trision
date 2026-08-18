@@ -97,15 +97,23 @@ exists; the default is the Vercel address above.
 
 ## Verification
 
-`scripts/verificar-fase-0.mts` (Lighthouse + Playwright/axe) checks `/` and `/apresentacao`
-against the budgets in `spec-design.md` §12. Last measured **2026-08-17, before
-`TASK-frontend-fase-0.md`'s routes landed**: LCP 1.47–1.51s (budget ≤2.0s), CLS 0.001
-(≤0.05), JS transfer 135–140 KB (≤180 KB), zero contrast violations, every keyboard stop
-carries the `.foco-visor` bracket, `Ceu`/`VisorCursor` correctly go still/off under
-`prefers-reduced-motion` and coarse pointer. Full methodology and findings in
-`docs/tasks/TASK-verificacao-fase-0.md`. **Not yet re-run against the new routes** —
-`/catalogo`, `/oculos/[slug]` etc. were verified manually (`tsc`/`lint`/`build` + curl,
-`TASK-frontend-fase-0.md` §6), not against these measured budgets.
+`scripts/verificar-fase-0.mts` (Lighthouse + Playwright/axe) checks `/`, `/apresentacao`,
+`/catalogo`, `/oculos/TRI-MOD-A`, and `/loja/otica-exemplo/mostruario` against the budgets
+in `spec-design.md` §12. Last full extension run **2026-08-18** (`docs/tasks/TASK-verificacao-fase-0.md` §6):
+
+| Route | LCP | CLS | JS transfer |
+|---|---|---|---|
+| `/` | 1.56s ✓ | 0.000 ✓ | 143 KB ✓ |
+| `/catalogo` | 1.61s ✓ | 0.000 ✓ | 147 KB ✓ |
+| `/oculos/TRI-MOD-A` | 1.58s ✓ | 0.000 ✓ | 145 KB ✓ |
+| `/loja/otica-exemplo/mostruario` | 1.56s ✓ | 0.000 ✓ | 147 KB ✓ |
+| `/apresentacao` | **3.77s ✗** | 0.000 ✓ | 178 KB ✓ |
+
+All Playwright checks pass (contrast, keyboard/`.foco-visor`, `Ceu`/`VisorCursor` under
+reduced-motion and coarse pointer). **`/apresentacao` LCP is the one open budget** — the
+`motion` layer added in `ea6120f`; tracked in `TASK-verificacao-fase-0.md` §6 and the
+motion task docs. Run with `pnpm build && PORT=3001 pnpm start` then
+`pnpm verificar-fase-0 http://localhost:3001`.
 
 ## Routes
 

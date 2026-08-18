@@ -110,9 +110,10 @@ photos, or open questions, unlike almost everything else left in Fase 0.
 | `package.json` | edit | `playwright`, `@axe-core/playwright`, `lighthouse`, `tsx` devDeps; `verificar-fase-0` script |
 | `pnpm-lock.yaml` | edit | lockfile for the above |
 | `src/app/apresentacao/page.tsx` | edit | deck `<div>` gets `.foco-visor` + `aria-label` — the keyboard-focus fix, §5 |
+| `src/app/layout.tsx` | edit | Archivo `display: "optional"` — CLS fix, extension §5 |
 | `README.md` | edit | record the measured numbers, note the script |
 
-## 5. Verification — measured 2026-08-17
+## 5. Verification — measured 2026-08-17 (original two-page pass)
 
 Local machine, production build (`pnpm build && pnpm start`), Chromium via Playwright/
 Lighthouse. Numbers are a snapshot of this build on this machine, not a permanent
@@ -134,7 +135,7 @@ guarantee — re-run after any change that could plausibly move them.
 the same quantity the 180 KB budget describes.
 ² **Fixed as part of this task** — see below.
 
-### What this pass found and fixed
+### What the original pass found and fixed
 
 - **LCP looked like a failure (2.56–2.71s) under Lighthouse's default `simulate`
   throttling, and wasn't** — `devtools` throttling (an actual throttled replay) measured
@@ -154,6 +155,45 @@ the same quantity the 180 KB budget describes.
 - **No other budget failed.** Contrast, CLS, JS weight, and all four motion/pointer checks
   passed on the first correctly-measured run.
 
-A row that fails budget is not "done" until either fixed and re-measured (as above) or
-explicitly logged as a follow-up with why it wasn't closed here. Nothing needed that
-treatment this pass.
+## 6. Extension re-run — measured 2026-08-18
+
+After `TASK-frontend-fase-0.md` and `ea6120f` (motion on `/apresentacao`). Production
+build, `pnpm verificar-fase-0 http://localhost:3001`, median of 3 Lighthouse runs per page.
+Playwright checks use `waitForReady()` (dark theme on DOM) and context-level
+`reducedMotion` / `hasTouch` for VisorCursor.
+
+| Check | `/` | `/apresentacao` | `/catalogo` | `/oculos/TRI-MOD-A` | `/loja/.../mostruario` | Budget | Result |
+|---|---|---|---|---|---|---|---|
+| LCP | 1.56s | **3.77s** | 1.61s | 1.58s | 1.56s | ≤ 2.0s | **FAIL** — `/apresentacao` only |
+| CLS | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 | ≤ 0.05 | **PASS** (after CLS fix below) |
+| JS transfer | 143.4 KB | 178.0 KB | 146.7 KB | 144.8 KB | 146.7 KB | ≤ 180 KB | **PASS** |
+| Contrast (axe-core) | 0 | 0 | 0 | 0 | 0 | ≥ 4.5:1 | **PASS** |
+| Keyboard + `.foco-visor` | 7 stops | 1 stop (deck) | 22 stops | 4 stops | 17 stops | all bracketed | **PASS** |
+| Mobile `/catalogo` keyboard | — | — | 7 stops incl. Filtros button | — | — | bracketed | **PASS** |
+| `prefers-reduced-motion` — `Ceu` | static | static | static | static | static | must hold still | **PASS** |
+| `prefers-reduced-motion` — `VisorCursor` | off | off | off | off | off | must not act | **PASS** |
+| Coarse pointer — `VisorCursor` | off | off | off | off | off | fine-pointer only | **PASS** |
+
+### What the extension pass found and fixed
+
+- **`/` CLS was 0.074 with Archivo `display: "swap"`** — Lighthouse's layout-shift audit
+  traced it to the collections section reflow when the preloaded Archivo woff2 landed
+  (`cause: Web font loaded`). **Fixed:** `src/app/layout.tsx` sets Archivo to
+  `display: "optional"` so there is no post-paint swap; re-measured **0.000 CLS** on `/`
+  (median of 3). `next/font` still preloads the file, so Archivo wins on a normal load.
+- **`/apresentacao` LCP regressed to ~3.77s** — not caused by the font change (same number
+  with `swap` and `optional`). **`ea6120f` added `motion` + scroll-driven components**
+  (`Revela`, `Deck`, `FocoVerdadeiro`) and pushed JS transfer to 178 KB. Fixing LCP here
+  means deferring or code-splitting the motion layer — **`TASK-motion-vitrine.md` /
+  `TASK-motion-apresentacao.md` scope**, not a one-line verification fix. Logged as
+  follow-up; every other route in §2.1 passes.
+- **`scripts/verificar-fase-0.mts` hardened for the new routes** — extended `PAGES`,
+  `waitForReady()` before axe/keyboard (prevents false contrast failures on unstyled FOUC),
+  context-level `reducedMotion`/`hasTouch` for VisorCursor, specific VisorCursor selector,
+  non-zero exit code on any failure.
+- **`TASK-frontend-fase-0.md` §6 manual checks confirmed** — `tsc`/`lint`/`build`, curl
+  (filters narrow, tenancy scoping, 404, disabled WhatsApp CTA), grep (tenant/lead seams),
+  Playwright keyboard pass on all new routes.
+
+A row that fails budget is not "done" until either fixed and re-measured or explicitly
+logged as a follow-up. **`/apresentacao` LCP is the one open row** — see above.
