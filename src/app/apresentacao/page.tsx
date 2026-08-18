@@ -81,7 +81,12 @@ export default function Apresentacao() {
     <>
       <Ceu />
       <VisorCursor />
-      <div className={s.deck}>
+      {/* Chromium makes a scrollable overflow region a native Tab stop, so it needs a
+          visible focus indicator — the same bracket every other focusable element uses
+          (spec-design.md §3.1: "the mark IS the focus ring"), not a silent gap where
+          `:focus-visible { outline: none }` (globals.css) would otherwise leave nothing
+          to see. Found by docs/tasks/TASK-verificacao-fase-0.md's keyboard pass. */}
+      <div className={`${s.deck} foco-visor`} aria-label="Apresentação — use as setas para navegar">
         {/* 01 ───────────────────────────────── */}
         <section className={`${s.slide} ${s.escuro}`}>
           <MarcaLockup />

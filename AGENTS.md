@@ -385,8 +385,11 @@ second package emerges. Payload, when it lands, is mounted *inside* this app
   src/components/ceu.tsx        starfield canvas; static under reduced motion
   src/lib/site-config.ts        SITE_URL, normalised once (trailing slash stripped)
   src/lib/marca-paths.ts        the eight paths — the only source for the mark
+  src/lib/catalog/              Fase 0 catalogue seam: types.ts, source.ts, source.local.ts
+  src/content/                  example catalogue data (produtos, colecoes, marca) — all `exemplo`
   src/assets/*.ttf              Archivo statics for Satori; next/font's variable face
                                 does not reach ImageResponse
+  scripts/verificar-fase-0.mts  budget checks: Lighthouse + Playwright/axe (TASK-verificacao-fase-0.md)
   docs/spec-brand.md            who Trísion is
   docs/spec-design.md           the visual system
   docs/spec-architecture.md     the platform
@@ -403,8 +406,7 @@ second package emerges. Payload, when it lands, is mounted *inside* this app
   src/app/(loja)/[rev]/         <slug>.trision.com.br
   src/app/(payload)/            Payload admin + API
   src/app/ir/[rev]/[sku]/       the lead redirect
-  src/content/                  Fase 0 catalogue: produtos.ts, marca.ts, colecoes.ts
-  src/lib/catalog/              types.ts, source.ts, source.local.ts, source.payload.ts
+  src/lib/catalog/source.payload.ts   Fase 1 implementation of the seam above
   src/lib/tenant/scope.ts       the ONE scoping function
   src/lib/lead/link.ts          the ONE wa.me builder
   src/lib/numeracao.ts          mm → 52□18-145 (logic; the component already exists)
@@ -414,7 +416,7 @@ second package emerges. Payload, when it lands, is mounted *inside* this app
   src/components/produto/       catalogue composites
   src/components/revendedor/    storefront composites
   payload.config.ts             collections from architecture §5
-  scripts/normalizar-imagens.ts photography pipeline (spec-design.md §10)
+  scripts/normalizar-imagens.ts photography pipeline (spec-design.md §10, TASK-normalizar-imagens.md — planned, pending a real sample photo)
   ```
 
 - **`src/lib/marca-paths.ts` is the single source for the mark.** The React component

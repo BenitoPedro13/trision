@@ -80,10 +80,20 @@ pnpm install
 pnpm dev          # http://localhost:3000  →  / points at /apresentacao
 pnpm build && pnpm start
 pnpm lint
+pnpm verificar-fase-0   # budgets pass, TASK-verificacao-fase-0.md §5 — needs pnpm start running
 ```
 
 No `.env` needed in this phase. `NEXT_PUBLIC_SITE_URL` only lands when the real domain
 exists; the default is the Vercel address above.
+
+## Verification
+
+`scripts/verificar-fase-0.mts` (Lighthouse + Playwright/axe) checks `/` and `/apresentacao`
+against the budgets in `spec-design.md` §12. Last measured **2026-08-17**: LCP 1.47–1.51s
+(budget ≤2.0s), CLS 0.001 (≤0.05), JS transfer 135–140 KB (≤180 KB), zero contrast
+violations, every keyboard stop carries the `.foco-visor` bracket, `Ceu`/`VisorCursor`
+correctly go still/off under `prefers-reduced-motion` and coarse pointer. All pass — full
+methodology and findings in `docs/tasks/TASK-verificacao-fase-0.md`.
 
 ## Routes
 
@@ -113,7 +123,10 @@ src/app/globals.css      spec-design.md §4.1 tokens
 src/components/          visor, visor-cursor, numeracao, marca, ceu
 src/lib/site-config.ts   SITE_URL, normalised once
 src/lib/marca-paths.ts   the eight paths of the symbol
+src/lib/catalog/         Fase 0 catalogue seam — types.ts, source.ts, source.local.ts
+src/content/             example catalogue data (produtos, colecoes, marca) — all `exemplo`
 src/assets/*.ttf         static Archivo, OG only (Satori)
+scripts/verificar-fase-0.mts  budget checks (Lighthouse + Playwright/axe)
 docs/                    specs, identity board, tasks
 references/              brand evidence (*.mov gitignored; frames committed)
 ```
