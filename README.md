@@ -54,9 +54,11 @@ Versions here are a snapshot, not a pin — see `AGENTS.md` §2.0 before adding 
 ## Address
 
 `https://trision.vercel.app` — in `src/lib/site-config.ts`, trailing slash stripped in
-one place. Override with `NEXT_PUBLIC_SITE_URL` when the real domain arrives
-(`spec-brand.md` §6, question 4). Wildcard subdomains (`loja.trision.com.br`) need the
-apex; until then, Fase 1 does not move.
+one place. Override with `NEXT_PUBLIC_SITE_URL` once the real domain is known — Amanda
+confirmed 2026-08-17 she owns one, but the exact string and DNS access are still
+`[VERIFICAR]` (`spec-brand.md` §6, question 4). Wildcard subdomains (illustrated here as
+`loja.trision.com.br`, not a confirmed name) need the apex; until then, Fase 1 does not
+move.
 
 ## Mark, favicon and OG
 

@@ -58,8 +58,9 @@ in `src/app/globals.css`, and the pitch for Amanda is live at `/apresentacao`
 deliberate: Payload enters in Fase 1 (`spec-architecture.md` §3).
 
 The live URL is `https://trision.vercel.app` (`src/lib/site-config.ts`). Wildcard
-subdomains — and therefore every multi-tenant route — wait on owning the apex domain
-(`spec-brand.md` §6 question 4).
+subdomains — and therefore every multi-tenant route — wait on the apex domain. Amanda
+confirmed 2026-08-17 that she owns one; the exact domain and DNS/registrar access are still
+`[VERIFICAR]` (`spec-brand.md` §6 question 4).
 
 ### Brand identity (for copy, tone, and component decisions)
 
@@ -193,7 +194,9 @@ All ten live in `spec-brand.md` §6 with an owner each. **Three of them block ev
 else**, and they are the real deliverable of `/apresentacao` slides 14–15:
 
 1. **The domain** (question 4). Wildcard subdomains require an apex. Hard blocker for
-   every multi-tenant route. Fase 0 can ship on `trision.vercel.app`.
+   every multi-tenant route. Fase 0 can ship on `trision.vercel.app`. **Partially
+   answered 2026-08-17** — Amanda confirmed she owns a domain; the exact string and
+   DNS/registrar access are still `[VERIFICAR]`, so this still blocks Fase 1.
 2. **The pricing model** (question 7). Decides whether `mostruario.preco` exists, and
    whether "register a product once" survives contact with reality. Do not build a
    per-reseller price field speculatively.

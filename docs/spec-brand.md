@@ -261,11 +261,20 @@ These block real work and each one names who answers it.
 | 1 | Does Trísion manufacture/import its **own** line, or distribute several brands? | whether `produtos.marca` is a real field or a constant | Amanda |
 | 2 | What is on the **"Atendimento Exclusivo"** page? | possibly a whole route; it is a named service we cannot see | Amanda |
 | 3 | Amanda's full name, city/UF, WhatsApp number, Instagram handle | every footer, every CTA, `content/marca.ts` | Amanda |
-| 4 | Does Trísion own a **domain**? | **Hard blocker for multi-tenant** — wildcard subdomains require an apex domain (`spec-architecture.md` §4.1) | Amanda / Benito |
+| 4 | Does Trísion own a **domain**? — **partially answered 2026-08-17**, see note below | **Hard blocker for multi-tenant** — wildcard subdomains require an apex domain (`spec-architecture.md` §4.1) | Amanda / Benito |
 | 5 | How many resellers today, and how many frames in the catalogue? | phasing, whether a CSV importer is Fase 1 or Fase 3 | Amanda |
 | 6 | Does the reseller's WhatsApp button reach **Amanda** or the **reseller**? | the lead model (`spec-architecture.md` §7.2 ships a flag so this is not blocking, but it must be answered before launch) | Amanda |
 | 7 | One suggested retail price, or per-reseller pricing? | whether `mostruario` carries a price override, and whether "one catalogue" survives | Amanda |
 | 8 | Is the original **logo vector** recoverable? | §1.2, §4 | Amanda's designer |
 | 9 | Do the frames carry standard **boxing-system markings** (`52□18-145`), and does she have them per SKU? | the whole technical layer in `spec-design.md` §5 | Amanda |
 | 10 | What is the "Site" link on her link-in-bio? | there may be an existing site we have not seen | Amanda |
+
+### Question 4 — partially answered 2026-08-17
+
+**Amanda: "Eu tenho domínio."** She confirms she owns a domain, which clears the hard
+blocker in principle. **Still `[VERIFICAR]`:** which domain (the exact string), and who
+controls its DNS/registrar access — both are required before `NEXT_PUBLIC_SITE_URL`
+(`src/lib/site-config.ts`) can be set to it or any wildcard/apex configuration
+(`spec-architecture.md` §4.1) can start. Not yet actionable; do not assume `trision.com.br`
+or any other string until she names it.
 
