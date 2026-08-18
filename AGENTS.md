@@ -463,6 +463,13 @@ second package emerges. Payload, when it lands, is mounted *inside* this app
   src/lib/site-config.ts        SITE_URL, normalised once (trailing slash stripped)
   src/lib/marca-paths.ts        the eight paths — the only source for the mark
   src/lib/numeracao.ts          mm → "52□18-145" string, shared by the component and lib/lead/link.ts
+  src/lib/seo.ts                the ONE page-metadata builder (metadataDaPagina) — every
+                                page/generateMetadata calls this, not a bare { title }
+  src/lib/og-image.tsx          the ONE OG/Twitter card composer (gerarOgImage), reused by
+                                every route's opengraph-image.tsx; NumeracaoOg draws □ as SVG
+                                like components/numeracao.tsx — Satori's font lacks the glyph
+  src/lib/structured-data.ts    JSON-LD builders: organizacaoJsonLd() (root layout, sitewide),
+                                produtoJsonLd() (both /oculos/[slug] variants)
   src/lib/catalog/              Fase 0 catalogue seam: types.ts, source.ts, source.local.ts
   src/lib/tenant/               Fase 0 tenancy seam: source.ts, source.local.ts, scope.ts (the ONE scoping fn)
   src/lib/lead/link.ts          the ONE wa.me builder — direct link only, no /ir/ attribution yet

@@ -19,7 +19,7 @@ How to work in this repo: [`AGENTS.md`](AGENTS.md).
 | `docs/identidade.html` | Internal identity board (not client-facing material) |
 | `docs/tasks/` | Task docs — no code before one of these (`AGENTS.md` §1) |
 
-## Status (2026-08-18)
+## Status (2026-08-18, SEO/OG update)
 
 **Fase 0, in progress.** Next.js 16.3.1 scaffolded, `spec-design.md` §4.1 tokens applied,
 and the **pitch page for Amanda** is live at `/apresentacao`
@@ -62,6 +62,20 @@ focus trap + Escape-to-close. Token bridge in `globals.css` maps only the AlignU
 those files use; the CLI theme generator was not run. Everything else (filter chips,
 `BotaoWhatsApp`, `ProdutoCard`, `FichaTecnica`) stays hand-written per `spec-design.md` §8.
 
+**Every route has real per-page metadata and a dynamic OG/Twitter card**
+(`TASK-seo-metadata-og-images.md`): `lib/seo.ts`'s `metadataDaPagina()` gives each page
+its own `description`/`openGraph`/`twitter`/canonical instead of silently inheriting the
+root layout's generic ones — Next.js shallow-merges `openGraph` between segments, so a
+page that set only a bare `title` was losing the brand card entirely. `lib/og-image.tsx`
+composes one Satori card (visor corners, starfield, mark) reused by eleven route-specific
+`opengraph-image.tsx` files — product, collection and reseller-storefront pages each get
+their own card, typographic only (no `fotos`/`capa`/`retrato` exist yet). Numeração on
+the product cards is drawn as inline SVG (`NumeracaoOg`), not the `lib/numeracao.ts`
+string — the static Archivo TTF Satori reads doesn't ship the `□` glyph. `Product`
+JSON-LD on both product-page variants omits `offers` entirely when there's no real
+price, rather than a placeholder. `/loja/**` pages now carry an explicit
+`robots: noindex`, matching `robots.ts`'s existing `disallow`.
+
 No Payload, no database — a scope decision: Payload enters in Fase 1
 (`spec-architecture.md` §3).
 
@@ -103,14 +117,22 @@ move.
 
 The eight paths of the symbol live in `src/lib/marca-paths.ts` and are the **only**
 source: the header, the favicon (`src/app/icon.tsx`), the apple-touch (`apple-icon.tsx`)
-and the social card (`opengraph-image.tsx`, reused by `twitter-image.tsx`) all read from
-there, so the favicon cannot drift from the mark. The drawing is an **approximate
-redraw** of the raster — question 8 in `spec-brand.md` §6 is still open.
+and every social card all read from there, so the favicon cannot drift from the mark.
+The drawing is an **approximate redraw** of the raster — question 8 in `spec-brand.md`
+§6 is still open.
 
-The social card is composed with the static instances in `src/assets/*.ttf` — Satori
-does not use the variable face that `next/font` serves. The card's stars are seeded
-(`estrelas()`), so the image is byte-stable across builds: a card that changes on every
-deploy invalidates every social cache.
+`/` keeps the root `opengraph-image.tsx`/`twitter-image.tsx` pair (the brand-generic
+card). Every other route composes its own card through `lib/og-image.tsx`'s shared
+`gerarOgImage()` — `/catalogo`, `/colecoes`, `/colecoes/[slug]`, `/oculos/[slug]`,
+`/revendedores`, `/seja-revendedor`, `/sobre`, and `/loja/[rev]` + its three subroutes
+each get a card naming what's actually on that page (product, collection, or reseller +
+city/UF), not the generic brand one. All of them are composed with the static font
+instances in `src/assets/*.ttf` — Satori does not use the variable face that `next/font`
+serves — and the seeded starfield (`estrelas()`) keeps each card byte-stable across
+builds.
+
+Sitewide Organization/WebSite JSON-LD lives in `src/app/layout.tsx`
+(`lib/structured-data.ts`); `Product` JSON-LD renders on both product-page variants.
 
 ## Run
 

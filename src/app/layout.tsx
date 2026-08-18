@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import { SITE, SITE_URL } from "@/lib/site-config";
+import { organizacaoJsonLd } from "@/lib/structured-data";
 import "./globals.css";
 
 /* Archivo is chosen for its width axis (wdth 62–125) — headlines run wide to echo
@@ -73,7 +74,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="pt-BR"
       className={`${archivo.variable} ${plexMono.variable} dark h-full antialiased`}
     >
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        {children}
+        <script
+          type="application/ld+json"
+          // JSON-LD is data, not executable code — a native <script> tag is correct
+          // here (node_modules/next/dist/docs/01-app/02-guides/json-ld.md).
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizacaoJsonLd()).replace(/</g, "\\u003c"),
+          }}
+        />
+      </body>
     </html>
   );
 }

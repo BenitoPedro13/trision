@@ -4,8 +4,16 @@ import { FiltroToggle } from "@/components/produto/filtro-toggle";
 import { Filtros, combina, type FiltrosAtivos } from "@/components/produto/filtros";
 import { GradeProdutos } from "@/components/produto/grade-produtos";
 import { catalogSourceLocal } from "@/lib/catalog/source.local";
+import { metadataDaPagina } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Catálogo" };
+export async function generateMetadata(): Promise<Metadata> {
+  const produtos = await catalogSourceLocal.listarProdutos();
+  return metadataDaPagina({
+    titulo: "Catálogo",
+    descricao: `${produtos.length} armações Trísion — óculos de sol, de grau e clip-on selecionados um a um.`,
+    caminho: "/catalogo",
+  });
+}
 
 export default async function CatalogoPage({
   searchParams,

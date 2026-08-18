@@ -6,6 +6,9 @@ import { GaleriaProduto } from "@/components/produto/galeria-produto";
 import { Revela } from "@/components/revela";
 import { marca } from "@/content/marca";
 import { escopoRevendedor, revendedoresAtivos } from "@/lib/tenant/scope";
+import { metadataDaPagina } from "@/lib/seo";
+import { produtoJsonLd } from "@/lib/structured-data";
+import { formatarNumeracao } from "@/lib/numeracao";
 
 /* Same product page as `/oculos/[slug]`, but tenant-scoped (spec-design.md §11:
    "the two are the same components with a different tenantId") and attributed:
@@ -35,9 +38,19 @@ export async function generateMetadata({
   const { rev, slug } = await params;
   const escopo = await escopoRevendedor(rev);
   const item = escopo?.itens.find((i) => i.produto.sku === slug);
-  return {
-    title: item ? `${item.produto.nome} · ${escopo!.revendedor.nome}` : "Óculos",
-  };
+  if (!escopo || !item) {
+    return metadataDaPagina({ titulo: "Óculos", descricao: "Óculos Trísion.", caminho: `/loja/${rev}/oculos/${slug}`, indexar: false });
+  }
+
+  const { produto } = item;
+  const { revendedor } = escopo;
+  const numeracao = formatarNumeracao(produto.medidas);
+  return metadataDaPagina({
+    titulo: `${produto.nome} · ${revendedor.nome}`,
+    descricao: `${produto.categoria} · ${produto.formato} · ${produto.material} · ${produto.cor}${numeracao ? ` · ${numeracao}` : ""}. Disponível na revenda oficial ${revendedor.nome}, ${revendedor.cidade} · ${revendedor.uf}.`,
+    caminho: `/loja/${rev}/oculos/${slug}`,
+    indexar: false,
+  });
 }
 
 export default async function ProdutoLojaPage({
@@ -57,6 +70,12 @@ export default async function ProdutoLojaPage({
 
   return (
     <main className="px-[clamp(24px,5vw,88px)] pb-[clamp(64px,10vh,160px)]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(produtoJsonLd(produto)).replace(/</g, "\\u003c"),
+        }}
+      />
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
         <GaleriaProduto produto={produto} />
         <Revela secao className="flex flex-col gap-6">

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Revela } from "@/components/revela";
 import { escopoRevendedor, revendedoresAtivosSlugs } from "@/lib/tenant/scope";
+import { metadataDaPagina } from "@/lib/seo";
 
 export async function generateStaticParams() {
   const slugs = await revendedoresAtivosSlugs();
@@ -17,7 +18,17 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { rev } = await params;
   const escopo = await escopoRevendedor(rev);
-  return { title: escopo ? `A loja · ${escopo.revendedor.nome}` : "Loja" };
+  if (!escopo) {
+    return metadataDaPagina({ titulo: "Loja", descricao: "Revenda oficial Trísion.", caminho: `/loja/${rev}/a-loja`, indexar: false });
+  }
+
+  const { revendedor } = escopo;
+  return metadataDaPagina({
+    titulo: `A loja · ${revendedor.nome}`,
+    descricao: `Endereço e horários da revenda oficial Trísion em ${revendedor.cidade} · ${revendedor.uf}.`,
+    caminho: `/loja/${rev}/a-loja`,
+    indexar: false,
+  });
 }
 
 function CampoIdentidade({ rotulo, valor }: { rotulo: string; valor: string }) {

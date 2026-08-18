@@ -5,6 +5,7 @@ import { FiltroToggle } from "@/components/produto/filtro-toggle";
 import { Filtros, combina, type FiltrosAtivos } from "@/components/produto/filtros";
 import { GradeProdutos } from "@/components/produto/grade-produtos";
 import { escopoRevendedor, revendedoresAtivosSlugs } from "@/lib/tenant/scope";
+import { metadataDaPagina } from "@/lib/seo";
 
 export async function generateStaticParams() {
   const slugs = await revendedoresAtivosSlugs();
@@ -18,7 +19,17 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { rev } = await params;
   const escopo = await escopoRevendedor(rev);
-  return { title: escopo ? `Mostruário · ${escopo.revendedor.nome}` : "Mostruário" };
+  if (!escopo) {
+    return metadataDaPagina({ titulo: "Mostruário", descricao: "Revenda oficial Trísion.", caminho: `/loja/${rev}/mostruario`, indexar: false });
+  }
+
+  const { revendedor, itens } = escopo;
+  return metadataDaPagina({
+    titulo: `Mostruário · ${revendedor.nome}`,
+    descricao: `${itens.length} armações Trísion disponíveis na revenda de ${revendedor.nome}, ${revendedor.cidade} · ${revendedor.uf}.`,
+    caminho: `/loja/${rev}/mostruario`,
+    indexar: false,
+  });
 }
 
 /* Same `GradeProdutos`/`Filtros`/`FiltroDrawer` as `/catalogo` — spec-design.md §11:

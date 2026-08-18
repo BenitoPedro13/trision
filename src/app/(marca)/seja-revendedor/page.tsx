@@ -2,8 +2,14 @@ import type { Metadata } from "next";
 import { BotaoWhatsApp } from "@/components/produto/botao-whatsapp";
 import { Revela } from "@/components/revela";
 import { marca } from "@/content/marca";
+import { metadataDaPagina } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Seja revendedor" };
+export const metadata: Metadata = metadataDaPagina({
+  titulo: "Seja revendedor",
+  descricao:
+    "A Trísion trabalha com uma linha curada, não o catálogo mais largo, a certa. Fale comigo para conhecer a linha e a rede de revendas oficiais.",
+  caminho: "/seja-revendedor",
+});
 
 export default function SejaRevendedorPage() {
   return (

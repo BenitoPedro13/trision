@@ -2,8 +2,16 @@ import type { Metadata } from "next";
 import { ColecaoCard } from "@/components/colecao/colecao-card";
 import { Revela } from "@/components/revela";
 import { catalogSourceLocal } from "@/lib/catalog/source.local";
+import { metadataDaPagina } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Coleções" };
+export async function generateMetadata(): Promise<Metadata> {
+  const colecoes = await catalogSourceLocal.listarColecoes();
+  return metadataDaPagina({
+    titulo: "Coleções",
+    descricao: `${colecoes.length} coleções Trísion — uma armação é uma decisão sobre o que você olha.`,
+    caminho: "/colecoes",
+  });
+}
 
 export default async function ColecoesPage() {
   const colecoes = await catalogSourceLocal.listarColecoes();

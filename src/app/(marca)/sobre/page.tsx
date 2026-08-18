@@ -2,8 +2,13 @@ import type { Metadata } from "next";
 import { BotaoWhatsApp } from "@/components/produto/botao-whatsapp";
 import { Revela } from "@/components/revela";
 import { marca } from "@/content/marca";
+import { metadataDaPagina } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Sobre" };
+export const metadata: Metadata = metadataDaPagina({
+  titulo: "Sobre",
+  descricao: `A Trísion trabalha com uma linha curada há ${new Date().getFullYear() - marca.desde} anos — não o catálogo mais largo, a certa. Um olho de óptico, não a pose de uma boutique.`,
+  caminho: "/sobre",
+});
 
 export default function SobrePage() {
   return (

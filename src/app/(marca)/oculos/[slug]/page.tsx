@@ -7,6 +7,9 @@ import { OndeComprar } from "@/components/produto/onde-comprar";
 import { Revela } from "@/components/revela";
 import { catalogSourceLocal } from "@/lib/catalog/source.local";
 import { marca } from "@/content/marca";
+import { metadataDaPagina } from "@/lib/seo";
+import { produtoJsonLd } from "@/lib/structured-data";
+import { formatarNumeracao } from "@/lib/numeracao";
 
 /* Route is `/oculos/[slug]` per spec-design.md §11, but the param actually matches
    on `Produto.sku` (the catalogue key shown to customers, `spec-architecture.md`
@@ -23,7 +26,17 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const produto = await catalogSourceLocal.buscarProdutoPorSku(slug);
-  return { title: produto?.nome ?? "Óculos" };
+  if (!produto) {
+    return metadataDaPagina({ titulo: "Óculos", descricao: "Óculos Trísion.", caminho: `/oculos/${slug}` });
+  }
+
+  const numeracao = formatarNumeracao(produto.medidas);
+  return metadataDaPagina({
+    titulo: produto.nome,
+    descricao: `${produto.categoria} · ${produto.formato} · ${produto.material} · ${produto.cor}${numeracao ? ` · ${numeracao}` : ""}. ${produto.descricao}`,
+    caminho: `/oculos/${slug}`,
+    keywords: [produto.nome, produto.sku, produto.categoria, produto.formato, produto.material, produto.cor],
+  });
 }
 
 export default async function ProdutoPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -33,6 +46,12 @@ export default async function ProdutoPage({ params }: { params: Promise<{ slug: 
 
   return (
     <main className="px-[clamp(24px,5vw,88px)] pb-[clamp(64px,10vh,160px)]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(produtoJsonLd(produto)).replace(/</g, "\\u003c"),
+        }}
+      />
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
         <GaleriaProduto produto={produto} />
         <Revela secao className="flex flex-col gap-6">

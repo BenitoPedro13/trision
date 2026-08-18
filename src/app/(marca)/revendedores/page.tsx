@@ -8,8 +8,16 @@ import { RevendedorEndosso } from "@/components/revendedor/revendedor-endosso";
 import { Revela } from "@/components/revela";
 import { marca } from "@/content/marca";
 import { revendedoresAtivos } from "@/lib/tenant/scope";
+import { metadataDaPagina } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Revendedores" };
+export async function generateMetadata(): Promise<Metadata> {
+  const revendedores = await revendedoresAtivos();
+  return metadataDaPagina({
+    titulo: "Revendedores",
+    descricao: `${revendedores.length} revendas oficiais Trísion — desde ${marca.desde}, escolhidas armação a armação.`,
+    caminho: "/revendedores",
+  });
+}
 
 export default async function RevendedoresPage({
   searchParams,

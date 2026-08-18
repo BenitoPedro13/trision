@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { GradeProdutos } from "@/components/produto/grade-produtos";
 import { Revela } from "@/components/revela";
 import { escopoRevendedor, revendedoresAtivosSlugs } from "@/lib/tenant/scope";
+import { metadataDaPagina } from "@/lib/seo";
 
 /* Fase 0 path shape — see TASK-frontend-fase-0.md §2.4. `<slug>.trision.com.br/` is
    the real target once the domain and `middleware.ts` exist; this route is very
@@ -20,7 +21,17 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { rev } = await params;
   const escopo = await escopoRevendedor(rev);
-  return { title: escopo ? escopo.revendedor.nome : "Loja" };
+  if (!escopo) {
+    return metadataDaPagina({ titulo: "Loja", descricao: "Revenda oficial Trísion.", caminho: `/loja/${rev}`, indexar: false });
+  }
+
+  const { revendedor } = escopo;
+  return metadataDaPagina({
+    titulo: revendedor.nome,
+    descricao: `Revenda oficial Trísion em ${revendedor.cidade} · ${revendedor.uf}. ${revendedor.sobre}`,
+    caminho: `/loja/${rev}`,
+    indexar: false,
+  });
 }
 
 export default async function LojaPage({ params }: { params: Promise<{ rev: string }> }) {
