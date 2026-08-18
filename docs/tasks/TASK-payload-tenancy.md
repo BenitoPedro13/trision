@@ -1,5 +1,24 @@
 # TASK — Payload, Postgres and the tenancy boundary (Fase 1 foundation)
 
+**Status:** Stages B–E implemented 2026-08-18 on top of doc-faithful Payload install (blank
+template v3.88.0). Stage A (Marketplace provisioning) and Stage F (real data entry) remain
+manual. Run `pnpm dev` once, answer Drizzle push prompts (or reset Neon first), create admin
+at `/admin`.
+
+### Drizzle push troubleshooting (2026-08-18)
+
+When upgrading from the blank template (`users`, `media`) to Trísion (`usuarios` + six
+collections), Drizzle's interactive push asks whether each new table is a **create** or
+**rename**. Always pick **`+ create table`**. Picking `~ rename table` (e.g.
+`users_sessions › usuarios_sessions`) leaves Payload's internal rel tables
+(`payload_locked_documents_rels`, `payload_preferences_rels`) with a stale `users_id`
+column; the next push then tries to `DROP CONSTRAINT payload_locked_documents_rels_users_fk`
+which may not exist → `/admin` 500.
+
+**Fix (dev, data already broken):** `pnpm payload:fix-rels` renames `users_id` →
+`usuarios_id` on those two rel tables. **Nuclear option (empty dev DB):**
+`pnpm payload:reset-db` then restart `pnpm dev` and create admin again.
+
 ## 1. Current scenario
 
 Fase 0 is complete against mock data (README "Status", 2026-08-18): `/`, `/colecoes`,

@@ -10,23 +10,25 @@ export interface TenantSource {
   listarMostruario(revendedorSlug: string): Promise<MostruarioItem[]>;
 }
 
-async function resolveTenantSource(): Promise<TenantSource> {
-  if (hasDatabase()) {
+async function withTenantSource<T>(fn: (source: TenantSource) => Promise<T>): Promise<T> {
+  if (!hasDatabase()) return fn(tenantSourceLocal);
+  try {
     const { tenantSourcePayload } = await import("./source.payload");
-    return tenantSourcePayload;
+    return await fn(tenantSourcePayload);
+  } catch {
+    return fn(tenantSourceLocal);
   }
-  return tenantSourceLocal;
 }
 
-/** Active tenant seam — Payload when `DATABASE_URL` is set, else `content/` mock. */
+/** Active tenant seam — Payload when `DATABASE_URL` is set and reachable, else `content/` mock. */
 export const tenantSource: TenantSource = {
   async listarRevendedores() {
-    return (await resolveTenantSource()).listarRevendedores();
+    return withTenantSource((source) => source.listarRevendedores());
   },
   async buscarRevendedorPorSlug(slug) {
-    return (await resolveTenantSource()).buscarRevendedorPorSlug(slug);
+    return withTenantSource((source) => source.buscarRevendedorPorSlug(slug));
   },
   async listarMostruario(revendedorSlug) {
-    return (await resolveTenantSource()).listarMostruario(revendedorSlug);
+    return withTenantSource((source) => source.listarMostruario(revendedorSlug));
   },
 };

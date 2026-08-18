@@ -25,6 +25,7 @@ references/
 
 # misc
 .DS_Store
+payload-types.ts
 *.pem
 
 # debug

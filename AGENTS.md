@@ -52,10 +52,10 @@ Trísion (`spec-brand.md` §4).
 
 ### Status
 
-**Fase 0, in progress.** Next.js 16.3.1 is scaffolded, `spec-design.md` §4.1 tokens are
-in `src/app/globals.css`, and the pitch for Amanda is live at `/apresentacao`
-(`TASK-scaffold-e-apresentacao.md`). No Payload, no database — deliberate: Payload
-enters in Fase 1 (`spec-architecture.md` §3).
+**Fase 0 frontend complete; Fase 1 CMS foundation landed** (`TASK-payload-tenancy.md`).
+Payload 3.88 at `/admin` (blank template install). Six Trísion collections/globals +
+multi-tenant plugin + Blob. Seams: `catalogSource` / `tenantSource` with Payload fallback
+to `content/` mock when DB unreachable or schema not pushed.
 
 **The frontend layout is built end-to-end against mock data**
 (`TASK-frontend-fase-0.md`): `/`, `/colecoes`, `/catalogo`, `/oculos/[slug]` and a
@@ -104,8 +104,8 @@ confirmed 2026-08-17 that she owns one; the exact domain and DNS/registrar acces
 | Components (later) | AlignUI (vendored, primary) → shadcn (gaps only) → React Bits (`spec-design.md` §8). **Foundation utils + `Drawer` vendored** (`src/utils/`, `src/components/ui/drawer.tsx`); rest deferred per real need | partial — `Drawer` only |
 | Catalogue, Fase 0 | Typed TS modules in `content/` behind the same domain types Payload will later implement. **The seam is `lib/catalog/source.*.ts`.** Nothing outside those files imports a Payload type | wired — `/`, `/colecoes`, `/catalogo`, `/oculos/[slug]` render it, example data, `TASK-frontend-fase-0.md` |
 | Tenancy seam, Fase 0 | Mirrors the catalogue seam: `lib/tenant/source.*.ts` + **`lib/tenant/scope.ts`**, the one place that reads `revendedores`/`mostruario` (`spec-architecture.md` §6.1). One mock reseller, path-routed at `/loja/[rev]` — **not** the real subdomain shape, see the routing row below | seam scaffolded, mock data, `TASK-frontend-fase-0.md` §2.4 |
-| CMS, Fase 1 | **Payload ≥ 3.73.0**, mounted at `/admin`, `@payloadcms/plugin-multi-tenant`. Collections it does *not* list stay global — which is how `produtos` stays brand-owned | not started |
-| Data + files, Fase 1 | Postgres via `@payloadcms/db-postgres` (provider chosen at scaffold time, not from memory) + Vercel Blob | not started |
+| CMS, Fase 1 | **Payload ≥ 3.73.0**, mounted at `/admin`, `@payloadcms/plugin-multi-tenant`. Collections it does *not* list stay global — which is how `produtos` stays brand-owned | **started** — 3.88.0, Trísion collections, `/admin` |
+| Data + files, Fase 1 | Postgres via `@payloadcms/db-postgres` (provider chosen at scaffold time, not from memory) + Vercel Blob | wired — Neon in `.env`, Blob token in `.env.example` |
 | Client/server state | **Zustand** for client-only ephemeral UI state shared between sibling components with no natural parent (e.g. the mobile filter drawer, `components/produto/filtro-store.ts`) — plain `create()`, no provider. **URL search params + Server Components** for anything shareable/filterable (`/catalogo` filters), per Next's own guidance over either state library. **TanStack Query is not installed** — Fase 0 has no live/mutable server data for it to manage; see the state-management note below before reaching for either library | zustand 5, `@tanstack/react-query` deliberately absent |
 | Conversion | `wa.me` deep links via **`lib/lead/link.ts`** — the one builder (`spec-architecture.md` §6.3), used directly (no `/ir/` attribution redirect yet — needs the Payload `leads` collection, Fase 1). **No cart, no checkout, no payments in v1** | `lib/lead/link.ts` built, direct-link only |
 | Storefront routing | Target: `<slug>.trision.com.br` via `middleware.ts` Host rewrite (`spec-architecture.md` §8) — blocked on the domain. Fase 0 stand-in: `/loja/[rev]` as a real path segment, **not** the `(loja)` route group the target layout shows below — very likely deleted, not evolved, once the domain lands | Fase 0 stand-in only |

@@ -19,13 +19,12 @@ How to work in this repo: [`AGENTS.md`](AGENTS.md).
 | `docs/identidade.html` | Internal identity board (not client-facing material) |
 | `docs/tasks/` | Task docs — no code before one of these (`AGENTS.md` §1) |
 
-## Status (2026-08-18, SEO/OG update)
+## Status (2026-08-18, Fase 1 CMS foundation)
 
-**Fase 0, in progress.** Next.js 16.3.1 scaffolded, `spec-design.md` §4.1 tokens applied,
-and the **pitch page for Amanda** is live at `/apresentacao`
-(`TASK-scaffold-e-apresentacao.md`).
+**Fase 0 frontend complete; Fase 1 CMS foundation landed** (`TASK-payload-tenancy.md`).
+Payload 3.88 mounted at `/admin` per the [official install guide](https://payloadcms.com/docs/getting-started/installation) (blank template v3.88.0). Six collections/globals (`produtos`, `colecoes`, `revendedores`, `mostruario`, `usuarios`, `config`) + `media`, multi-tenant plugin, Vercel Blob storage. Catalogue/tenant seams export `catalogSource` / `tenantSource` — Payload when `DATABASE_URL` is set and queries succeed, `content/` mock otherwise.
 
-**The frontend layout is now built end-to-end against mock data**
+**The frontend layout is built end-to-end against mock data**
 (`TASK-frontend-fase-0.md`): `/`, `/colecoes`, `/catalogo`, `/oculos/[slug]`, `/revendedores`,
 `/seja-revendedor`, and a Fase-0 storefront stand-in at `/loja/[rev]` all render — every product
 and reseller marked `exemplo`. No real photography exists yet, so every gallery shows the honest
@@ -76,9 +75,6 @@ JSON-LD on both product-page variants omits `offers` entirely when there's no re
 price, rather than a placeholder. `/loja/**` pages now carry an explicit
 `robots: noindex`, matching `robots.ts`'s existing `disallow`.
 
-No Payload, no database — a scope decision: Payload enters in Fase 1
-(`spec-architecture.md` §3).
-
 **Closed at R$ 300** (R$ 150 to start) for Fases 0, 1 and 2 — site live, first storefront,
 and lead attribution per shop. Only Fase 3 is left to negotiate.
 
@@ -99,8 +95,8 @@ Versions here are a snapshot, not a pin — see `AGENTS.md` §2.0 before adding 
 | Tenancy | Mirrors the catalogue seam: `lib/tenant/` + `lib/tenant/scope.ts` (Fase 0, mock data) | three mock resellers, `/loja/[rev]` path stand-in |
 | State | Zustand (client UI state, e.g. the filter drawer) + URL search params (filters). TanStack Query deliberately not installed yet | see `AGENTS.md` "State management" |
 | UI primitives | AlignUI foundation + `Drawer` vendored (`src/components/ui/`, `src/utils/`) | `Drawer` only — rest deferred per real need |
-| CMS | Payload 3, in the same app, at `/admin` (Fase 1) | not yet |
-| Data | Postgres + Vercel Blob (Fase 1) | not yet |
+| CMS | Payload 3.88 at `/admin`, multi-tenant plugin | mounted — schema push on first `pnpm dev`, then create admin |
+| Data | Postgres + Vercel Blob | adapters wired; provision via Marketplace if not done |
 | Conversion | `wa.me` via `lib/lead/link.ts`, no cart (`spec-architecture.md` §2) | direct link, no `/ir/` attribution yet |
 | Host | Vercel | `trision.vercel.app` |
 
@@ -138,14 +134,42 @@ Sitewide Organization/WebSite JSON-LD lives in `src/app/layout.tsx`
 
 ```sh
 pnpm install
-pnpm dev          # http://localhost:3000
+cp .env.example .env   # fill DATABASE_URL, PAYLOAD_SECRET, BLOB_READ_WRITE_TOKEN
+pnpm dev               # http://localhost:3000 — first run prompts Drizzle schema push
 pnpm build && pnpm start
 pnpm lint
-pnpm verificar-fase-0   # budgets pass, TASK-verificacao-fase-0.md §5 — needs pnpm start running
+pnpm test:tenancy
+pnpm payload:verify    # smoke-test Payload init without the admin UI
+pnpm payload:seed      # port content/ mock data into Postgres (idempotent)
+pnpm verificar-fase-0  # budgets pass, TASK-verificacao-fase-0.md §5 — needs pnpm start running
 ```
 
-No `.env` needed in this phase. `NEXT_PUBLIC_SITE_URL` only lands when the real domain
-exists; the default is the Vercel address above.
+Without `DATABASE_URL`, the site still renders from `content/` mock data (Fase 0 fallback).
+With it set, `/admin` mounts Payload and the catalogue/tenant seams read Postgres when
+reachable.
+
+### Payload first run
+
+1. Copy `.env.example` → `.env` and fill `DATABASE_URL` (pooler URL is fine),
+   `DATABASE_URL_UNPOOLED` (direct Neon host, `sslmode=verify-full`), `PAYLOAD_SECRET`,
+   `BLOB_READ_WRITE_TOKEN`.
+2. `pnpm dev` — Drizzle compares the DB to `payload.config.ts` and may prompt
+   interactively. **Always choose `+ create table`**, never `~ rename table`, when moving
+   from the blank template's default `users`/`media` schema to Trísion's `usuarios` +
+   collections. Renaming makes Drizzle think old tables map to new ones and the push can
+   stall mid-migration.
+3. Accept the data-loss warning if it mentions deleting the template `users` table (one
+   test account at most).
+4. Open `/admin` and create the first admin user (`usuarios` collection).
+5. If schema push fails with
+   `constraint "payload_locked_documents_rels_users_fk" … does not exist`, the push stalled
+   halfway: run `pnpm payload:fix-rels` and restart dev. For a clean dev DB with no data
+   worth keeping, `pnpm payload:reset-db` drops the public schema so the next push starts
+   fresh.
+
+Expected collections in `/admin` after a successful push: **Usuarios**, **Media**,
+**Colecoes**, **Produtos**, **Revendedores**, **Mostruario**, plus the **Config** global
+—not the blank template's "Users" only.
 
 ## Verification
 

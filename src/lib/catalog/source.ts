@@ -10,23 +10,25 @@ export interface CatalogSource {
   listarColecoes(): Promise<Colecao[]>;
 }
 
-async function resolveCatalogSource(): Promise<CatalogSource> {
-  if (hasDatabase()) {
+async function withCatalogSource<T>(fn: (source: CatalogSource) => Promise<T>): Promise<T> {
+  if (!hasDatabase()) return fn(catalogSourceLocal);
+  try {
     const { catalogSourcePayload } = await import("./source.payload");
-    return catalogSourcePayload;
+    return await fn(catalogSourcePayload);
+  } catch {
+    return fn(catalogSourceLocal);
   }
-  return catalogSourceLocal;
 }
 
-/** Active catalogue seam — Payload when `DATABASE_URL` is set, else `content/` mock. */
+/** Active catalogue seam — Payload when `DATABASE_URL` is set and reachable, else `content/` mock. */
 export const catalogSource: CatalogSource = {
   async listarProdutos() {
-    return (await resolveCatalogSource()).listarProdutos();
+    return withCatalogSource((source) => source.listarProdutos());
   },
   async buscarProdutoPorSku(sku) {
-    return (await resolveCatalogSource()).buscarProdutoPorSku(sku);
+    return withCatalogSource((source) => source.buscarProdutoPorSku(sku));
   },
   async listarColecoes() {
-    return (await resolveCatalogSource()).listarColecoes();
+    return withCatalogSource((source) => source.listarColecoes());
   },
 };

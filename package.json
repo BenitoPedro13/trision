@@ -9,6 +9,10 @@
     "start": "next start",
     "lint": "eslint",
     "test:tenancy": "vitest run",
+    "payload:verify": "tsx scripts/verify-payload-init.mts",
+    "payload:seed": "tsx scripts/seed-mock-data.mts",
+    "payload:fix-rels": "tsx scripts/fix-payload-rels.mts",
+    "payload:reset-db": "tsx scripts/reset-payload-db.mts",
     "verificar-fase-0": "tsx scripts/verificar-fase-0.mts"
   },
   "dependencies": {
