@@ -14,7 +14,17 @@ import { motion, useInView } from "motion/react";
    Reduced motion is handled by `<MotionConfig reducedMotion="user">` (`ProvedorMotion` on `/`
    and `/apresentacao`), not a branch here — see revela.tsx for why CSS `Revela` is separate.
    Under reduced motion the words still resolve to focus, just without the blur tween. */
-export function FocoVerdadeiro({ texto }: { texto: string }) {
+export function FocoVerdadeiro({
+  texto,
+  atrasoInicial = 0,
+}: {
+  texto: string;
+  /* Lets a headline be split into two `FocoVerdadeiro` calls (e.g. across a manual
+     line break) while the gold bracket still travels word to word continuously
+     across both — pass the previous call's word count * 0.14 so the second line's
+     delays pick up where the first left off, instead of restarting at 0. */
+  atrasoInicial?: number;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
   const emVista = useInView(ref, { once: true, margin: "-20% 0px" });
   const palavras = texto.split(" ");
@@ -28,7 +38,7 @@ export function FocoVerdadeiro({ texto }: { texto: string }) {
             animate={emVista ? { filter: "blur(0px)", opacity: 1 } : undefined}
             transition={{
               duration: 0.56,
-              delay: i * 0.14,
+              delay: atrasoInicial + i * 0.14,
               ease: [0.16, 1, 0.3, 1],
             }}
             style={{ display: "inline-block" }}
@@ -41,7 +51,7 @@ export function FocoVerdadeiro({ texto }: { texto: string }) {
             animate={emVista ? { opacity: [0, 1, 1, 0] } : undefined}
             transition={{
               duration: 0.42,
-              delay: i * 0.14,
+              delay: atrasoInicial + i * 0.14,
               times: [0, 0.2, 0.75, 1],
               ease: "linear",
             }}

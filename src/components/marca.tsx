@@ -18,21 +18,33 @@ export function MarcaSimbolo({ className }: { className?: string }) {
    `Trísion` always carries its accent — including in <title> and OG tags. */
 export function MarcaLockup({
   simbolo = "w-[clamp(64px,7.5vw,104px)]",
+  texto = "text-[clamp(2rem,5.4vw,4rem)]",
+  /* Sized as its own clamp, not `em` relative to `texto`, on purpose — the previous
+     nested `.26em` approach broke once `texto` shrank to header scale (rendered under
+     5px, unreadable — user report, TASK-logo-cabecalho-unificado.md). Callers passing
+     a non-default `texto` should pass a matching `subtexto`. */
+  subtexto = "text-[clamp(.75rem,1.9vw,1.375rem)]",
+  gap = "gap-[clamp(16px,3vw,32px)]",
   desde = true,
 }: {
   simbolo?: string;
+  texto?: string;
+  subtexto?: string;
+  gap?: string;
   desde?: boolean;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-[clamp(16px,3vw,32px)]">
+    <div className={`flex flex-wrap items-center ${gap}`}>
       <MarcaSimbolo className={`${simbolo} h-auto shrink-0 text-foco`} />
-      <div
-        className="text-[clamp(2rem,5.4vw,4rem)] font-light leading-none tracking-[.02em] text-foco"
-        style={{ fontVariationSettings: '"wdth" 125' }}
-      >
-        Trísion
+      <div className="flex flex-col items-end">
         <span
-          className="mt-[.4em] block text-[.26em] font-bold italic tracking-[.02em] text-prata"
+          className={`${texto} font-light leading-none tracking-[.02em] text-foco`}
+          style={{ fontVariationSettings: '"wdth" 125' }}
+        >
+          Trísion
+        </span>
+        <span
+          className={`mt-[.15em] ${subtexto} font-bold italic tracking-[.02em] text-prata`}
           style={{ fontVariationSettings: '"wdth" 110' }}
         >
           Eyewear
