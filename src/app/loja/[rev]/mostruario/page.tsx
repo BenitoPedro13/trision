@@ -93,7 +93,7 @@ export default async function MostruarioPage({
                 generosDisponiveis={generosDisponiveis}
               />
             </aside>
-            <GradeProdutos produtos={produtos} />
+            <GradeProdutos produtos={produtos} hrefBase={`/loja/${revendedor.slug}/oculos`} />
           </div>
         </main>
       </div>

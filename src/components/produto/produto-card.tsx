@@ -7,9 +7,18 @@ import type { Produto } from "@/lib/catalog/types";
 /* `ProdutoCard` — spec-design.md §8. Each frame sits inside brackets, not a box: the
    card itself has no border, only the four corners `Visor` draws (§3.1's binding
    rule — a bracket must frame something real, and a product tile is exactly that). */
-export function ProdutoCard({ produto }: { produto: Produto }) {
+export function ProdutoCard({
+  produto,
+  hrefBase = "/oculos",
+}: {
+  produto: Produto;
+  /** Brand site links to `/oculos/[sku]`; a storefront passes `/loja/<slug>/oculos`
+   * so the same card lands on the attributed product page — spec-design.md §11:
+   * "the two are the same components with a different tenantId." */
+  hrefBase?: string;
+}) {
   return (
-    <Link href={`/oculos/${produto.sku}`} data-alvo className="foco-visor block">
+    <Link href={`${hrefBase}/${produto.sku}`} data-alvo className="foco-visor block">
       <Visor>
         <div className="relative aspect-square rounded-[var(--radius-lente)] bg-lente">
           {produto.fotos[0] ? (

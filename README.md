@@ -41,6 +41,15 @@ city/UF chip filters on `/revendedores`. Three `exemplo` resellers in `content/r
 exercise the filter; each has at least one `mostruario` row so storefront links from the
 directory are not dead ends.
 
+**Storefront product page is attributed** (`TASK-loja-oculos-slug.md`): `/loja/[rev]/oculos/[slug]`
+completes `spec-design.md` §11's storefront route table — same product page as
+`/oculos/[slug]`, tenant-scoped (a sku not in that reseller's mostruário 404s there even
+if it exists in the brand catalogue) and its WhatsApp CTA names the shop
+(`lib/lead/link.ts`'s `revendedorNome`/`cidade`/`uf` fields, spec-architecture.md §7.3's
+sentence, minus the `/ir/` `codigo` — that redirect is still Fase 1). `ProdutoCard` and
+`GradeProdutos` take an optional `hrefBase` so storefront grids link here instead of the
+brand-scoped page; `/catalogo` and the brand product page are unchanged.
+
 **AlignUI foundation vendored** (`TASK-alignui-vendoring.md`): `src/utils/{cn,tv,polymorphic,
 recursive-clone-children}` + `Drawer` (and its `CompactButton` dependency) in
 `src/components/ui/`, logged in `SOURCES.md`. `FiltroDrawer` now runs on Radix Dialog —
@@ -142,7 +151,7 @@ motion task docs. Run with `pnpm build && PORT=3001 pnpm start` then
 | `/seja-revendedor` | B2B funnel — static copy + WhatsApp CTA (no form until Fase 1) |
 | `/catalogo` | Full line, filterable by formato/material/cor/gênero via URL search params |
 | `/oculos/[slug]` | Product page — gallery, ficha técnica, numeração, onde comprar, WhatsApp CTA |
-| `/loja/[rev]`, `/loja/[rev]/mostruario`, `/loja/[rev]/a-loja` | **Fase 0 path stand-in** for the storefront — three mock resellers (`otica-exemplo`, `otica-demonstracao`, `loja-exemplo`). Not the final URL shape (see `AGENTS.md` "Storefront routing") |
+| `/loja/[rev]`, `/loja/[rev]/mostruario`, `/loja/[rev]/a-loja`, `/loja/[rev]/oculos/[slug]` | **Fase 0 path stand-in** for the storefront — three mock resellers (`otica-exemplo`, `otica-demonstracao`, `loja-exemplo`). The product page is tenant-scoped (404s for a sku the shop doesn't carry) and its WhatsApp CTA is attributed to the shop. Not the final URL shape (see `AGENTS.md` "Storefront routing") |
 | `/apresentacao` | The pitch for Amanda — 16 sections, pt-BR, `noindex` |
 | `/icon`, `/apple-icon` | Favicon and apple-touch generated from the symbol |
 | `/opengraph-image`, `/twitter-image` | Social card 1200×630 |
@@ -169,7 +178,8 @@ motion task docs. Run with `pnpm build && PORT=3001 pnpm start` then
 
 ```
 src/app/                 routes: /, /catalogo, /colecoes, /oculos/[slug], /revendedores,
-                          /seja-revendedor, /loja/[rev], /apresentacao, icon/og/robots/sitemap
+                          /seja-revendedor, /loja/[rev] (+ mostruario, a-loja, oculos/[slug]),
+                          /apresentacao, icon/og/robots/sitemap
 src/app/globals.css      spec-design.md §4.1 tokens
 src/components/          visor, visor-cursor, numeracao, marca, ceu, produto/, colecao/, revendedor/, ui/
 src/utils/               AlignUI foundation (cn, tv, polymorphic, recursive-clone-children)
@@ -194,8 +204,9 @@ task that is not building them.
 ## Deploy
 
 Mostly static — `pnpm build` prerenders every route with `generateStaticParams`
-(`/colecoes/[slug]`, `/oculos/[slug]`, `/loja/[rev]`). `/catalogo` and
-`/loja/[rev]/mostruario` render on demand (`ƒ`) because they read URL search params.
+(`/colecoes/[slug]`, `/oculos/[slug]`, `/loja/[rev]`, `/loja/[rev]/a-loja`,
+`/loja/[rev]/oculos/[slug]`). `/catalogo` and `/loja/[rev]/mostruario` render on demand
+(`ƒ`) because they read URL search params.
 Goes up on Vercel straight from the repo, with no environment variables in this phase.
 
 ## What must not break

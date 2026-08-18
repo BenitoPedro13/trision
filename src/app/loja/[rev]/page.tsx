@@ -51,7 +51,10 @@ export default async function LojaPage({ params }: { params: Promise<{ rev: stri
               {revendedor.sobre}
             </p>
           </Revela>
-          <GradeProdutos produtos={vitrine.map((item) => item.produto)} />
+          <GradeProdutos
+            produtos={vitrine.map((item) => item.produto)}
+            hrefBase={`/loja/${revendedor.slug}/oculos`}
+          />
           <div className="mt-8 flex flex-wrap gap-4">
             <Link
               href={`/loja/${revendedor.slug}/a-loja`}
