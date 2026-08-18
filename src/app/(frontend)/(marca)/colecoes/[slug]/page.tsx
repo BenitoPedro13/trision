@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { GradeProdutos } from "@/components/produto/grade-produtos";
 import { Revela } from "@/components/revela";
-import { catalogSourceLocal } from "@/lib/catalog/source.local";
+import { catalogSource } from "@/lib/catalog/source";
 import { metadataDaPagina } from "@/lib/seo";
 
 export async function generateStaticParams() {
-  const colecoes = await catalogSourceLocal.listarColecoes();
+  const colecoes = await catalogSource.listarColecoes();
   return colecoes.map((colecao) => ({ slug: colecao.slug }));
 }
 
@@ -16,7 +16,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const colecoes = await catalogSourceLocal.listarColecoes();
+  const colecoes = await catalogSource.listarColecoes();
   const colecao = colecoes.find((c) => c.slug === slug);
   if (!colecao) return metadataDaPagina({ titulo: "Coleção", descricao: "Coleção Trísion.", caminho: `/colecoes/${slug}` });
 
@@ -31,8 +31,8 @@ export async function generateMetadata({
 export default async function ColecaoPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const [colecoes, produtos] = await Promise.all([
-    catalogSourceLocal.listarColecoes(),
-    catalogSourceLocal.listarProdutos(),
+    catalogSource.listarColecoes(),
+    catalogSource.listarProdutos(),
   ]);
   const colecao = colecoes.find((c) => c.slug === slug);
   if (!colecao) notFound();

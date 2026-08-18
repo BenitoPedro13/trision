@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test:tenancy": "vitest run",
     "verificar-fase-0": "tsx scripts/verificar-fase-0.mts"
   },
   "dependencies": {

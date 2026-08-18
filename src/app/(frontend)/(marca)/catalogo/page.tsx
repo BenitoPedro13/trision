@@ -3,11 +3,11 @@ import { FiltroDrawer } from "@/components/produto/filtro-drawer";
 import { FiltroToggle } from "@/components/produto/filtro-toggle";
 import { Filtros, combina, type FiltrosAtivos } from "@/components/produto/filtros";
 import { GradeProdutos } from "@/components/produto/grade-produtos";
-import { catalogSourceLocal } from "@/lib/catalog/source.local";
+import { catalogSource } from "@/lib/catalog/source";
 import { metadataDaPagina } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const produtos = await catalogSourceLocal.listarProdutos();
+  const produtos = await catalogSource.listarProdutos();
   return metadataDaPagina({
     titulo: "Catálogo",
     descricao: `${produtos.length} armações Trísion — óculos de sol, de grau e clip-on selecionados um a um.`,
@@ -28,7 +28,7 @@ export default async function CatalogoPage({
     genero: typeof params.genero === "string" ? params.genero : undefined,
   };
 
-  const todos = await catalogSourceLocal.listarProdutos();
+  const todos = await catalogSource.listarProdutos();
   const formatosDisponiveis = [
     ...new Set(todos.filter((p) => combina(p, ativos, "formato")).map((p) => p.formato)),
   ].sort();

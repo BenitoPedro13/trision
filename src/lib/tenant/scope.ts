@@ -1,6 +1,6 @@
-import { catalogSourceLocal as catalogSource } from "@/lib/catalog/source.local";
+import { catalogSource } from "@/lib/catalog/source";
 import type { Produto, Revendedor } from "@/lib/catalog/types";
-import { tenantSourceLocal as tenantSource } from "./source.local";
+import { tenantSource } from "./source";
 
 export interface ItemMostruario {
   produto: Produto;

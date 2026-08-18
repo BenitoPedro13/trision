@@ -5,7 +5,7 @@ import { FichaTecnica } from "@/components/produto/ficha-tecnica";
 import { GaleriaProduto } from "@/components/produto/galeria-produto";
 import { OndeComprar } from "@/components/produto/onde-comprar";
 import { Revela } from "@/components/revela";
-import { catalogSourceLocal } from "@/lib/catalog/source.local";
+import { catalogSource } from "@/lib/catalog/source";
 import { marca } from "@/content/marca";
 import { metadataDaPagina } from "@/lib/seo";
 import { produtoJsonLd } from "@/lib/structured-data";
@@ -15,7 +15,7 @@ import { formatarNumeracao } from "@/lib/numeracao";
    on `Produto.sku` (the catalogue key shown to customers, `spec-architecture.md`
    §5.1) — there is no separate slug field on `Produto`. */
 export async function generateStaticParams() {
-  const produtos = await catalogSourceLocal.listarProdutos();
+  const produtos = await catalogSource.listarProdutos();
   return produtos.map((produto) => ({ slug: produto.sku }));
 }
 
@@ -25,7 +25,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const produto = await catalogSourceLocal.buscarProdutoPorSku(slug);
+  const produto = await catalogSource.buscarProdutoPorSku(slug);
   if (!produto) {
     return metadataDaPagina({ titulo: "Óculos", descricao: "Óculos Trísion.", caminho: `/oculos/${slug}` });
   }
@@ -41,7 +41,7 @@ export async function generateMetadata({
 
 export default async function ProdutoPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const produto = await catalogSourceLocal.buscarProdutoPorSku(slug);
+  const produto = await catalogSource.buscarProdutoPorSku(slug);
   if (!produto) notFound();
 
   return (

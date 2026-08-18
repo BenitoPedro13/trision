@@ -1,13 +1,13 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/site-config";
-import { catalogSourceLocal } from "@/lib/catalog/source.local";
+import { catalogSource } from "@/lib/catalog/source";
 
 /* /loja/[rev] stays out — it's the Fase 0 path-based storefront stand-in
    (TASK-frontend-fase-0.md §2.4), disallowed in robots.ts for the same reason. */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [colecoes, produtos] = await Promise.all([
-    catalogSourceLocal.listarColecoes(),
-    catalogSourceLocal.listarProdutos(),
+    catalogSource.listarColecoes(),
+    catalogSource.listarProdutos(),
   ]);
 
   return [

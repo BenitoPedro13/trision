@@ -63,12 +63,16 @@ export type SupportedTimezones =
 
 export interface Config {
   auth: {
-    users: UserAuthOperations;
+    usuarios: UsuarioAuthOperations;
   };
   blocks: {};
   collections: {
-    users: User;
+    usuarios: Usuario;
     media: Media;
+    colecoes: Colecoe;
+    produtos: Produto;
+    revendedores: Revendedore;
+    mostruario: Mostruario;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -76,8 +80,12 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
+    usuarios: UsuariosSelect<false> | UsuariosSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    colecoes: ColecoesSelect<false> | ColecoesSelect<true>;
+    produtos: ProdutosSelect<false> | ProdutosSelect<true>;
+    revendedores: RevendedoresSelect<false> | RevendedoresSelect<true>;
+    mostruario: MostruarioSelect<false> | MostruarioSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -87,19 +95,23 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    config: Config1;
+  };
+  globalsSelect: {
+    config: ConfigSelect<false> | ConfigSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
   };
-  user: User;
+  user: Usuario;
   jobs: {
     tasks: unknown;
     workflows: unknown;
   };
 }
-export interface UserAuthOperations {
+export interface UsuarioAuthOperations {
   forgotPassword: {
     email: string;
     password: string;
@@ -119,10 +131,17 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
+ * via the `definition` "usuarios".
  */
-export interface User {
+export interface Usuario {
   id: number;
+  role: 'admin' | 'revendedor';
+  tenants?:
+    | {
+        tenant: number | Revendedore;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -140,7 +159,32 @@ export interface User {
       }[]
     | null;
   password?: string | null;
-  collection: 'users';
+  collection: 'usuarios';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "revendedores".
+ */
+export interface Revendedore {
+  id: number;
+  nome: string;
+  slug: string;
+  cidade: string;
+  uf: string;
+  whatsapp?: string | null;
+  instagram?: string | null;
+  endereco?: {
+    texto?: string | null;
+  };
+  horarios?: {
+    texto?: string | null;
+  };
+  retrato?: (number | null) | Media;
+  sobre?: string | null;
+  status: 'ativo' | 'pausado';
+  destinoLead: 'marca' | 'revendedor';
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -160,6 +204,87 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "colecoes".
+ */
+export interface Colecoe {
+  id: number;
+  nome: string;
+  slug: string;
+  ano: number;
+  capa?: (number | null) | Media;
+  texto: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "produtos".
+ */
+export interface Produto {
+  id: number;
+  nome: string;
+  sku: string;
+  marca: string;
+  colecao: number | Colecoe;
+  categoria: 'solar' | 'grau' | 'clip-on';
+  formato: 'aviador' | 'quadrado' | 'redondo' | 'gatinho' | 'hexagonal' | 'retangular';
+  material: 'acetato' | 'metal' | 'TR90' | 'titânio';
+  cor: {
+    nome: string;
+    hexAprox: string;
+  };
+  genero: 'feminino' | 'masculino' | 'unissex';
+  medidas: {
+    aro: number;
+    ponte: number;
+    haste: number;
+  };
+  fotos?:
+    | {
+        foto: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  descricao: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Ausente ⇒ Consulte o valor. Nunca preencher por padrão.
+   */
+  precoSugerido?: number | null;
+  status: 'ativo' | 'descontinuado';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mostruario".
+ */
+export interface Mostruario {
+  id: number;
+  revendedor?: (number | null) | Revendedore;
+  produto: number | Produto;
+  disponivel?: boolean | null;
+  destaque?: boolean | null;
+  ordem: number;
+  observacao?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -186,17 +311,33 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'users';
-        value: number | User;
+        relationTo: 'usuarios';
+        value: number | Usuario;
       } | null)
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'colecoes';
+        value: number | Colecoe;
+      } | null)
+    | ({
+        relationTo: 'produtos';
+        value: number | Produto;
+      } | null)
+    | ({
+        relationTo: 'revendedores';
+        value: number | Revendedore;
+      } | null)
+    | ({
+        relationTo: 'mostruario';
+        value: number | Mostruario;
       } | null);
   globalSlug?: string | null;
   user: {
-    relationTo: 'users';
-    value: number | User;
+    relationTo: 'usuarios';
+    value: number | Usuario;
   };
   updatedAt: string;
   createdAt: string;
@@ -208,8 +349,8 @@ export interface PayloadLockedDocument {
 export interface PayloadPreference {
   id: number;
   user: {
-    relationTo: 'users';
-    value: number | User;
+    relationTo: 'usuarios';
+    value: number | Usuario;
   };
   key?: string | null;
   value?:
@@ -237,9 +378,16 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
+ * via the `definition` "usuarios_select".
  */
-export interface UsersSelect<T extends boolean = true> {
+export interface UsuariosSelect<T extends boolean = true> {
+  role?: T;
+  tenants?:
+    | T
+    | {
+        tenant?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -274,6 +422,99 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "colecoes_select".
+ */
+export interface ColecoesSelect<T extends boolean = true> {
+  nome?: T;
+  slug?: T;
+  ano?: T;
+  capa?: T;
+  texto?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "produtos_select".
+ */
+export interface ProdutosSelect<T extends boolean = true> {
+  nome?: T;
+  sku?: T;
+  marca?: T;
+  colecao?: T;
+  categoria?: T;
+  formato?: T;
+  material?: T;
+  cor?:
+    | T
+    | {
+        nome?: T;
+        hexAprox?: T;
+      };
+  genero?: T;
+  medidas?:
+    | T
+    | {
+        aro?: T;
+        ponte?: T;
+        haste?: T;
+      };
+  fotos?:
+    | T
+    | {
+        foto?: T;
+        id?: T;
+      };
+  descricao?: T;
+  precoSugerido?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "revendedores_select".
+ */
+export interface RevendedoresSelect<T extends boolean = true> {
+  nome?: T;
+  slug?: T;
+  cidade?: T;
+  uf?: T;
+  whatsapp?: T;
+  instagram?: T;
+  endereco?:
+    | T
+    | {
+        texto?: T;
+      };
+  horarios?:
+    | T
+    | {
+        texto?: T;
+      };
+  retrato?: T;
+  sobre?: T;
+  status?: T;
+  destinoLead?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mostruario_select".
+ */
+export interface MostruarioSelect<T extends boolean = true> {
+  revendedor?: T;
+  produto?: T;
+  disponivel?: T;
+  destaque?: T;
+  ordem?: T;
+  observacao?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -314,6 +555,41 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "config".
+ */
+export interface Config1 {
+  id: number;
+  /**
+   * E.164 — mirrors WHATSAPP_MARCA env fallback.
+   */
+  whatsappMarca?: string | null;
+  instagram?: string | null;
+  email?: string | null;
+  desde: number;
+  heroTitulo?: string | null;
+  heroSubtitulo?: string | null;
+  rodapeTexto?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "config_select".
+ */
+export interface ConfigSelect<T extends boolean = true> {
+  whatsappMarca?: T;
+  instagram?: T;
+  email?: T;
+  desde?: T;
+  heroTitulo?: T;
+  heroSubtitulo?: T;
+  rodapeTexto?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

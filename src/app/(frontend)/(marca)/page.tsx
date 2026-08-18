@@ -2,10 +2,10 @@ import Link from "next/link";
 import { ColecaoCard } from "@/components/colecao/colecao-card";
 import { FocoVerdadeiro } from "@/components/foco-verdadeiro";
 import { Revela } from "@/components/revela";
-import { catalogSourceLocal } from "@/lib/catalog/source.local";
+import { catalogSource } from "@/lib/catalog/source";
 
 export default async function Home() {
-  const colecoes = await catalogSourceLocal.listarColecoes();
+  const colecoes = await catalogSource.listarColecoes();
 
   return (
     <main className="flex flex-col gap-[clamp(64px,10vh,160px)] px-[clamp(24px,5vw,88px)] pb-[clamp(64px,10vh,160px)]">
