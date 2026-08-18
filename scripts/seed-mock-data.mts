@@ -12,7 +12,9 @@ import { resolve } from "node:path";
 import { getPayload } from "payload";
 
 import config from "../payload.config";
+import type { Produto as ProdutoDoc } from "../payload-types";
 import { colecoes } from "../src/content/colecoes";
+import type { MostruarioItem } from "@/lib/catalog/types";
 import { marca } from "../src/content/marca";
 import { mostruario } from "../src/content/mostruario";
 import { produtos } from "../src/content/produtos";
@@ -33,7 +35,7 @@ function loadEnv(key: string): string | undefined {
 }
 
 /** Minimal Lexical state for a single plain-text paragraph. */
-function plainToLexical(text: string) {
+function plainToLexical(text: string): ProdutoDoc["descricao"] {
   return {
     root: {
       type: "root",
@@ -48,8 +50,6 @@ function plainToLexical(text: string) {
           indent: 0,
           version: 1,
           direction: "ltr",
-          textFormat: 0,
-          textStyle: "",
           children: [
             {
               type: "text",
@@ -163,7 +163,7 @@ async function main() {
     },
   });
 
-  const colecaoIds = new Map<string, number | string>();
+  const colecaoIds = new Map<string, number>();
   for (const c of colecoes) {
     const doc = await payload.create({
       collection: "colecoes",
@@ -175,11 +175,11 @@ async function main() {
         texto: c.texto,
       },
     });
-    colecaoIds.set(c.slug, doc.id);
+    colecaoIds.set(c.slug, doc.id as number);
     console.log(`  colecoes: ${c.slug}`);
   }
 
-  const revendedorIds = new Map<string, number | string>();
+  const revendedorIds = new Map<string, number>();
   for (const r of revendedores) {
     const doc = await payload.create({
       collection: "revendedores",
@@ -198,14 +198,14 @@ async function main() {
         destinoLead: "marca",
       },
     });
-    revendedorIds.set(r.slug, doc.id);
+    revendedorIds.set(r.slug, doc.id as number);
     console.log(`  revendedores: ${r.slug}`);
   }
 
-  const produtoIds = new Map<string, number | string>();
+  const produtoIds = new Map<string, number>();
   for (const p of produtos) {
     const colecaoId = colecaoIds.get(p.colecaoSlug);
-    if (!colecaoId) throw new Error(`Missing coleção for ${p.sku}`);
+    if (colecaoId === undefined) throw new Error(`Missing coleção for ${p.sku}`);
 
     const doc = await payload.create({
       collection: "produtos",
@@ -225,27 +225,28 @@ async function main() {
         status: p.status,
       },
     });
-    produtoIds.set(p.sku, doc.id);
+    produtoIds.set(p.sku, doc.id as number);
     console.log(`  produtos: ${p.sku}`);
   }
 
   for (const m of mostruario) {
     const revendedorId = revendedorIds.get(m.revendedorSlug);
     const produtoId = produtoIds.get(m.produtoSku);
-    if (!revendedorId || !produtoId) {
+    if (revendedorId === undefined || produtoId === undefined) {
       throw new Error(`Missing rels for mostruario ${m.revendedorSlug}/${m.produtoSku}`);
     }
 
+    const item = m as MostruarioItem;
     await payload.create({
       collection: "mostruario",
       overrideAccess: true,
       data: {
         revendedor: revendedorId,
         produto: produtoId,
-        disponivel: m.disponivel,
-        destaque: m.destaque,
-        ordem: m.ordem,
-        observacao: m.observacao,
+        disponivel: item.disponivel,
+        destaque: item.destaque,
+        ordem: item.ordem,
+        observacao: item.observacao,
       },
     });
     console.log(`  mostruario: ${m.revendedorSlug} → ${m.produtoSku}`);
