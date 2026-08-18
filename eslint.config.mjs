@@ -5,6 +5,19 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    files: [
+      "src/utils/cn.ts",
+      "src/utils/tv.ts",
+      "src/utils/polymorphic.ts",
+      "src/utils/recursive-clone-children.tsx",
+      "src/components/ui/**/*.tsx",
+    ],
+    rules: {
+      "@typescript-eslint/no-empty-object-type": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

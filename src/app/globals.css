@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 /* ============================================================================
    Trísion Eyewear — design tokens.
@@ -55,6 +56,22 @@
   --font-sans: var(--font-archivo);
   --font-mono: var(--font-plex-mono);
   --radius: 0px;
+  /* AlignUI token bridge — TASK-alignui-vendoring.md §2.3. Only names Drawer +
+     CompactButton reference; mapped to Trísion values, not AlignUI's full theme. */
+  --color-overlay: color-mix(in srgb, var(--vazio) 80%, transparent);
+  --color-bg-white-0: var(--fumo);
+  --color-bg-weak-50: var(--noite);
+  --color-bg-strong-950: var(--vazio);
+  --color-stroke-soft-200: var(--aro);
+  --color-text-strong-950: var(--luz);
+  --color-text-sub-600: var(--prata);
+  --color-text-white-0: var(--luz);
+  --color-text-disabled-300: var(--cinza);
+  --shadow-regular-xs: none;
+  --shadow-regular-md: none;
+  --radius-md: 0px;
+  --radius-10: 0px;
+  --radius-20: 0px;
 }
 
 * { box-sizing: border-box; }
@@ -153,4 +170,18 @@ body {
     animation-duration: .001ms !important;
     transition-duration: .001ms !important;
   }
+}
+
+/* AlignUI Drawer ships backdrop-blur; Trísion overlay is opaque only (TASK-alignui-vendoring §2.3). */
+.bg-overlay.backdrop-blur-\[10px\] {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* AlignUI typography — only sizes referenced by vendored components so far. */
+@utility text-label-lg {
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import * as Drawer from "@/components/ui/drawer";
 import { FORMATOS, MATERIAIS, GENEROS } from "./filtros";
 import { useFiltroStore } from "./filtro-store";
 
@@ -8,7 +9,10 @@ import { useFiltroStore } from "./filtro-store";
    ("pendentes") and only reach the URL — the actual filter source of truth,
    `Filtros` reads it server-side — on "Ver resultados". That staging is the reason
    this needed Zustand instead of pushing straight to the router on every tap: a
-   real product pattern (edit several, commit once), not state for its own sake. */
+   real product pattern (edit several, commit once), not state for its own sake.
+
+   Overlay chrome is AlignUI `Drawer` (Radix Dialog): focus trap + Escape-to-close.
+   Filter chip markup inside is unchanged — brand-owned selection state. */
 export function FiltroDrawer({
   basePath,
   coresDisponiveis,
@@ -18,8 +22,6 @@ export function FiltroDrawer({
 }) {
   const router = useRouter();
   const { aberto, pendentes, fechar, alternar, limparPendentes } = useFiltroStore();
-
-  if (!aberto) return null;
 
   const linhas = [
     { rotulo: "Formato", chave: "formato" as const, opcoes: FORMATOS as string[] },
@@ -38,47 +40,53 @@ export function FiltroDrawer({
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex flex-col justify-end lg:hidden">
-      <button
-        type="button"
-        aria-label="Fechar filtros"
-        onClick={fechar}
-        className="absolute inset-0 bg-vazio/80"
-      />
-      <div className="relative border-t border-aro bg-noite p-6">
-        <div className="flex flex-col gap-5">
-          {linhas.map(
-            ({ rotulo, chave, opcoes }) =>
-              opcoes.length > 0 && (
-                <div key={chave}>
-                  <p className="mb-2 font-mono text-[.6875rem] uppercase tracking-[.16em] text-cinza">
-                    {rotulo}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {opcoes.map((opcao) => {
-                      const selecionado = pendentes[chave] === opcao;
-                      return (
-                        <button
-                          key={opcao}
-                          type="button"
-                          data-alvo
-                          onClick={() => alternar(chave, opcao)}
-                          className={`foco-visor border px-3 py-1.5 text-[.8125rem] capitalize transition-colors ${
-                            selecionado
-                              ? "border-ouro text-ouro"
-                              : "border-aro text-prata hover:border-prata"
-                          }`}
-                        >
-                          {opcao}
-                        </button>
-                      );
-                    })}
+    <Drawer.Root
+      open={aberto}
+      onOpenChange={(open) => {
+        if (!open) fechar();
+      }}
+    >
+      <Drawer.Content className="lg:hidden">
+        <Drawer.Header className="border-b border-stroke-soft-200">
+          <Drawer.Title>Filtros</Drawer.Title>
+        </Drawer.Header>
+
+        <Drawer.Body className="p-6">
+          <div className="flex flex-col gap-5">
+            {linhas.map(
+              ({ rotulo, chave, opcoes }) =>
+                opcoes.length > 0 && (
+                  <div key={chave}>
+                    <p className="mb-2 font-mono text-[.6875rem] uppercase tracking-[.16em] text-cinza">
+                      {rotulo}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {opcoes.map((opcao) => {
+                        const selecionado = pendentes[chave] === opcao;
+                        return (
+                          <button
+                            key={opcao}
+                            type="button"
+                            data-alvo
+                            onClick={() => alternar(chave, opcao)}
+                            className={`foco-visor border px-3 py-1.5 text-[.8125rem] capitalize transition-colors ${
+                              selecionado
+                                ? "border-ouro text-ouro"
+                                : "border-aro text-prata hover:border-prata"
+                            }`}
+                          >
+                            {opcao}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              ),
-          )}
-        </div>
-        <div className="mt-6 flex gap-3">
+                ),
+            )}
+          </div>
+        </Drawer.Body>
+
+        <Drawer.Footer className="border-t border-stroke-soft-200">
           <button
             type="button"
             data-alvo
@@ -95,8 +103,8 @@ export function FiltroDrawer({
           >
             Ver resultados
           </button>
-        </div>
-      </div>
-    </div>
+        </Drawer.Footer>
+      </Drawer.Content>
+    </Drawer.Root>
   );
 }
