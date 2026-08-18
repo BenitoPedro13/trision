@@ -54,8 +54,17 @@ Trísion (`spec-brand.md` §4).
 
 **Fase 0, in progress.** Next.js 16.3.1 is scaffolded, `spec-design.md` §4.1 tokens are
 in `src/app/globals.css`, and the pitch for Amanda is live at `/apresentacao`
-(`TASK-scaffold-e-apresentacao.md`). `/` is a holding page. No Payload, no database —
-deliberate: Payload enters in Fase 1 (`spec-architecture.md` §3).
+(`TASK-scaffold-e-apresentacao.md`). No Payload, no database — deliberate: Payload
+enters in Fase 1 (`spec-architecture.md` §3).
+
+**The frontend layout is built end-to-end against mock data**
+(`TASK-frontend-fase-0.md`): `/`, `/colecoes`, `/catalogo`, `/oculos/[slug]` and a
+Fase-0 storefront stand-in at `/loja/[rev]` all render, every product/reseller marked
+`exemplo`. No real photography exists yet (`TASK-normalizar-imagens.md` is written but
+not built), so every gallery shows the honest "sem foto" empty state, not an invented
+photograph. AlignUI/shadcn/React Bits are still not installed — the CTA, filter chips
+and thesis line are hand-written on the existing tokens, not the polished versions
+`spec-design.md` §7/§8 describe.
 
 The live URL is `https://trision.vercel.app` (`src/lib/site-config.ts`). Wildcard
 subdomains — and therefore every multi-tenant route — wait on the apex domain. Amanda
@@ -93,15 +102,56 @@ confirmed 2026-08-17 that she owns one; the exact domain and DNS/registrar acces
 | Styling | Tailwind v4, CSS-first in `src/app/globals.css`. Tokens mapped 1:1 to `spec-design.md` §4.1. Dark only — no light-mode toggle, no `prefers-color-scheme` swap | built |
 | Brand components | Hand-written: `Visor`, `VisorCursor`, `Numeracao`, `Marca`/`MarcaLockup`, `Ceu` (`src/components/`). No generator produces these; they are the brand | built |
 | Components (later) | AlignUI (vendored, primary) → shadcn (gaps only) → React Bits (`spec-design.md` §8). **Not installed yet.** Do not add them in a task that does not name them | deferred |
-| Catalogue, Fase 0 | Typed TS modules in `content/` behind the same domain types Payload will later implement. **The seam is `lib/catalog/source.*.ts`.** Nothing outside those files imports a Payload type | seam scaffolded (`source.local.ts`), example data only — `/` not wired yet |
+| Catalogue, Fase 0 | Typed TS modules in `content/` behind the same domain types Payload will later implement. **The seam is `lib/catalog/source.*.ts`.** Nothing outside those files imports a Payload type | wired — `/`, `/colecoes`, `/catalogo`, `/oculos/[slug]` render it, example data, `TASK-frontend-fase-0.md` |
+| Tenancy seam, Fase 0 | Mirrors the catalogue seam: `lib/tenant/source.*.ts` + **`lib/tenant/scope.ts`**, the one place that reads `revendedores`/`mostruario` (`spec-architecture.md` §6.1). One mock reseller, path-routed at `/loja/[rev]` — **not** the real subdomain shape, see the routing row below | seam scaffolded, mock data, `TASK-frontend-fase-0.md` §2.4 |
 | CMS, Fase 1 | **Payload ≥ 3.73.0**, mounted at `/admin`, `@payloadcms/plugin-multi-tenant`. Collections it does *not* list stay global — which is how `produtos` stays brand-owned | not started |
 | Data + files, Fase 1 | Postgres via `@payloadcms/db-postgres` (provider chosen at scaffold time, not from memory) + Vercel Blob | not started |
-| Conversion | `wa.me` deep links. **No cart, no checkout, no payments in v1.** Every URL produced by `lib/lead/link.ts` once that file exists | Fase 2 |
+| Client/server state | **Zustand** for client-only ephemeral UI state shared between sibling components with no natural parent (e.g. the mobile filter drawer, `components/produto/filtro-store.ts`) — plain `create()`, no provider. **URL search params + Server Components** for anything shareable/filterable (`/catalogo` filters), per Next's own guidance over either state library. **TanStack Query is not installed** — Fase 0 has no live/mutable server data for it to manage; see the state-management note below before reaching for either library | zustand 5, `@tanstack/react-query` deliberately absent |
+| Conversion | `wa.me` deep links via **`lib/lead/link.ts`** — the one builder (`spec-architecture.md` §6.3), used directly (no `/ir/` attribution redirect yet — needs the Payload `leads` collection, Fase 1). **No cart, no checkout, no payments in v1** | `lib/lead/link.ts` built, direct-link only |
+| Storefront routing | Target: `<slug>.trision.com.br` via `middleware.ts` Host rewrite (`spec-architecture.md` §8) — blocked on the domain. Fase 0 stand-in: `/loja/[rev]` as a real path segment, **not** the `(loja)` route group the target layout shows below — very likely deleted, not evolved, once the domain lands | Fase 0 stand-in only |
 | Hosting | Vercel. Wildcard domain + Routing Middleware are the two features Fase 1 depends on | live at a Vercel URL; apex domain open |
 | Package manager | **pnpm**, decided at scaffold time, never mixed | pnpm 11.21.0 |
 
 **Version numbers written anywhere in this repo are a snapshot, not a pin.** See §2.0
 before adding a dependency.
+
+### State management — which tool, and why
+
+Researched and decided in `TASK-frontend-fase-0.md` §3; keep applying this instead of
+re-deriving it per task.
+
+1. **Server Components own initial data.** A page reads `lib/catalog/source.ts` /
+   `lib/tenant/scope.ts` directly, awaited, no client fetch. Fase 0's data is synchronous
+   local TS, so there is nothing to keep in sync after the first render — which is
+   specifically TanStack Query's job, not a Server Component's.
+2. **TanStack Query is not installed.** Its real job — request-scoped `QueryClient` via
+   `cache()`, `HydrationBoundary`, `useSuspenseQuery` — starts once a page needs to
+   *revalidate, mutate, or poll* live data. Nothing does yet. Installing the provider
+   before that would sit in every route's client bundle for zero benefit (storefront JS
+   budget ≤180 KB gzipped, `spec-design.md` §12) — install it when a real feature needs
+   it (first candidate: the Fase 1 reseller mostruário toggle grid,
+   `spec-architecture.md` §5.3), not speculatively. When it lands, the pattern is: a
+   per-request `getQueryClient` via React's `cache()`, `queryClient.prefetchQuery` (not
+   awaited) in the Server Component wrapped in `<HydrationBoundary state={dehydrate(...)}>`,
+   and `useSuspenseQuery` in the client leaf underneath.
+3. **Filterable/shareable state (e.g. `/catalogo`'s formato/material/cor/gênero) is URL
+   search params, read by the Server Component** — not a client store. Matches Next's
+   own soft-navigation model (no client fetch on a filter click) and makes filtered URLs
+   shareable, which is a real product win here (a reseller can send a customer a
+   pre-filtered link).
+4. **Zustand is for client-only ephemeral UI state shared between components with no
+   natural common parent** — e.g. `components/produto/filtro-store.ts`, split between a
+   toolbar badge and an off-canvas drawer. A plain `create()` (no provider, no
+   per-request factory) is correct whenever the store's initial state is *not* seeded
+   from server/request data and is never read during SSR — which is true of every
+   client-only UI store in this repo so far. The heavier `createStore` + Context-provider
+   factory pattern from Zustand's own Next.js guide exists only for stores whose initial
+   state comes from the request; don't reach for it by default.
+5. **When one component owns a piece of state alone, `useState` is correct** — e.g.
+   `GaleriaProduto`'s selected-thumbnail index. Neither Zustand nor Context is needed
+   just because a library is available. A Context provider wrapping a page also forces
+   everything inside it — including the Server Component page body — into the client
+   boundary; that's the concrete reason Zustand, not Context, backs `filtro-store.ts`.
 
 ### Things that must not break
 
@@ -147,13 +197,14 @@ a lesson already paid for on a sibling project.
   `Ceu` is static under reduced motion; `VisorCursor` is off on coarse pointers and
   under reduced motion. The page is fully legible if the canvas never initialises
   (`spec-design.md` §7.1, §7.5).
-- **One `wa.me` builder.** Once `lib/lead/link.ts` exists, nothing else composes a
+- **One `wa.me` builder.** `lib/lead/link.ts` is that builder — nothing else composes a
   WhatsApp URL. F&A Móveis shipped `localhost` inside every production message because
   more than one place built that string (`spec-architecture.md` §6.3).
 - **One tenancy boundary.** Every read of a tenant-scoped collection goes through
-  `lib/tenant/scope.ts`. A reseller can never create a product — two locks, plus a
-  catalog test that enumerates every collection (`spec-architecture.md` §6). Do not
-  write a filter inline in a route.
+  `lib/tenant/scope.ts` (built, Fase 0 version, against mock `revendedores`/`mostruario`
+  in `content/`). A reseller can never create a product — two locks, plus a catalog test
+  that enumerates every collection (`spec-architecture.md` §6, still Fase 1 — no product
+  creation UI exists yet). Do not write a filter inline in a route.
 - **A React Bits component needs a sentence naming the brand fact it carries.** "It
   looks incredible" is not that sentence. The rejected list in `spec-design.md` §7.4 is
   binding.
@@ -376,20 +427,35 @@ second package emerges. Payload, when it lands, is mounted *inside* this app
   src/app/icon.tsx              favicon, from marca-paths.ts
   src/app/apple-icon.tsx        apple-touch, same source
   src/app/opengraph-image.tsx   1200×630 card; twitter-image.tsx reuses it
-  src/app/robots.ts             Disallow /apresentacao and /ir/
-  src/app/sitemap.ts            public routes only — /apresentacao stays out
+  src/app/robots.ts             Disallow /apresentacao, /ir/, /loja/ (Fase 0 path stand-in, §2.4 caveat above)
+  src/app/sitemap.ts            marca routes + colecoes/produtos slugs — /loja/ stays out
+  src/app/catalogo/             filterable grid, URL search params
+  src/app/colecoes/             list + [slug] detail
+  src/app/oculos/[slug]/        product page: gallery, ficha técnica, numeração, onde comprar, WhatsApp CTA
+  src/app/loja/[rev]/           Fase 0 storefront path stand-in: home + mostruario/
   src/components/visor.tsx      the four brackets
   src/components/visor-cursor.tsx  brackets following the pointer, data-alvo snap
-  src/components/numeracao.tsx  mm in → 52□18-145; □ is SVG
+  src/components/numeracao.tsx  mm in → 52□18-145; □ is SVG (string logic lives in lib/numeracao.ts)
   src/components/marca.tsx      symbol + lockup (approximate redraw)
+  src/components/marca/cabecalho.tsx  nav shared by marca routes
   src/components/ceu.tsx        starfield canvas; static under reduced motion
+  src/components/produto/       ProdutoCard, GaleriaProduto, FichaTecnica, BotaoWhatsApp,
+                                OndeComprar, GradeProdutos, Filtros, FiltroToggle/FiltroDrawer
+                                + filtro-store.ts (Zustand)
+  src/components/colecao/       ColecaoCard
+  src/components/revendedor/    RevendedorEndosso (the attribution line, spec-brand.md §3)
   src/lib/site-config.ts        SITE_URL, normalised once (trailing slash stripped)
   src/lib/marca-paths.ts        the eight paths — the only source for the mark
+  src/lib/numeracao.ts          mm → "52□18-145" string, shared by the component and lib/lead/link.ts
   src/lib/catalog/              Fase 0 catalogue seam: types.ts, source.ts, source.local.ts
-  src/content/                  example catalogue data (produtos, colecoes, marca) — all `exemplo`
+  src/lib/tenant/               Fase 0 tenancy seam: source.ts, source.local.ts, scope.ts (the ONE scoping fn)
+  src/lib/lead/link.ts          the ONE wa.me builder — direct link only, no /ir/ attribution yet
+  src/content/                  example catalogue + tenant data (produtos, colecoes, marca,
+                                revendedores, mostruario) — all `exemplo`
   src/assets/*.ttf              Archivo statics for Satori; next/font's variable face
                                 does not reach ImageResponse
-  scripts/verificar-fase-0.mts  budget checks: Lighthouse + Playwright/axe (TASK-verificacao-fase-0.md)
+  scripts/verificar-fase-0.mts  budget checks: Lighthouse + Playwright/axe (TASK-verificacao-fase-0.md;
+                                not yet extended to the routes TASK-frontend-fase-0.md added)
   docs/spec-brand.md            who Trísion is
   docs/spec-design.md           the visual system
   docs/spec-architecture.md     the platform
@@ -402,19 +468,17 @@ second package emerges. Payload, when it lands, is mounted *inside* this app
   folders in a task that is not building them):**
 
   ```
-  src/app/(marca)/              trision.com.br
-  src/app/(loja)/[rev]/         <slug>.trision.com.br
+  src/app/(marca)/              trision.com.br — replaces today's top-level marca routes
+                                once middleware.ts and the domain exist
+  src/app/(loja)/[rev]/         <slug>.trision.com.br — replaces src/app/loja/[rev]/ above,
+                                not an evolution of it (TASK-frontend-fase-0.md §2.4)
   src/app/(payload)/            Payload admin + API
   src/app/ir/[rev]/[sku]/       the lead redirect
-  src/lib/catalog/source.payload.ts   Fase 1 implementation of the seam above
-  src/lib/tenant/scope.ts       the ONE scoping function
-  src/lib/lead/link.ts          the ONE wa.me builder
-  src/lib/numeracao.ts          mm → 52□18-145 (logic; the component already exists)
+  src/lib/catalog/source.payload.ts   Fase 1 implementation of the catalogue seam
+  src/lib/tenant/source.payload.ts    Fase 1 implementation of the tenancy seam
   src/components/ui/            AlignUI, vendored + SOURCES.md
-  src/components/bits/          React Bits, vendored + SOURCES.md
-  src/components/marca/         brand composites
-  src/components/produto/       catalogue composites
-  src/components/revendedor/    storefront composites
+  src/components/bits/          React Bits, vendored + SOURCES.md — TrueFocus, Iridescence etc.
+                                that TASK-frontend-fase-0.md deliberately shipped static instead
   payload.config.ts             collections from architecture §5
   scripts/normalizar-imagens.ts photography pipeline (spec-design.md §10, TASK-normalizar-imagens.md — planned, pending a real sample photo)
   ```

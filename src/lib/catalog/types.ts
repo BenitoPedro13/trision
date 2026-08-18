@@ -62,3 +62,34 @@ export interface Marca {
   instagram: string;
   desde: number;
 }
+
+export type StatusRevendedor = "ativo" | "pausado";
+
+/** Fase 0 stand-in for `revendedores` (`spec-architecture.md` §5.2), trimmed to the
+ * fields TASK-frontend-fase-0.md's UI reads — no `endereco`/`horarios` yet. */
+export interface Revendedor {
+  nome: string;
+  /** Unique, indexed — the future subdomain. Never changes once a storefront exists. */
+  slug: string;
+  cidade: string;
+  uf: string;
+  /** E.164, "" ⇒ no CTA — same convention as `Marca.whatsapp`. */
+  whatsapp: string;
+  instagram: string;
+  sobre: string;
+  status: StatusRevendedor;
+  /** Fase 0 only, mirrors `Produto.exemplo` — gates the visible "exemplo" label. */
+  exemplo: boolean;
+}
+
+/** Fase 0 stand-in for `mostruario` (`spec-architecture.md` §5.3) — the join between a
+ * `Revendedor` and the `Produto`s it carries. No `preco` field: open question #7
+ * (per-reseller pricing) is unresolved, so it isn't built speculatively. */
+export interface MostruarioItem {
+  revendedorSlug: string;
+  produtoSku: string;
+  disponivel: boolean;
+  destaque: boolean;
+  ordem: number;
+  observacao?: string;
+}
