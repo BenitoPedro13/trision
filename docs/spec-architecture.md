@@ -48,7 +48,12 @@ money**, exactly as it did with Fátima.
 | **0 — a venda** | The brand site only, real frames, real photographs, WhatsApp CTA. No CMS, no tenants — catalogue as typed TS modules in `content/`. Shown to Amanda on her phone. | ~R$0 (Vercel Hobby) + domain |
 | **1 — o segundo inquilino** | Payload + Postgres + Blob. Subdomain routing. `produtos` / `revendedores` / `mostruario`. **One real reseller onboarded end to end.** This is where the product proves itself, and it is the phase worth charging for. | Vercel Pro + Postgres + Blob |
 | **2 — a atribuição** | `/ir` lead route, `leads` collection, Amanda's dashboard, lead status workflow, per-reseller report | unchanged |
-| **3 — escala** | Custom domains per reseller, reseller self-onboarding, catalogue CSV import, `/seja-revendedor` funnel | + domain automation |
+| **3 — escala** | Custom domains per reseller, reseller self-onboarding automation, catalogue CSV import | + domain automation |
+
+**Note on `/seja-revendedor`:** the static editorial page (Fase 0 copy + `wa.me` handoff to
+Amanda) ships in Fase 0 — same logic as `/catalogo`. The Fase 3 line item above is the
+*automation*: self-service reseller signup with no human in the loop. The page and the system
+are different deliverables.
 
 **Fase 0 deliberately has no database.** The catalogue lives in `content/produtos.ts` behind
 the same domain types the Payload source will implement (§6.1), so Fase 1 swaps one module

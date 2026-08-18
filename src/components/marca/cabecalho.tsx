@@ -19,6 +19,12 @@ export function Cabecalho() {
         <Link href="/colecoes" data-alvo className="foco-visor hover:text-luz">
           Coleções
         </Link>
+        <Link href="/revendedores" data-alvo className="foco-visor hover:text-luz">
+          Revendedores
+        </Link>
+        <Link href="/seja-revendedor" data-alvo className="foco-visor hover:text-luz">
+          Seja revendedor
+        </Link>
       </nav>
     </header>
   );

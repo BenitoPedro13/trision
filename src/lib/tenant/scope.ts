@@ -43,12 +43,18 @@ export async function escopoRevendedor(
   return { revendedor, itens };
 }
 
+/** Every active reseller — `/revendedores`, and the source for slug-only callers. */
+export async function revendedoresAtivos(): Promise<Revendedor[]> {
+  const revendedores = await tenantSource.listarRevendedores();
+  return revendedores.filter((r) => r.status === "ativo");
+}
+
 /** Slugs of every active reseller — `generateStaticParams` for `/loja/[rev]` and
  * `/loja/[rev]/mostruario`, mirroring `spec-architecture.md` §8: "generateStaticParams
  * covers active tenants at build; new tenants render on demand." */
 export async function revendedoresAtivosSlugs(): Promise<string[]> {
-  const revendedores = await tenantSource.listarRevendedores();
-  return revendedores.filter((r) => r.status === "ativo").map((r) => r.slug);
+  const revendedores = await revendedoresAtivos();
+  return revendedores.map((r) => r.slug);
 }
 
 /** Reverse lookup for `OndeComprar`: every active reseller carrying `sku`. */

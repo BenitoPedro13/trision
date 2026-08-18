@@ -26,6 +26,8 @@ const PAGES = [
   "/catalogo",
   "/colecoes",
   "/colecoes/exemplo",
+  "/revendedores",
+  "/seja-revendedor",
   "/oculos/TRI-MOD-A",
   "/loja/otica-exemplo",
   "/loja/otica-exemplo/mostruario",

@@ -26,9 +26,9 @@ and the **pitch page for Amanda** is live at `/apresentacao`
 (`TASK-scaffold-e-apresentacao.md`).
 
 **The frontend layout is now built end-to-end against mock data**
-(`TASK-frontend-fase-0.md`): `/`, `/colecoes`, `/catalogo`, `/oculos/[slug]`, and a
-Fase-0 storefront stand-in at `/loja/[rev]` all render — every product and reseller
-marked `exemplo`. No real photography exists yet, so every gallery shows the honest
+(`TASK-frontend-fase-0.md`): `/`, `/colecoes`, `/catalogo`, `/oculos/[slug]`, `/revendedores`,
+`/seja-revendedor`, and a Fase-0 storefront stand-in at `/loja/[rev]` all render — every product
+and reseller marked `exemplo`. No real photography exists yet, so every gallery shows the honest
 "sem foto" state rather than an invented photo. The motion layer (`Revela`, `FocoVerdadeiro`,
 `.iridescencia`) now covers the catalogue and storefront routes too, not just `/apresentacao`
 (`TASK-motion-vitrine.md`). Measured with `pnpm verificar-fase-0` — `/oculos` and `/loja/*`
@@ -108,7 +108,8 @@ exists; the default is the Vercel address above.
 ## Verification
 
 `scripts/verificar-fase-0.mts` (Lighthouse + Playwright/axe) checks `/`, `/apresentacao`,
-`/catalogo`, `/colecoes`, `/colecoes/exemplo`, `/oculos/TRI-MOD-A`, `/loja/otica-exemplo`,
+`/catalogo`, `/colecoes`, `/colecoes/exemplo`, `/revendedores`, `/seja-revendedor`,
+`/oculos/TRI-MOD-A`, `/loja/otica-exemplo`,
 and `/loja/otica-exemplo/mostruario` against the budgets in `spec-design.md` §12.
 
 | Route | LCP | CLS | JS transfer |
@@ -131,6 +132,8 @@ motion task docs. Run with `pnpm build && PORT=3001 pnpm start` then
 |---|---|
 | `/` | The real homepage: thesis line, collections, `Desde 2002`. Mock data, `exemplo` labelled |
 | `/colecoes`, `/colecoes/[slug]` | Collection list + editorial detail |
+| `/revendedores` | Active reseller network — each card links to its storefront |
+| `/seja-revendedor` | B2B funnel — static copy + WhatsApp CTA (no form until Fase 1) |
 | `/catalogo` | Full line, filterable by formato/material/cor/gênero via URL search params |
 | `/oculos/[slug]` | Product page — gallery, ficha técnica, numeração, onde comprar, WhatsApp CTA |
 | `/loja/[rev]`, `/loja/[rev]/mostruario` | **Fase 0 path stand-in** for the storefront — `/loja/otica-exemplo` is the one mock reseller. Not the final URL shape (see `AGENTS.md` "Storefront routing") |
@@ -158,8 +161,8 @@ motion task docs. Run with `pnpm build && PORT=3001 pnpm start` then
 ## Layout
 
 ```
-src/app/                 routes: /, /catalogo, /colecoes, /oculos/[slug], /loja/[rev],
-                          /apresentacao, icon/og/robots/sitemap
+src/app/                 routes: /, /catalogo, /colecoes, /oculos/[slug], /revendedores,
+                          /seja-revendedor, /loja/[rev], /apresentacao, icon/og/robots/sitemap
 src/app/globals.css      spec-design.md §4.1 tokens
 src/components/          visor, visor-cursor, numeracao, marca, ceu, produto/, colecao/, revendedor/, ui/
 src/utils/               AlignUI foundation (cn, tv, polymorphic, recursive-clone-children)
