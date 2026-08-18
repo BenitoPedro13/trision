@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import * as Drawer from "@/components/ui/drawer";
-import { FORMATOS, MATERIAIS, GENEROS } from "./filtros";
+import { combina, type FacetaProduto } from "./filtros";
 import { useFiltroStore } from "./filtro-store";
 
 /* The off-canvas panel `FiltroToggle` opens. Edits are staged in `filtro-store.ts`
@@ -12,22 +12,54 @@ import { useFiltroStore } from "./filtro-store";
    real product pattern (edit several, commit once), not state for its own sake.
 
    Overlay chrome is AlignUI `Drawer` (Radix Dialog): focus trap + Escape-to-close.
-   Filter chip markup inside is unchanged — brand-owned selection state. */
+   Filter chip markup inside is unchanged — brand-owned selection state.
+
+   Option lists narrow live, against `pendentes` — not just on "Ver resultados" — using
+   the same `combina()` the server pages apply to `ativos` (TASK-filtros-facetados-
+   catalogo.md §2.3b), so a chip never offers a combination that returns zero products
+   even mid-edit. `facetas` ships only the four filterable fields per product, not the
+   full `Produto` (photos, sku, price…), to keep the client payload small. */
 export function FiltroDrawer({
   basePath,
-  coresDisponiveis,
+  facetas,
 }: {
   basePath: string;
-  coresDisponiveis: string[];
+  facetas: FacetaProduto[];
 }) {
   const router = useRouter();
   const { aberto, pendentes, fechar, alternar, limparPendentes } = useFiltroStore();
 
   const linhas = [
-    { rotulo: "Formato", chave: "formato" as const, opcoes: FORMATOS as string[] },
-    { rotulo: "Material", chave: "material" as const, opcoes: MATERIAIS as string[] },
-    { rotulo: "Cor", chave: "cor" as const, opcoes: coresDisponiveis },
-    { rotulo: "Gênero", chave: "genero" as const, opcoes: GENEROS as string[] },
+    {
+      rotulo: "Formato",
+      chave: "formato" as const,
+      opcoes: [
+        ...new Set(facetas.filter((f) => combina(f, pendentes, "formato")).map((f) => f.formato)),
+      ].sort(),
+    },
+    {
+      rotulo: "Material",
+      chave: "material" as const,
+      opcoes: [
+        ...new Set(
+          facetas.filter((f) => combina(f, pendentes, "material")).map((f) => f.material),
+        ),
+      ].sort(),
+    },
+    {
+      rotulo: "Cor",
+      chave: "cor" as const,
+      opcoes: [
+        ...new Set(facetas.filter((f) => combina(f, pendentes, "cor")).map((f) => f.cor)),
+      ].sort(),
+    },
+    {
+      rotulo: "Gênero",
+      chave: "genero" as const,
+      opcoes: [
+        ...new Set(facetas.filter((f) => combina(f, pendentes, "genero")).map((f) => f.genero)),
+      ].sort(),
+    },
   ];
 
   const aplicar = () => {

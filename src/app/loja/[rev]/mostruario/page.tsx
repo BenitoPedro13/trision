@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { Ceu } from "@/components/ceu";
 import { FiltroDrawer } from "@/components/produto/filtro-drawer";
 import { FiltroToggle } from "@/components/produto/filtro-toggle";
-import { Filtros, type FiltrosAtivos } from "@/components/produto/filtros";
+import { Filtros, combina, type FiltrosAtivos } from "@/components/produto/filtros";
 import { GradeProdutos } from "@/components/produto/grade-produtos";
 import { Revela } from "@/components/revela";
 import { RevendedorEndosso } from "@/components/revendedor/revendedor-endosso";
@@ -49,16 +49,21 @@ export default async function MostruarioPage({
 
   const { revendedor, itens } = escopo;
   const todos = itens.map((item) => item.produto);
-  const coresDisponiveis = [...new Set(todos.map((p) => p.cor))].sort();
+  const formatosDisponiveis = [
+    ...new Set(todos.filter((p) => combina(p, ativos, "formato")).map((p) => p.formato)),
+  ].sort();
+  const materiaisDisponiveis = [
+    ...new Set(todos.filter((p) => combina(p, ativos, "material")).map((p) => p.material)),
+  ].sort();
+  const coresDisponiveis = [
+    ...new Set(todos.filter((p) => combina(p, ativos, "cor")).map((p) => p.cor)),
+  ].sort();
+  const generosDisponiveis = [
+    ...new Set(todos.filter((p) => combina(p, ativos, "genero")).map((p) => p.genero)),
+  ].sort();
   const basePath = `/loja/${revendedor.slug}/mostruario`;
 
-  const produtos = todos.filter(
-    (p) =>
-      (!ativos.formato || p.formato === ativos.formato) &&
-      (!ativos.material || p.material === ativos.material) &&
-      (!ativos.cor || p.cor === ativos.cor) &&
-      (!ativos.genero || p.genero === ativos.genero),
-  );
+  const produtos = todos.filter((p) => combina(p, ativos));
 
   return (
     <>
@@ -79,13 +84,28 @@ export default async function MostruarioPage({
           </div>
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-[220px_1fr]">
             <aside className="hidden lg:block">
-              <Filtros basePath={basePath} ativos={ativos} coresDisponiveis={coresDisponiveis} />
+              <Filtros
+                basePath={basePath}
+                ativos={ativos}
+                formatosDisponiveis={formatosDisponiveis}
+                materiaisDisponiveis={materiaisDisponiveis}
+                coresDisponiveis={coresDisponiveis}
+                generosDisponiveis={generosDisponiveis}
+              />
             </aside>
             <GradeProdutos produtos={produtos} />
           </div>
         </main>
       </div>
-      <FiltroDrawer basePath={basePath} coresDisponiveis={coresDisponiveis} />
+      <FiltroDrawer
+        basePath={basePath}
+        facetas={todos.map(({ formato, material, cor, genero }) => ({
+          formato,
+          material,
+          cor,
+          genero,
+        }))}
+      />
     </>
   );
 }

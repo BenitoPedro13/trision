@@ -30,7 +30,7 @@ export function ProdutoCard({ produto }: { produto: Produto }) {
             </div>
           )}
         </div>
-        <div className="mt-3 flex items-start justify-between gap-3">
+        <div className="mt-3 flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
           <div>
             <p className="text-[.9375rem] font-medium text-luz">{produto.nome}</p>
             <Numeracao {...produto.medidas} className="mt-1 text-[.75rem] text-cinza" />
