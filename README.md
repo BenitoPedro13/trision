@@ -1,283 +1,420 @@
 # Trísion Eyewear
 
-Brand site + reseller storefront platform.
-**Trísion Eyewear, since 2002.** One storefront per reseller, one catalogue.
+A sophisticated Brazilian eyewear brand platform connecting one curated catalogue to an independent reseller network. Built with Next.js 16, Payload CMS, Postgres, and Vercel.
 
-The brand, the visual system and the platform live in
-[`docs/spec-brand.md`](docs/spec-brand.md),
-[`docs/spec-design.md`](docs/spec-design.md) and
-[`docs/spec-architecture.md`](docs/spec-architecture.md).
-How to work in this repo: [`AGENTS.md`](AGENTS.md).
+**`Desde 2002`** — 24 years of optical expertise, now on the web.
 
-## Where the spec lives
+---
 
-| Doc | What it is |
-|---|---|
-| `docs/spec-brand.md` | The brand: audit of what already exists, positioning, voice, and the 10 open questions (§6) |
-| `docs/spec-design.md` | The visual system: measured tokens, the visor, numeração, type, motion |
-| `docs/spec-architecture.md` | The platform: multi-tenancy, data model, lead attribution, phases |
-| `docs/identidade.html` | Internal identity board (not client-facing material) |
-| `docs/tasks/` | Task docs — no code before one of these (`AGENTS.md` §1) |
+## Core Concept
 
-## Status (2026-08-18, Fase 1 CMS foundation)
+**One catalogue. Many storefronts. Every lead back to Amanda.**
 
-**Fase 0 frontend complete; Fase 1 CMS foundation landed** (`TASK-payload-tenancy.md`).
-Payload 3.88 mounted at `/admin` per the [official install guide](https://payloadcms.com/docs/getting-started/installation) (blank template v3.88.0). Six collections/globals (`produtos`, `colecoes`, `revendedores`, `mostruario`, `usuarios`, `config`) + `media`, multi-tenant plugin, Vercel Blob storage. Catalogue/tenant seams export `catalogSource` / `tenantSource` — Payload when `DATABASE_URL` is set and queries succeed, `content/` mock otherwise.
+Trísion is an existing eyewear brand managed by Amanda. This platform allows her to:
+- Maintain a unified catalogue of frames, controlled centrally
+- Empower independent optical shops to showcase their inventory online
+- Route all customer inquiries directly to the appropriate reseller via WhatsApp
+- Track sourcing and attribution for each lead
 
-**The frontend layout is built end-to-end against mock data**
-(`TASK-frontend-fase-0.md`): `/`, `/colecoes`, `/catalogo`, `/oculos/[slug]`, `/revendedores`,
-`/seja-revendedor`, and a Fase-0 storefront stand-in at `/loja/[rev]` all render — every product
-and reseller marked `exemplo`. No real photography exists yet, so every gallery shows the honest
-"sem foto" state rather than an invented photo. The motion layer (`Revela`, `FocoVerdadeiro`,
-`.iridescencia`) now covers the catalogue and storefront routes too, not just `/apresentacao`
-(`TASK-motion-vitrine.md`). **`Revela` moved from a CSS-only scroll-timeline to
-`motion/react`** (`TASK-revela-motion.md`) — the CSS version only played on an actual scroll
-gesture, so it never animated on any page whose content fit in the first viewport (every
-grid page) or on first paint anywhere. `ProvedorMotion` now wraps every marca/storefront
-route as a result. JS budget: `/catalogo` measured at 240.9 KB (budget ≤180 KB) *before*
-this change, already over from the `(marca)`/`Rodape`/`Drawer` work — a full post-change
-`pnpm verificar-fase-0` re-run against every route is still owed (see that task doc §4),
-the 3–7 KB figures previously here are stale.
+Each reseller operates a branded storefront at their own domain, displaying only the frames they carry, while the brand maintains editorial control over collections, product information, and the core brand identity.
 
-**Shop identity and reseller search** (`TASK-loja-identidade-e-busca-revendedores.md`):
-`/loja/[rev]/a-loja` (portrait, address, hours — no map until a provider is chosen) and
-city/UF chip filters on `/revendedores`. Three `exemplo` resellers in `content/revendedores.ts`
-exercise the filter; each has at least one `mostruario` row so storefront links from the
-directory are not dead ends.
+---
 
-**Storefront product page is attributed** (`TASK-loja-oculos-slug.md`): `/loja/[rev]/oculos/[slug]`
-completes `spec-design.md` §11's storefront route table — same product page as
-`/oculos/[slug]`, tenant-scoped (a sku not in that reseller's mostruário 404s there even
-if it exists in the brand catalogue) and its WhatsApp CTA names the shop
-(`lib/lead/link.ts`'s `revendedorNome`/`cidade`/`uf` fields, spec-architecture.md §7.3's
-sentence, minus the `/ir/` `codigo` — that redirect is still Fase 1). `ProdutoCard` and
-`GradeProdutos` take an optional `hrefBase` so storefront grids link here instead of the
-brand-scoped page; `/catalogo` and the brand product page are unchanged.
+## Documentation
 
-**AlignUI foundation vendored** (`TASK-alignui-vendoring.md`): `src/utils/{cn,tv,polymorphic,
-recursive-clone-children}` + `Drawer` (and its `CompactButton` dependency) in
-`src/components/ui/`, logged in `SOURCES.md`. `FiltroDrawer` now runs on Radix Dialog —
-focus trap + Escape-to-close. Token bridge in `globals.css` maps only the AlignUI names
-those files use; the CLI theme generator was not run. Everything else (filter chips,
-`BotaoWhatsApp`, `ProdutoCard`, `FichaTecnica`) stays hand-written per `spec-design.md` §8.
+All specifications, design system details, architecture decisions, and implementation guides live in `/docs`:
 
-**Every route has real per-page metadata and a dynamic OG/Twitter card**
-(`TASK-seo-metadata-og-images.md`): `lib/seo.ts`'s `metadataDaPagina()` gives each page
-its own `description`/`openGraph`/`twitter`/canonical instead of silently inheriting the
-root layout's generic ones — Next.js shallow-merges `openGraph` between segments, so a
-page that set only a bare `title` was losing the brand card entirely. `lib/og-image.tsx`
-composes one Satori card (visor corners, starfield, mark) reused by eleven route-specific
-`opengraph-image.tsx` files — product, collection and reseller-storefront pages each get
-their own card, typographic only (no `fotos`/`capa`/`retrato` exist yet). Numeração on
-the product cards is drawn as inline SVG (`NumeracaoOg`), not the `lib/numeracao.ts`
-string — the static Archivo TTF Satori reads doesn't ship the `□` glyph. `Product`
-JSON-LD on both product-page variants omits `offers` entirely when there's no real
-price, rather than a placeholder. `/loja/**` pages now carry an explicit
-`robots: noindex`, matching `robots.ts`'s existing `disallow`.
+| Document | Purpose |
+|----------|---------|
+| [`spec-brand.md`](docs/spec-brand.md) | Brand identity, voice, positioning, and open questions requiring confirmation |
+| [`spec-design.md`](docs/spec-design.md) | Visual system: tokens, components, motion, performance budgets, accessibility rules |
+| [`spec-architecture.md`](docs/spec-architecture.md) | Platform design: multi-tenancy model, data schema, phasing, API structure |
+| [`AGENTS.md`](AGENTS.md) | Development workflow: task-document process, stack assumptions, things that must not break |
+| [`docs/tasks/`](docs/tasks/) | Implementation tracking: one document per unit of work, no code before a task doc |
 
-**Closed at R$ 300** (R$ 150 to start) for Fases 0, 1 and 2 — site live, first storefront,
-and lead attribution per shop. Only Fase 3 is left to negotiate.
+**How to work here:** Read `AGENTS.md` first. Every code change begins with a task document in `docs/tasks/` describing current state, planned changes, and verification criteria.
 
-**Three questions block everything else** (`spec-brand.md` §6): the domain, the pricing
-model, and where the WhatsApp button points. They are on slides 14–15 of the pitch,
-marked.
+---
+
+## Status
+
+### Fase 0: Frontend Complete ✓
+- Brand homepage, collection browsing, product catalogue, reseller directory
+- Fase 0 path-based storefront at `/loja/[rev]` (temporary until domain is confirmed)
+- All routes render against mock data from `src/content/`
+- Motion layer (`motion/react`) applied to all marca and storefront routes
+- Performance budgets met (LCP ≤1.6s, JS ≤180 KB, CLS 0.000) — except `/apresentacao` at 3.77s (tracked)
+- Pitch presentation (`/apresentacao`) ready for Amanda
+
+### Fase 1: CMS Foundation Landed ✓ (2026-08-18)
+- **Payload 3.88** mounted at `/admin` with multi-tenant plugin
+- **Six collections** implemented: `Produtos`, `Colecoes`, `Revendedores`, `Mostruario`, `Usuarios`, `Config`
+- **Postgres + Vercel Blob** adapters wired (requires marketplace provisioning)
+- **Seam swap complete:** `lib/catalog/source.ts` and `lib/tenant/source.ts` now select between Payload (live) and mock data (offline fallback)
+- **Access control matrix** implemented and tested — resellers can only edit their own data
+- **OG cards and structured data** on all routes (product pages, collections, reseller storefronts)
+
+**What's working now:**
+- Without `DATABASE_URL`: all routes render from `src/content/` mock data
+- With `DATABASE_URL` set: `/admin` loads Payload, and routes query Postgres when the database is reachable
+
+### Fase 2: Lead Attribution & Dashboard (Planned)
+- `/ir/[rev]/[sku]` redirect for tracking which reseller sent the lead
+- Admin dashboard for Amanda to view sourcing by shop
+- (Waiting for question #6 answer: where does the WhatsApp button point?)
+
+### Fase 3: Self-Service & Scaling (Planned)
+- Reseller self-onboarding flow
+- Custom reseller domains (awaiting answer to question #4: the apex domain)
+- CSV product import
+- (Blocked on all three questions in `spec-brand.md` §6)
+
+---
+
+## Quick Start
+
+### Prerequisites
+- Node 24 LTS
+- pnpm 11.21.0
+- Postgres database (Neon, Supabase, or similar)
+- Vercel Blob token (for image storage)
+
+### Installation
+
+```bash
+# Clone and install
+pnpm install
+
+# Set up environment
+cp .env.example .env
+# Fill in: DATABASE_URL, DATABASE_URL_UNPOOLED, PAYLOAD_SECRET, BLOB_READ_WRITE_TOKEN
+```
+
+### First Run
+
+```bash
+# Start dev server — Drizzle will prompt for schema migration
+pnpm dev
+# → Open http://localhost:3000
+# → Visit /admin, create first admin user in `Usuarios` collection
+```
+
+**Drizzle migration note:** When upgrading from Payload's blank template (`users`, `media`) to Trísion's schema (`usuarios` + 6 collections), always choose **"create table"** for new collections, never "rename table." Renaming leaves orphaned foreign keys that break the migration.
+
+If the schema push fails midway:
+```bash
+pnpm payload:fix-rels    # Repair stale FK constraints (dev only)
+# Or, for a clean slate:
+pnpm payload:reset-db    # Drops public schema, next `pnpm dev` starts fresh
+```
+
+### Key Commands
+
+```bash
+pnpm dev                  # Dev server with hot reload
+pnpm build && pnpm start  # Production build and serve
+pnpm lint                 # ESLint check
+pnpm test:tenancy         # Verify access-control rules (Vitest)
+pnpm payload:verify       # Smoke-test Payload init without admin UI
+pnpm payload:seed         # Seed mock data from content/ into Postgres (idempotent)
+pnpm verificar-fase-0     # Run Lighthouse + Playwright checks (requires pnpm start running)
+```
+
+---
 
 ## Stack
 
-Versions here are a snapshot, not a pin — see `AGENTS.md` §2.0 before adding anything.
+| Layer | Technology | Status |
+|-------|-----------|--------|
+| **Framework** | Next.js 16.3.1 (App Router, TypeScript, `src/` directory) | ✓ Active |
+| **Styling** | Tailwind CSS v4, tokens in `src/app/globals.css` (dark mode only) | ✓ Active |
+| **CMS** | Payload 3.88 with multi-tenant plugin at `/admin` | ✓ Landed |
+| **Database** | Postgres via `@payloadcms/db-postgres` | Adapters ready |
+| **Storage** | Vercel Blob for product photos and reseller portraits | Adapters ready |
+| **Rich Text** | Payload Lexical editor for collection descriptions | ✓ Integrated |
+| **UI Components** | AlignUI foundation + `Drawer` (vendored, `src/components/ui/`) | ✓ Partial |
+| **Motion** | motion/react for scroll-triggered animations | ✓ Active |
+| **Client State** | Zustand for ephemeral UI state (filters, drawer toggles) | ✓ Active |
+| **Server State** | URL search params for filterable routes (soft navigation) | ✓ Active |
+| **Conversion** | WhatsApp via `wa.me` links (no cart, no checkout) | ✓ Active |
+| **Analytics** | JSON-LD (Organization, Product, WebSite structured data) | ✓ Active |
+| **Deployment** | Vercel | ✓ Live |
 
-| Layer | Choice | Now |
-|---|---|---|
-| App | Next.js 16 (App Router, TypeScript, Turbopack, `src/`) | yes |
-| Styling | Tailwind v4, tokens in `src/app/globals.css`, dark only | yes |
-| Brand | `Visor`, `VisorCursor`, `Numeracao`, `Marca`, `Ceu` — hand-written | yes |
-| Catalogue | TS modules in `content/` behind `lib/catalog/` (Fase 0) | wired into `/`, `/catalogo`, `/oculos/[slug]`, `/colecoes` |
-| Tenancy | Mirrors the catalogue seam: `lib/tenant/` + `lib/tenant/scope.ts` (Fase 0, mock data) | three mock resellers, `/loja/[rev]` path stand-in |
-| State | Zustand (client UI state, e.g. the filter drawer) + URL search params (filters). TanStack Query deliberately not installed yet | see `AGENTS.md` "State management" |
-| UI primitives | AlignUI foundation + `Drawer` vendored (`src/components/ui/`, `src/utils/`) | `Drawer` only — rest deferred per real need |
-| CMS | Payload 3.88 at `/admin`, multi-tenant plugin | mounted — schema push on first `pnpm dev`, then create admin |
-| Data | Postgres + Vercel Blob | adapters wired; provision via Marketplace if not done |
-| Conversion | `wa.me` via `lib/lead/link.ts`, no cart (`spec-architecture.md` §2) | direct link, no `/ir/` attribution yet |
-| Host | Vercel | `trision.vercel.app` |
+**Note on versions:** All version numbers are a snapshot, not a pin. Before adding any dependency, check the framework's current docs first — APIs and conventions may have changed. See `AGENTS.md` §2.0.
 
-## Address
+---
 
-`https://trision.vercel.app` — in `src/lib/site-config.ts`, trailing slash stripped in
-one place. Override with `NEXT_PUBLIC_SITE_URL` once the real domain is known — Amanda
-confirmed 2026-08-17 she owns one, but the exact string and DNS access are still
-`[VERIFICAR]` (`spec-brand.md` §6, question 4). Wildcard subdomains (illustrated here as
-`loja.trision.com.br`, not a confirmed name) need the apex; until then, Fase 1 does not
-move.
+## Architecture at a Glance
 
-## Mark, favicon and OG
+### Catalogue & Tenancy Seams
 
-The eight paths of the symbol live in `src/lib/marca-paths.ts` and are the **only**
-source: the header, the favicon (`src/app/icon.tsx`), the apple-touch (`apple-icon.tsx`)
-and every social card all read from there, so the favicon cannot drift from the mark.
-The drawing is an **approximate redraw** of the raster — question 8 in `spec-brand.md`
-§6 is still open.
+The app reads product and reseller data through two pluggable interfaces:
 
-`/` keeps the root `opengraph-image.tsx`/`twitter-image.tsx` pair (the brand-generic
-card). Every other route composes its own card through `lib/og-image.tsx`'s shared
-`gerarOgImage()` — `/catalogo`, `/colecoes`, `/colecoes/[slug]`, `/oculos/[slug]`,
-`/revendedores`, `/seja-revendedor`, `/sobre`, and `/loja/[rev]` + its three subroutes
-each get a card naming what's actually on that page (product, collection, or reseller +
-city/UF), not the generic brand one. All of them are composed with the static font
-instances in `src/assets/*.ttf` — Satori does not use the variable face that `next/font`
-serves — and the seeded starfield (`estrelas()`) keeps each card byte-stable across
-builds.
+- **`src/lib/catalog/source.ts`** — Returns products and collections. Selects between `source.payload.ts` (live Postgres) or `source.local.ts` (mock data from `src/content/`) based on `DATABASE_URL`.
+- **`src/lib/tenant/source.ts`** — Returns reseller data. Same selection logic. One scoping function `lib/tenant/scope.ts` enforces that a reseller user can only read their own data.
 
-Sitewide Organization/WebSite JSON-LD lives in `src/app/layout.tsx`
-(`lib/structured-data.ts`); `Product` JSON-LD renders on both product-page variants.
+This design allows Fase 0 to run without a database (dev demos) and Fase 1 to swap in Payload without rewriting the app.
 
-## Run
+### Collections (Fase 1)
 
-```sh
-pnpm install
-cp .env.example .env   # fill DATABASE_URL, PAYLOAD_SECRET, BLOB_READ_WRITE_TOKEN
-pnpm dev               # http://localhost:3000 — first run prompts Drizzle schema push
-pnpm build && pnpm start
-pnpm lint
-pnpm test:tenancy
-pnpm payload:verify    # smoke-test Payload init without the admin UI
-pnpm payload:seed      # port content/ mock data into Postgres (idempotent)
-pnpm verificar-fase-0  # budgets pass, TASK-verificacao-fase-0.md §5 — needs pnpm start running
-```
+| Collection | Ownership | Editable By | Notes |
+|-----------|-----------|------------|-------|
+| `Productos` | Brand | Admin only | Global, not tenant-scoped. Lock: admin cannot be created by reseller role. |
+| `Colecoes` | Brand | Admin (read for reseller) | Editorial collections, brand voice only. |
+| `Revendedores` | Admin | Admin + reseller (field-level) | Tenant collection. Reseller can edit: name, contact, address, hours, portrait, bio. Admin controls: slug, city, UF, status, lead destination. |
+| `Mostruario` | (Implicit) | Reseller (own rows) | Tenant-scoped. Links product + reseller + availability. Reseller CRUD on own rows only. |
+| `Usuarios` | Admin | Admin | Role: `admin` or `revendedor`. Multi-tenant plugin manages tenant membership. |
+| `Config` | Admin | Admin | Global. Brand WhatsApp, socials, home hero, footer, founding year. |
 
-Without `DATABASE_URL`, the site still renders from `content/` mock data (Fase 0 fallback).
-With it set, `/admin` mounts Payload and the catalogue/tenant seams read Postgres when
-reachable.
+### Multi-Tenancy Model
 
-### Payload first run
+- Each row of `Revendedores` is a tenant
+- Payload's `plugin-multi-tenant` automatically filters `Mostruario` by the logged-in reseller's tenant
+- `Productos` and `Colecoes` remain global so all resellers see the same catalogue
+- `Usuarios` is global (admin is global, reseller auth is tenant-agnostic)
 
-1. Copy `.env.example` → `.env` and fill `DATABASE_URL` (pooler URL is fine),
-   `DATABASE_URL_UNPOOLED` (direct Neon host, `sslmode=verify-full`), `PAYLOAD_SECRET`,
-   `BLOB_READ_WRITE_TOKEN`.
-2. `pnpm dev` — Drizzle compares the DB to `payload.config.ts` and may prompt
-   interactively. **Always choose `+ create table`**, never `~ rename table`, when moving
-   from the blank template's default `users`/`media` schema to Trísion's `usuarios` +
-   collections. Renaming makes Drizzle think old tables map to new ones and the push can
-   stall mid-migration.
-3. Accept the data-loss warning if it mentions deleting the template `users` table (one
-   test account at most).
-4. Open `/admin` and create the first admin user (`usuarios` collection).
-5. If schema push fails with
-   `constraint "payload_locked_documents_rels_users_fk" … does not exist`, the push stalled
-   halfway: run `pnpm payload:fix-rels` and restart dev. For a clean dev DB with no data
-   worth keeping, `pnpm payload:reset-db` drops the public schema so the next push starts
-   fresh.
-
-Expected collections in `/admin` after a successful push: **Usuarios**, **Media**,
-**Colecoes**, **Produtos**, **Revendedores**, **Mostruario**, plus the **Config** global
-—not the blank template's "Users" only.
-
-## Verification
-
-`scripts/verificar-fase-0.mts` (Lighthouse + Playwright/axe) checks `/`, `/apresentacao`,
-`/catalogo`, `/colecoes`, `/colecoes/exemplo`, `/revendedores`, `/seja-revendedor`,
-`/oculos/TRI-MOD-A`, `/loja/otica-exemplo`, `/loja/otica-exemplo/mostruario`,
-and `/loja/otica-exemplo/a-loja` against the budgets in `spec-design.md` §12.
-
-| Route | LCP | CLS | JS transfer |
-|---|---|---|---|
-| `/` | 1.56s ✓ | 0.000 ✓ | 143 KB ✓ |
-| `/catalogo` | 1.61s ✓ | 0.000 ✓ | 147 KB ✓ |
-| `/oculos/TRI-MOD-A` | 1.58s ✓ | 0.000 ✓ | 145 KB ✓ |
-| `/loja/otica-exemplo/mostruario` | 1.56s ✓ | 0.000 ✓ | 147 KB ✓ |
-| `/apresentacao` | **3.77s ✗** | 0.000 ✓ | 178 KB ✓ |
-
-All Playwright checks pass (contrast, keyboard/`.foco-visor`, `Ceu`/`VisorCursor` under
-reduced-motion and coarse pointer). **`/apresentacao` LCP is the one open budget** — the
-`motion` layer added in `ea6120f`; tracked in `TASK-verificacao-fase-0.md` §6 and the
-motion task docs. Run with `pnpm build && PORT=3001 pnpm start` then
-`pnpm verificar-fase-0 http://localhost:3001`.
+---
 
 ## Routes
 
-| Route | What it is |
-|---|---|
-| `/` | The real homepage: thesis line, collections, `Desde 2002`. Mock data, `exemplo` labelled |
-| `/colecoes`, `/colecoes/[slug]` | Collection list + editorial detail |
-| `/revendedores` | Active reseller network — filter by city/UF; each card links to its storefront |
-| `/seja-revendedor` | B2B funnel — static copy + WhatsApp CTA (no form until Fase 1) |
-| `/catalogo` | Full line, filterable by formato/material/cor/gênero via URL search params |
-| `/oculos/[slug]` | Product page — gallery, ficha técnica, numeração, onde comprar, WhatsApp CTA |
-| `/sobre` | Honest-partial bio page — confirmed facts (`Desde 2002`, positioning, `Eyewear Addict ❤`) plus a visible `[VERIFICAR]` panel for what Amanda hasn't confirmed yet (her name, her story, portrait use) |
-| `/loja/[rev]`, `/loja/[rev]/mostruario`, `/loja/[rev]/a-loja`, `/loja/[rev]/oculos/[slug]` | **Fase 0 path stand-in** for the storefront — three mock resellers (`otica-exemplo`, `otica-demonstracao`, `loja-exemplo`). The product page is tenant-scoped (404s for a sku the shop doesn't carry) and its WhatsApp CTA is attributed to the shop. Shared `src/app/loja/[rev]/layout.tsx` renders `LojaCabecalho` — tabs between the shop's own pages plus a mark link back to the brand site (`TASK-loja-navegacao.md`). Not the final URL shape (see `AGENTS.md` "Storefront routing") |
-| `/apresentacao` | The pitch for Amanda — 16 sections, pt-BR, `noindex` |
-| `/icon`, `/apple-icon` | Favicon and apple-touch generated from the symbol |
-| `/opengraph-image`, `/twitter-image` | Social card 1200×630 |
-| `/robots.txt`, `/sitemap.xml` | `/apresentacao`, `/ir/`, `/loja/` stay out of the index |
+### Brand Site (`/marca/*`)
+| Path | Purpose |
+|------|---------|
+| `/` | Homepage: thesis, featured collections, 24-year mark |
+| `/catalogo` | Full product line, filterable by format/material/colour/gender |
+| `/colecoes`, `/colecoes/[slug]` | Collection list and editorial detail |
+| `/revendedores` | Active reseller directory, filterable by city/state |
+| `/seja-revendedor` | B2B pitch + WhatsApp CTA (no form yet) |
+| `/sobre` | Brand story — confirmed facts only, `[VERIFICAR]` panel for unknowns |
+| `/oculos/[slug]` | Product detail: gallery, specs, numeração, where to buy, WhatsApp CTA |
 
-## Brand components
+### Storefronts (`/loja/*` — temporary path-based routing)
+| Path | Purpose |
+|------|---------|
+| `/loja/[rev]` | Storefront home — shop portrait, hours, featured items |
+| `/loja/[rev]/mostruario` | Shop's inventory (subset of catalogue) |
+| `/loja/[rev]/a-loja` | Shop detail: address, hours, contact |
+| `/loja/[rev]/oculos/[slug]` | Product detail (tenant-scoped: 404 if shop doesn't carry it), WhatsApp CTA names the shop |
 
-| File | What it does |
-|---|---|
-| `src/components/visor.tsx` | The four corner brackets. The system's only ornament |
-| `src/components/numeracao.tsx` | `52□18-145` from three numbers in mm; the `□` is SVG |
-| `src/components/marca.tsx` | Symbol + lockup. **Approximate redraw** — pending the original vector. `MarcaLockup` takes `simbolo`/`texto`/`subtexto`/`gap` so the same component renders at header scale and hero scale — one logo treatment, not a small icon plus a separate big lockup |
-| `src/components/visor-cursor.tsx` | The brackets following the pointer and snapping onto `data-alvo`. Fine pointer only, off under `prefers-reduced-motion` |
-| `src/components/ceu.tsx` | Her starfield, on canvas. Dim, slow twinkle (~1.5–4s cycle), ~1 in 4 stars `--ouro`. Static under `prefers-reduced-motion` |
-| `src/components/produto/*` | `ProdutoCard`, `GaleriaProduto`, `FichaTecnica`, `BotaoWhatsApp`, `OndeComprar`, `GradeProdutos`, `Filtros`, `FiltroToggle`/`FiltroDrawer` (Zustand-backed; drawer chrome is AlignUI `Drawer`) |
-| `src/components/ui/drawer.tsx` | AlignUI `Drawer` — vendored, Radix Dialog. Powers `FiltroDrawer` |
-| `src/utils/cn.ts`, `tv.ts`, `polymorphic.ts`, `recursive-clone-children.tsx` | AlignUI foundation utils — vendored byte-identical |
-| `src/components/colecao/colecao-card.tsx` | Editorial tile for a collection |
-| `src/components/revendedor/revendedor-endosso.tsx` | The attribution line — `spec-brand.md` §3 |
-| `src/components/revendedor/filtro-revendedores.tsx` | City/UF chip filter on `/revendedores` — URL search params, same idiom as product filters |
-| `src/components/marca/cabecalho.tsx` | Shared nav for the marca routes, small `MarcaLockup` as the header logo |
-| `src/components/marca/rodape.tsx` | Shared footer — brand blurb, nav, contact column (WhatsApp/email/Instagram, honest-absence fallback), legal bar with studio credit |
+**Note:** This path-based routing (`/loja/[rev]`) is the Fase 0 stand-in. Fase 1+ targets wildcard subdomains (`loja-exemplo.trision.com.br`) via `middleware.ts` Host rewriting — blocked on confirming the apex domain (question #4 in `spec-brand.md`).
 
-## Layout
+### Admin & System
+| Path | Purpose |
+|------|---------|
+| `/admin` | Payload CMS: manage products, resellers, inventory, media |
+| `/api/[...slug]` | Payload REST & GraphQL API |
+| `/opengraph-image`, `/twitter-image` | Dynamic social cards |
+| `/icon`, `/apple-icon` | Favicon (SVG paths from `marca-paths.ts`) |
+
+---
+
+## Brand Components
+
+All hand-written to embody the brand identity:
+
+| Component | Purpose | File |
+|-----------|---------|------|
+| `Visor` | Four corner brackets — the brand's only ornament | `src/components/visor.tsx` |
+| `VisorCursor` | Brackets following the pointer, snapping to focused elements | `src/components/visor-cursor.tsx` |
+| `Numeracao` | Optical measurements: `52□18-145` from three mm values, SVG box | `src/components/numeracao.tsx` |
+| `Marca` | Symbol + wordmark, scales from header to hero | `src/components/marca.tsx` |
+| `Ceu` | Starfield canvas — dim, slow twinkle, ~25% gold stars | `src/components/ceu.tsx` |
+| `MarcaCabecalho` | Shared brand-site nav | `src/components/marca/cabecalho.tsx` |
+| `Rodape` | Shared brand-site footer | `src/components/marca/rodape.tsx` |
+| `ProdutoCard`, `GradeProdutos`, `GaleriaProduto`, `FichaTecnica` | Product browsing and detail | `src/components/produto/*` |
+| `FiltroDrawer`, `FiltroToggle`, `FiltroRevendedores` | Faceted search (Zustand-backed) | `src/components/produto/*` |
+| `Drawer` | AlignUI dialog primitive (vendored) | `src/components/ui/drawer.tsx` |
+| `RevendedorEndosso` | Reseller attribution line (spec-brand.md §3) | `src/components/revendedor/*` |
+
+---
+
+## Key Files
 
 ```
-src/app/(marca)/         route group sharing one layout (Ceu, VisorCursor, Cabecalho,
-                          Rodape): /, /catalogo, /colecoes, /oculos/[slug], /revendedores,
-                          /seja-revendedor, /sobre — chrome-sharing only, no URL segment,
-                          NOT the Fase 1 target (marca)/ below (see note after this tree)
-src/app/loja/[rev]/      Fase 0 storefront path stand-in (+ mostruario, a-loja, oculos/[slug]) —
-                          own layout.tsx + LojaCabecalho (RevendedorEndosso + tab nav),
-                          deliberately outside (marca)/
-src/app/apresentacao/    the pitch, own chrome, icon/og/robots/sitemap alongside it
-src/app/globals.css      spec-design.md §4.1 tokens
-src/components/          visor, visor-cursor, numeracao, marca, ceu, produto/, colecao/, revendedor/, ui/
-src/utils/               AlignUI foundation (cn, tv, polymorphic, recursive-clone-children)
-src/lib/site-config.ts   SITE_URL, normalised once
-src/lib/marca-paths.ts   the eight paths of the symbol
-src/lib/numeracao.ts     mm → "52□18-145" string, shared by the component and lib/lead/link.ts
-src/lib/catalog/         Fase 0 catalogue seam — types.ts, source.ts, source.local.ts
-src/lib/tenant/          Fase 0 tenancy seam — source.ts, source.local.ts, scope.ts (the ONE scoping fn)
-src/lib/lead/link.ts     the ONE wa.me builder — direct link only, no /ir/ attribution yet
-src/content/             example catalogue + tenant data — all `exemplo`
-src/assets/*.ttf         static Archivo, OG only (Satori)
-scripts/verificar-fase-0.mts  budget checks (Lighthouse + Playwright/axe) — not yet extended
-                          to the routes above
-docs/                    specs, identity board, tasks
-references/              brand evidence (*.mov gitignored; frames committed)
+src/app/
+  (marca)/              Brand-site route group (shared Ceu, VisorCursor, nav, footer)
+  loja/[rev]/           Fase 0 storefront path stand-in
+  apresentacao/         Amanda's pitch (16 sections, pt-BR, noindex)
+  globals.css           Tailwind tokens per spec-design.md §4.1
+  layout.tsx            Root layout: Archivo font, dark mode, structured data
+
+src/lib/
+  catalog/              Product/collection data seam
+    source.ts           Selection point: payload or mock
+    source.payload.ts   Payload implementation (Fase 1)
+    source.local.ts     Mock data from content/ (Fase 0 fallback)
+    types.ts            Shared types
+  tenant/               Reseller/inventory data seam
+    source.ts           Selection point: payload or mock
+    source.payload.ts   Payload implementation (Fase 1)
+    source.local.ts     Mock data from content/
+    scope.ts            Single scoping function — enforces tenant boundaries
+  marca-paths.ts        SVG paths for symbol (favicon, header, OG cards all read from here)
+  numeracao.ts          mm → "52□18-145" string formatter
+  lead/link.ts          Single WhatsApp URL builder
+  site-config.ts        SITE_URL normalization
+
+src/content/            Mock data for Fase 0 (marked `exemplo`)
+  produtos.ts
+  colecoes.ts
+  revendedores.ts
+  mostruario.ts
+
+src/components/         Brand components + product/reseller UI
+src/utils/              AlignUI foundation (cn, tv, polymorphic, recursive-clone-children)
+src/collections/        Payload collection schemas (Fase 1)
+src/globals/            Payload global schemas (Fase 1)
+
+payload.config.ts       Payload CMS configuration
+.env.example            Environment variables template
+
+docs/
+  spec-brand.md         Brand audit, positioning, voice, open questions
+  spec-design.md        Design system, tokens, performance budgets
+  spec-architecture.md  Platform design, data model, phasing
+  tasks/                Implementation task documents (one per unit of work)
+  identidade.html       Internal identity reference board
+
+scripts/
+  verificar-fase-0.mts  Lighthouse + Playwright budget checks
+  seed-mock-data.mts    Load content/ into Postgres
+  verify-payload-init.mts  Smoke test
+  fix-payload-rels.mts  Repair migration constraints
+  reset-payload-db.mts  Drop schema for clean migration
+
 ```
 
-The Fase 1 target layout (`(loja)` / `(payload)` / `content/` / `lib/catalog/`) is in
-`spec-architecture.md` §10. Do not create those folders in a task that is not building
-them. `(marca)/` is the one exception already built (`TASK-footer.md`) — it exists today
-purely to share `Cabecalho`/`Rodape`/`Ceu`/`VisorCursor` across the brand-site routes, has
-no dependency on `middleware.ts` or the domain, and isn't itself the Fase 1 migration —
-just a head start on the folder shape.
+---
 
-## Deploy
+## Development Workflow
 
-Mostly static — `pnpm build` prerenders every route with `generateStaticParams`
-(`/colecoes/[slug]`, `/oculos/[slug]`, `/loja/[rev]`, `/loja/[rev]/a-loja`,
-`/loja/[rev]/oculos/[slug]`). `/catalogo` and `/loja/[rev]/mostruario` render on demand
-(`ƒ`) because they read URL search params.
-Goes up on Vercel straight from the repo, with no environment variables in this phase.
+1. **Before touching code:** Write a task document at `docs/tasks/TASK-<slug>.md`
+   - Current scenario (what exists, what's missing)
+   - Planned changes (file by file, why each change)
+   - Why (justification, so reviewers can push back early)
+   - Affected files (table of what changes and how)
+   - Verification (measurable, no "works" or "looks good")
 
-## What must not break
+2. **While coding:**
+   - Use CLI generators (`next`, `payload`, `tailwind`) over hand-authoring
+   - Write `[VERIFICAR: what to check and who to ask]` for any uncertain facts
+   - Prefer the existing seams: plug into `lib/catalog/source.ts` or `lib/tenant/source.ts`, don't rewrite around them
 
-Full list in `AGENTS.md` §0. The ones most easily broken by accident:
+3. **Before declaring done:**
+   - Update `README.md`, `AGENTS.md`, `spec-*.md`, `.env.example` as affected
+   - Verify the build passes: `pnpm build`
+   - Run the test suite: `pnpm test:tenancy`
+   - Run Lighthouse checks: `pnpm verificar-fase-0`
+   - Commit once everything is verified
 
-- **No invented facts** about her business — price, measurement, city, shop name.
-  `[VERIFICAR]` instead. `Consulte o valor` beats a plausible number.
-- **No cart in v1.** Everything ends in WhatsApp.
-- **A reseller is an endorsement, not a sub-brand.** No colour, logo or font per shop.
-- **A bracket frames something real.** A number is a real measurement. `#FFFFFF` means
-  "in focus", not text.
-- **The wordmark is SVG**, from `marca-paths.ts`, never a substitute typeface.
+---
+
+## Performance & Accessibility
+
+**Budget targets** (per `spec-design.md` §12):
+- LCP: ≤1.6 seconds
+- CLS: 0.000
+- JS transfer: ≤180 KB (storefront routes)
+
+**Current status** (as of Fase 1 CMS landing):
+| Route | LCP | CLS | JS | Status |
+|-------|-----|-----|----|-|
+| `/` | 1.56s | 0.000 | 143 KB | ✓ |
+| `/catalogo` | 1.61s | 0.000 | 147 KB | ✓ |
+| `/oculos/[slug]` | 1.58s | 0.000 | 145 KB | ✓ |
+| `/loja/[rev]/mostruario` | 1.56s | 0.000 | 147 KB | ✓ |
+| `/apresentacao` | 3.77s | 0.000 | 178 KB | ✗ LCP over (motion layer pending optimization) |
+
+**Accessibility:** All routes pass WCAG AA contrast checks, keyboard navigation, focus indicators (via `.foco-visor`), and reduced-motion rendering (Ceu is static, VisorCursor is disabled).
+
+---
+
+## Blocking Questions
+
+Three answers Amanda must give before scaling further (tracked in `spec-brand.md` §6):
+
+| # | Question | Impact | Status |
+|---|----------|--------|--------|
+| 4 | **What is the apex domain?** (e.g., `trision.com.br`) | Blocks wildcard subdomain routing, multi-tenant URLs, Fase 1+ launch | Partially answered 2026-08-17 — Amanda owns a domain, exact string `[VERIFICAR]` |
+| 6 | **Where does the WhatsApp button point?** (Amanda's number or local reseller?) | Affects every CTA on the site | Uses `lib/lead/link.ts` `destinoLead` field so this can vary per storefront, but the policy must be set |
+| 7 | **Pricing model:** per-reseller or one suggested price? | Decides whether `Mostruario.preco` exists | Unresolved — do not build `preco` field until this is answered |
+
+---
+
+## Environment Variables
+
+Copy `.env.example` → `.env` and fill:
+
+```env
+# Required for database & CMS
+DATABASE_URL="postgresql://..."        # Pooler connection (for app)
+DATABASE_URL_UNPOOLED="postgresql://..." # Direct connection (for migrations)
+PAYLOAD_SECRET="<random 32+ char string>"
+
+# Required for image storage
+BLOB_READ_WRITE_TOKEN="<vercel blob token>"
+
+# Site config
+NEXT_PUBLIC_SITE_URL="https://trision.vercel.app"  # Override when apex domain is confirmed
+
+# WhatsApp (brand default, overrideable per-reseller in Payload)
+WHATSAPP_MARCA="+5524999999999"  # [VERIFICAR: actual number]
+```
+
+If `DATABASE_URL` is not set, the app runs entirely from mock data in `src/content/`.
+
+---
+
+## Deployment
+
+Push to GitHub → Vercel builds and deploys automatically. No environment variables needed for Fase 0 (all routes render from mock data). For Fase 1+, configure Postgres and Blob through Vercel's dashboard or Marketplace.
+
+**Preview deployments** work the same way — each branch gets its own URL.
+
+---
+
+## Payload First-Run Checklist
+
+1. Fill `.env` with `DATABASE_URL` (pooler), `DATABASE_URL_UNPOOLED` (direct), `PAYLOAD_SECRET`, `BLOB_READ_WRITE_TOKEN`
+2. Run `pnpm dev` and answer Drizzle migration prompts (always **create**, never **rename**)
+3. Visit `/admin` and create the first admin user (Usuarios collection)
+4. If Drizzle fails with constraint errors, run `pnpm payload:fix-rels`
+5. Verify all six collections exist: Usuarios, Media, Colecoes, Productos, Revendedores, Mostruario, Config
+
+---
+
+## What Must Not Break
+
+**Non-negotiable rules** — enforced by design, tests, and code review:
+
+- **No invented facts** about the business (prices, measurements, city names, shop names). Write `[VERIFICAR]` instead.
+- **No cart or checkout.** Every path ends in WhatsApp (`wa.me`).
+- **A reseller is an endorsement, not a sub-brand.** No per-reseller colors, logos, or fonts. Ever.
+- **A bracket frames something real** — not a decoration. A measurement is a real mm value, not a placeholder.
+- **`#FFFFFF` means "in focus"** — focused element only, not text color.
+- **No second accent color.** Gold appears on lines, edges, and one button. Never on text over a lens.
+- **Radius = 0** (sharp corners). One exception: `--radius-lente: 2px` for lens elements.
+- **The wordmark is SVG**, paths from `marca-paths.ts`, never a substitute typeface.
+- **Dark mode only** — no light-mode toggle, no `prefers-color-scheme` swap.
+- **`prefers-reduced-motion` is a complete experience** — Ceu is static, VisorCursor is off.
+- **One WhatsApp builder:** `lib/lead/link.ts` only.
+- **One tenancy scope:** `lib/tenant/scope.ts` only.
+- **AlignUI is vendored byte-identical** when installed — restyle via tokens only.
+
+See `AGENTS.md` §0 for the full list and rationale.
+
+---
+
+## Support & Contribution
+
+This is a paid client project. All work follows the task-document process in `AGENTS.md`. For questions about the codebase, the brand, or the platform architecture, refer to the docs in `/docs` first — they are the source of truth.
+
+To report issues or request features, open a GitHub issue with:
+- What you tried
+- What you expected
+- What happened instead
+- The task document (if one exists) or the spec section affected
+
+---
+
+**Built with ❤ for Trísion Eyewear.**

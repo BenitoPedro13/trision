@@ -1,6 +1,20 @@
 {
-  "name": "app-tmp",
+  "name": "trision-eyewear",
   "version": "0.1.0",
+  "description": "Trísion Eyewear — a Brazilian eyewear brand site with multi-tenant reseller storefronts. One catalogue, one brand identity, many independent shop experiences.",
+  "keywords": [
+    "eyewear",
+    "optical",
+    "storefront",
+    "multi-tenant",
+    "saas",
+    "next.js",
+    "payload-cms",
+    "e-commerce",
+    "brazilian-brand",
+    "b2b",
+    "reseller-network"
+  ],
   "type": "module",
   "private": true,
   "scripts": {
@@ -52,5 +66,15 @@
     "typescript": "^5",
     "vitest": "^4.1.10"
   },
-  "packageManager": "pnpm@11.21.0"
+  "packageManager": "pnpm@11.21.0",
+  "author": "Benito",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BenitoPedro13/trision"
+  },
+  "bugs": {
+    "url": "https://github.com/BenitoPedro13/trision/issues"
+  },
+  "homepage": "https://trision.vercel.app",
+  "license": "SEE LICENSE IN LICENSE.md"
 }
