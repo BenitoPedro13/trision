@@ -1,0 +1,151 @@
+# TASK — `/loja/[rev]/a-loja` (shop identity) and city/UF search on `/revendedores`
+
+## 1. Current scenario
+
+`TASK-revendedores-e-seja-revendedor.md` just closed. `spec-design.md` §11 names two rows still
+open that are **not** blocked on Amanda (unlike `/sobre` and `/atendimento-exclusivo`, both
+`[VERIFICAR: blocked on open question]`):
+
+- **Storefront table:** `/a-loja` — "Shop identity: photo, address, hours, map." Not built.
+  `src/app/loja/[rev]/` today has only `page.tsx` (home) and `mostruario/page.tsx`.
+- **Brand table:** `/revendedores` — "The network. **Search by city/UF.** Proof of 24 years."
+  The search half was explicitly deferred by the task doc that built `/revendedores`
+  (§2.7): *"with exactly one `exemplo` reseller today, a filter UI would be unverifiable
+  against real content... Revisit once Fase 1 onboards more than one reseller."*
+
+That deferral reasoning still holds literally — `content/revendedores.ts` still has exactly one
+record (`Ótica Exemplo`). Raised with the user before scoping this doc; **resolved: add 2–3 more
+`exemplo` resellers as part of this task**, same license as every other mock dataset in this repo
+(`content/produtos.ts`, the original `content/revendedores.ts` comment), so the filter is
+actually exercised rather than shipped unverifiable a second time.
+
+`Revendedor` (`src/lib/catalog/types.ts` §70) currently has no `endereco`, `horarios`, or
+`retrato` fields — `/a-loja` needs all three. `spec-architecture.md` §5.2 (the Fase 1 Payload
+schema) already names them: `endereco`, `horarios` (group, reseller-editable), `retrato` (media,
+"the one visual thing a reseller controls," `spec-brand.md` §3). Adding them to the Fase 0 type
+now is implementing a field the target schema already specifies, not inventing one — same seam
+discipline as everything else in `lib/catalog` / `lib/tenant`.
+
+## 2. Planned changes
+
+### 2.1 `src/lib/catalog/types.ts` — three new `Revendedor` fields
+
+Mirrors `spec-architecture.md` §5.2 field names exactly (`endereco`, `horarios`, `retrato`), Fase
+0 shape (plain strings/booleans, no Payload `media`/`group` types):
+
+```ts
+export interface Revendedor {
+  // ...existing fields unchanged...
+  endereco: string; // "" ⇒ not shown, same convention as `whatsapp`
+  horarios: string; // free text, e.g. "Seg–Sex 9h–18h · Sáb 9h–13h"
+  retrato: string; // image path, "" ⇒ "Sem foto" empty state (mirrors GaleriaProduto)
+}
+```
+
+No `MedidasProduto`-style structured type for `horarios` — `spec-architecture.md` §5.2 lists it
+as a Payload `group`, but nothing in this app needs to parse hours (no "open now" logic exists or
+is planned), so a display string is the honest Fase 0 shape. Revisit only if a real feature reads
+it.
+
+### 2.2 `src/content/revendedores.ts` — 2–3 more `exemplo` resellers
+
+Adds resellers with distinct `cidade`/`uf` (so the filter has something to filter), all obviously
+fictional and `exemplo: true`, all `endereco`/`horarios` filled with plausible placeholder text,
+all `retrato: ""` (no photography exists, `TASK-normalizar-imagens.md` still not built — honest
+empty state, not an invented photo, `AGENTS.md` §0).
+
+### 2.3 `src/app/loja/[rev]/a-loja/page.tsx` — shop identity
+
+Server Component, same shell as `src/app/loja/[rev]/page.tsx` (`Ceu` + `VisorCursor`, no
+`Cabecalho` — storefront routes don't carry brand nav, matching the existing `/loja/[rev]` and
+`/mostruario` pages). Reuses `escopoRevendedor` for the `revendedor` record + `notFound()` on
+`generateStaticParams` mismatch, same as the sibling routes.
+
+Content, in order:
+
+1. `retrato` — `bg-lente` plate, `aspect-square`, `rounded-[var(--radius-lente)]`, "Sem foto"
+   label when empty — the exact empty-state idiom `GaleriaProduto` already established
+   (`components/produto/galeria-produto.tsx` §19–26), not a new pattern.
+2. `RevendedorEndosso` (name + city/UF, already exists) — repeats the header pattern already used
+   on `/loja/[rev]`.
+3. `endereco`, `horarios` as labelled text rows (mono, uppercase, tracked label above the value —
+   same idiom `FichaTecnica` uses for spec rows), only rendered when non-empty.
+4. **No embedded/interactive map.** No Maps provider is chosen anywhere in this repo, every
+   address is `exemplo` placeholder text, and an embedded map pointing at a fake address is worse
+   than none — same reasoning that already governs invented prices/measurements
+   (`AGENTS.md` §0). `spec-design.md` §11's "map" is `[VERIFICAR: no maps provider decided;
+   revisit once real addresses exist and a provider is chosen — likely Fase 1]`.
+
+### 2.4 `src/app/loja/[rev]/page.tsx` — one new nav link
+
+Adds a link to `/loja/${slug}/a-loja` next to the existing "Ver tudo que essa loja tem" link
+(same `foco-visor` treatment), so `/a-loja` is reachable — today nothing links to it.
+
+### 2.5 `src/components/revendedor/filtro-revendedores.tsx` — city/UF chips
+
+New component, follows `components/produto/filtros.tsx` byte-for-byte idiom: plain `Link` chips
+building `?cidade=`/`?uf=` query strings, no client component, no fetch, shareable URL — the
+state-management rule already established (`AGENTS.md` §0 "state management" section, point 3).
+Not a rename/extension of `Filtros` — that component's `FiltrosAtivos` type is product-specific
+(`formato`/`material`/`cor`/`genero`); reseller search is a different domain (`cidade`/`uf`), so a
+sibling component is more honest than overloading one type for two shapes.
+
+### 2.6 `src/app/revendedores/page.tsx` — reads `searchParams`, filters, renders chips
+
+Same shape `src/app/catalogo/page.tsx` already uses: `searchParams` prop, build `ativos` from it,
+filter the array fetched from `revendedoresAtivos()`, render `FiltroRevendedores` above the grid.
+No change to `lib/tenant/scope.ts` — filtering happens in the page against the already-fetched
+list, exactly like `/catalogo` filters products in the page rather than in `lib/catalog`.
+
+### 2.7 `scripts/verificar-fase-0.mts`
+
+Adds `/loja/otica-exemplo/a-loja` to `PAGES` (§4, affected files) — the new route needs the same
+JS-budget/LCP/CLS coverage every other route gets. `/revendedores` itself is already covered;
+its filtered states (`?cidade=...`) are UI-tested manually (§5), not added as separate budget
+entries — same as `/catalogo`'s filtered states today.
+
+### 2.8 Explicitly out of scope
+
+- **Interactive/embedded map.** §2.3 — no provider chosen, no real addresses yet.
+- **Reseller-editable `retrato` upload UI.** That's Payload admin, Fase 1 — this task only adds
+  the field and its read-side empty/filled states.
+- **Free-text search box / typeahead on `/revendedores`.** `spec-design.md` §11 says "search by
+  city/UF," which the chip idiom already satisfies (same exact-match filter shape `/catalogo`
+  uses) — a text input is a different, unrequested feature.
+- **`horarios` "open now" logic.** No structured time data exists (§2.1) — display only.
+- **Sitemap changes.** `/loja/*` stays out of `sitemap.ts` and `robots.ts`'s allow set — it's the
+  Fase 0 path stand-in, not the real subdomain shape (existing comment in both files already
+  covers this; `/a-loja` is one more route under the same disallowed prefix, no new line needed).
+
+## 3. Why
+
+Both pieces close the last two unblocked rows in `spec-design.md` §11's route tables. Building
+them now, rather than waiting, keeps pace with the rest of Fase 0's route table without touching
+anything blocked on Amanda (`[VERIFICAR]` items untouched) or front-loading Fase 1/3 scope (no
+Payload, no real map provider, no reseller self-service).
+
+## 4. Affected files
+
+| File | Change type | Notes |
+|---|---|---|
+| `src/lib/catalog/types.ts` | modified | `Revendedor` gains `endereco`, `horarios`, `retrato` (§2.1) |
+| `src/content/revendedores.ts` | modified | 2–3 more `exemplo` resellers, distinct cidade/uf (§2.2) |
+| `src/app/loja/[rev]/a-loja/page.tsx` | new | shop identity page (§2.3) |
+| `src/app/loja/[rev]/page.tsx` | modified | nav link to `/a-loja` (§2.4) |
+| `src/components/revendedor/filtro-revendedores.tsx` | new | city/UF chip filter, URL-param idiom (§2.5) |
+| `src/app/revendedores/page.tsx` | modified | reads `searchParams`, filters, renders chips (§2.6) |
+| `scripts/verificar-fase-0.mts` | modified | adds `/loja/otica-exemplo/a-loja` to `PAGES` (§2.7) |
+| `README.md` | modified | Status section: two more routes/features live |
+
+## 5. Verification
+
+- `pnpm lint` and `pnpm build` clean.
+- `pnpm exec tsx scripts/verificar-fase-0.mts` — new route added to `PAGES`; JS transfer ≤180 KB
+  gzipped, LCP ≤2.0s, CLS ≤0.05 (`spec-design.md` §12).
+- Visual: `/loja/otica-exemplo/a-loja` renders "Sem foto," endereço, horários for the original
+  mock reseller; `/revendedores?cidade=...` and `?uf=...` narrow the grid to matching resellers
+  across all `exemplo` records added in §2.2; clearing filters restores the full list.
+- `prefers-reduced-motion: reduce` pass on `/a-loja` and `/revendedores` (filtered + unfiltered):
+  zero console/page errors, content fully visible.
+- Keyboard pass: `Tab` reaches the new `/a-loja` nav link, the city/UF chips, and "Limpar
+  filtros" in DOM order, no new focus traps.
