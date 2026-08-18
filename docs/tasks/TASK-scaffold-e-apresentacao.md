@@ -67,7 +67,7 @@ in the spec, revisitable.
 | `marca.tsx` | The `Tr` bracket mark as SVG + the wordmark lockup. **Approximate redraw**, flagged in-code, pending the original vector (`spec-brand.md` §1.2). |
 | `ceu.tsx` | The starfield ground on `<canvas>`, her own ground rebuilt live instead of a 1.5 MB JPEG. Static under `prefers-reduced-motion`; the page is complete if it never initialises. |
 
-These are hand-written on purpose (`CLAUDE.md` §2.2) — no generator produces them, and they
+These are hand-written on purpose (`AGENTS.md` §2.2) — no generator produces them, and they
 are the brand.
 
 ### 2.5 The page — `src/app/apresentacao/page.tsx`

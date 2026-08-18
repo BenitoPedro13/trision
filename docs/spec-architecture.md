@@ -5,7 +5,7 @@
 > load-bearing here.
 >
 > Version numbers below are a **snapshot verified 2026-08-17**, not a pin. Re-check against
-> each tool's own docs before scaffolding (`CLAUDE.md` §2.0).
+> each tool's own docs before scaffolding (`AGENTS.md` §2.0).
 
 ---
 
@@ -64,7 +64,7 @@ already paid for itself there.
 | Framework | **Next.js, App Router, TypeScript** — **≥ 16.2.0 required** | Not a preference: Payload supports Next 16 only from `>16.1.1-canary.35` / `16.2.0+`, and **15.5–16.1.x is unsupported and will not be**. Pinning below 16.2 blocks the CMS. |
 | CMS | **Payload ≥ 3.73.0**, mounted inside the same Next app at `/admin` | Full Next 16 + Turbopack support landed in 3.73.0. Gives Amanda a real admin we do not build, plus per-collection *and* per-field access control, which is the whole tenancy story. |
 | Multi-tenancy | **`@payloadcms/plugin-multi-tenant`** | Adds a `tenant` field to *listed* collections and filters admin lists and relationship pickers by the selected tenant. Crucially, **collections it does not list stay global** — which is exactly the shape we need (§5). |
-| Database | **Postgres** via `@payloadcms/db-postgres` | Provider is **not pinned here.** Provision it at scaffold time by running Vercel Marketplace discovery, per `CLAUDE.md` §2.0 — picking a vendor from memory in a spec is how you end up on the wrong one. |
+| Database | **Postgres** via `@payloadcms/db-postgres` | Provider is **not pinned here.** Provision it at scaffold time by running Vercel Marketplace discovery, per `AGENTS.md` §2.0 — picking a vendor from memory in a spec is how you end up on the wrong one. |
 | Media | **Vercel Blob** via `@payloadcms/storage-vercel-blob` | Product photography is the heaviest asset class in the build. |
 | Styling | Tailwind + CSS variables mapped 1:1 to `spec-design.md` §4 | |
 | Components | AlignUI (vendored) → shadcn (gaps) → React Bits (§7 of the design spec) | `spec-design.md` §8 |
@@ -376,7 +376,7 @@ them. Losing them makes those specs unverifiable.
 | **Array of product relationships on `revendedores`** | §5.3. Unusable picker, one lock per edit, nowhere to hang curation. |
 | **`sendBeacon` attribution on direct `wa.me` links** | §7.1. Loses exactly the traffic that matters. |
 | **Per-reseller theming** | `spec-brand.md` §3. Destroys the product's core value. |
-| **Building Amanda a custom admin** | Payload already is one, with the access-control model this design needs. Writing it by hand is weeks of work to arrive somewhere worse (`CLAUDE.md` §2). |
+| **Building Amanda a custom admin** | Payload already is one, with the access-control model this design needs. Writing it by hand is weeks of work to arrive somewhere worse (`AGENTS.md` §2). |
 
 ## 15. Open questions
 

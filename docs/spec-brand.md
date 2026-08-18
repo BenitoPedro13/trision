@@ -86,39 +86,39 @@ be read programmatically — ask Amanda for a screenshot or for the text. It nam
 we currently know nothing about, and "Atendimento Exclusivo" may be the single most
 important page on the new site.]`
 
-### 1.5b CONTESTADO — a cor da marca é dourado, segundo a Amanda
+### 1.5b CONTESTED — the brand colour is gold, according to Amanda
 
-**Amanda, por WhatsApp, 2026-08-17:** *"A nossa cor é essa: Dourado com preto. No insta eu
+**Amanda, via WhatsApp, 2026-08-17:** *"A nossa cor é essa: Dourado com preto. No insta eu
 tenho usado preto com branco porque acho que facilita a leitura."*
 
-Isto **contradiz diretamente** o turquesa de §1.4 e a tese de `spec-design.md` §2, que rejeita
-o dourado por ser a posição mais lotada do mercado de óculos. A declaração dela é um **fato de
-marca** e tem precedência sobre a nossa amostragem — o turquesa foi inferido do material, o
-dourado foi afirmado pela dona.
+This **directly contradicts** the turquoise in §1.4 and the thesis of `spec-design.md` §2,
+which rejected gold as the most crowded position in the eyewear market. Her statement is a
+**brand fact** and outranks our sampling — turquoise was inferred from the material, gold
+was asserted by the owner.
 
-Duas coisas que a fala dela entrega de graça, e que valem mais que a discórdia:
+Two things her message hands us for free, and they are worth more than the disagreement:
 
-1. **O dourado já falhou na prática, por legibilidade** — ela mesma migrou para preto e branco
-   no Instagram *"porque facilita a leitura"*. Ou seja: o problema não é o dourado como
-   identidade, é o dourado como tinta de texto. Isso é resolvível e é exatamente o tipo de
-   coisa que um sistema de design existe para resolver.
-2. **Ela nunca abandonou o preto.** O fundo escuro sobrevive intacto, e com ele o céu
-   estrelado (§1.3), que é a parte mais forte e mais consistente do material dela.
+1. **Gold has already failed in practice, on legibility** — she herself moved to black and
+   white on Instagram *"porque facilita a leitura"*. So the problem is not gold as
+   identity, it is gold as body ink. That is solvable, and it is exactly the kind of thing
+   a design system exists to solve.
+2. **She never abandoned black.** The dark ground survives intact, and with it the
+   starfield (§1.3), which is the strongest and most consistent part of her material.
 
-**RESOLVIDO 2026-08-17.** O lockup horizontal dourado chegou. Amostrado com `ffmpeg`: a moda
-sobre 821 px é **`#CCA866`**, e os traços cheios do símbolo e do logotipo leem `#D2AE6D` /
-`#D2B171` — mesma família. **O ouro da Trísion é `#CCA866`**, amostrado, não escolhido.
-De quebra, a arte prova que o lockup horizontal **já existe** — §4 dizia que ele faltava, e
-isso estava errado.
+**RESOLVED 2026-08-17.** The horizontal gold lockup arrived. Sampled with `ffmpeg`: the
+mode over 821 px is **`#CCA866`**, and the solid strokes of the symbol and the logotype
+read `#D2AE6D` / `#D2B171` — the same family. **Trísion's gold is `#CCA866`**, sampled,
+not chosen. The art also proves the horizontal lockup **already exists** — §4 said it had
+to be built, and that was wrong.
 
-**~~Bloqueado em:~~** o valor exato. Ela disse "essa cor" junto de uma imagem que ainda não chegou
-até este repositório. **Não escolher um dourado de memória** — `#D4AF37` e afins são o dourado
-genérico de estoque, e usá-lo aqui repetiria o erro que §2 do design spec acusa. Pedir o
-arquivo, ou o hex, ou a arte onde ela usa.
+**~~Blocked on:~~** the exact value. She said "essa cor" alongside an image that had not
+yet reached this repository. **Do not pick a gold from memory** — `#D4AF37` and kin are
+stock gold, and using one here would repeat the error §2 of the design spec accuses. Ask
+for the file, or the hex, or the art where she uses it.
 
-**Enquanto não resolver:** os tokens em `spec-design.md` §4.1 continuam como estão, e nenhuma
-tela nova deve ser construída assumindo turquesa *ou* dourado como definitivo. Ver
-`TASK-paleta-dourada.md` quando existir.
+**While it was still open:** the tokens in `spec-design.md` §4.1 stay as they are, and no new
+screen should be built assuming turquoise *or* gold as definitive. See
+`TASK-paleta-dourada.md` when it exists.
 
 ### 1.6 The find
 

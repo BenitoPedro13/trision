@@ -1,81 +1,138 @@
 # Trísion Eyewear
 
-Site da marca + plataforma de vitrines para revendedores.
-**Trísion Eyewear, desde 2002.** Uma vitrine para cada revendedor, um catálogo só.
+Brand site + reseller storefront platform.
+**Trísion Eyewear, since 2002.** One storefront per reseller, one catalogue.
 
-## Onde está a especificação
+The brand, the visual system and the platform live in
+[`docs/spec-brand.md`](docs/spec-brand.md),
+[`docs/spec-design.md`](docs/spec-design.md) and
+[`docs/spec-architecture.md`](docs/spec-architecture.md).
+How to work in this repo: [`AGENTS.md`](AGENTS.md).
 
-| Doc | O que é |
+## Where the spec lives
+
+| Doc | What it is |
 |---|---|
-| `docs/spec-brand.md` | A marca: auditoria do que já existe, posicionamento, voz, e as 10 perguntas em aberto (§6) |
-| `docs/spec-design.md` | O sistema visual: tokens medidos, o visor, a numeração, tipografia, motion |
-| `docs/spec-architecture.md` | A plataforma: multi-tenant, modelo de dados, atribuição de lead, fases |
-| `docs/identidade.html` | Board interno de identidade (não é material de cliente) |
-| `docs/tasks/` | Task docs — nenhum código antes de um deles (`CLAUDE.md` §1) |
+| `docs/spec-brand.md` | The brand: audit of what already exists, positioning, voice, and the 10 open questions (§6) |
+| `docs/spec-design.md` | The visual system: measured tokens, the visor, numeração, type, motion |
+| `docs/spec-architecture.md` | The platform: multi-tenancy, data model, lead attribution, phases |
+| `docs/identidade.html` | Internal identity board (not client-facing material) |
+| `docs/tasks/` | Task docs — no code before one of these (`AGENTS.md` §1) |
 
 ## Status (2026-08-17)
 
-**Fase 0, em andamento.** Next.js 16.3.1 scaffoldado, tokens do `spec-design.md` §4.1
-aplicados, e a **página de apresentação para a Amanda** está pronta em `/apresentacao`
+**Fase 0, in progress.** Next.js 16.3.1 scaffolded, `spec-design.md` §4.1 tokens applied,
+and the **pitch page for Amanda** is live at `/apresentacao`
 (`TASK-scaffold-e-apresentacao.md`).
 
-Sem Payload, sem banco — decisão de escopo: Payload entra na Fase 1
-(`spec-architecture.md` §3).
+No Payload, no database — a scope decision: Payload enters in Fase 1
+(`spec-architecture.md` §3). `/` is a holding page: the real homepage depends on her
+photographs and product data (`spec-brand.md` §6).
 
-**Fechado em R$ 300** (R$ 150 pra começar) pelas Fases 0, 1 e 2 — site no ar, primeira
-vitrine e atribuição de lead por loja. Só a Fase 3 fica a combinar.
+**Closed at R$ 300** (R$ 150 to start) for Fases 0, 1 and 2 — site live, first storefront,
+and lead attribution per shop. Only Fase 3 is left to negotiate.
 
-**Três perguntas travam todo o resto** (`spec-brand.md` §6): o domínio, o modelo de preço,
-e para quem aponta o botão de WhatsApp. Estão nos slides 14–15 da apresentação, marcadas.
+**Three questions block everything else** (`spec-brand.md` §6): the domain, the pricing
+model, and where the WhatsApp button points. They are on slides 14–15 of the pitch,
+marked.
 
-## Endereço
+## Stack
 
-`https://trision.vercel.app` — em `src/lib/site-config.ts`, com barra final normalizada
-numa função só. Sobrescreva com `NEXT_PUBLIC_SITE_URL` quando o domínio próprio chegar
-(`spec-brand.md` §6, pergunta 4).
+Versions here are a snapshot, not a pin — see `AGENTS.md` §2.0 before adding anything.
 
-## Marca, favicon e OG
+| Layer | Choice | Now |
+|---|---|---|
+| App | Next.js 16 (App Router, TypeScript, Turbopack, `src/`) | yes |
+| Styling | Tailwind v4, tokens in `src/app/globals.css`, dark only | yes |
+| Brand | `Visor`, `VisorCursor`, `Numeracao`, `Marca`, `Ceu` — hand-written | yes |
+| Catalogue | TS modules in `content/` (Fase 0) | not yet |
+| CMS | Payload 3, in the same app, at `/admin` (Fase 1) | not yet |
+| Data | Postgres + Vercel Blob (Fase 1) | not yet |
+| Conversion | `wa.me`, no cart (`spec-architecture.md` §2) | Fase 2 |
+| Host | Vercel | `trision.vercel.app` |
 
-Os oito paths do símbolo vivem em `src/lib/marca-paths.ts` e são a **única** fonte:
-o cabeçalho, o favicon (`src/app/icon.tsx`), o apple-touch (`apple-icon.tsx`) e o card
-social (`opengraph-image.tsx`, reusado por `twitter-image.tsx`) leem todos dali, então
-o favicon não tem como divergir da marca.
+## Address
 
-O card social é composto com as instâncias estáticas em `src/assets/*.ttf` — o Satori
-não usa a fonte variável que o `next/font` serve. As estrelas do card são semeadas
-(`estrelas()`), então a imagem é byte-estável entre builds: um card que muda a cada
-deploy invalida todo cache social.
+`https://trision.vercel.app` — in `src/lib/site-config.ts`, trailing slash stripped in
+one place. Override with `NEXT_PUBLIC_SITE_URL` when the real domain arrives
+(`spec-brand.md` §6, question 4). Wildcard subdomains (`loja.trision.com.br`) need the
+apex; until then, Fase 1 does not move.
 
-## Rodar
+## Mark, favicon and OG
+
+The eight paths of the symbol live in `src/lib/marca-paths.ts` and are the **only**
+source: the header, the favicon (`src/app/icon.tsx`), the apple-touch (`apple-icon.tsx`)
+and the social card (`opengraph-image.tsx`, reused by `twitter-image.tsx`) all read from
+there, so the favicon cannot drift from the mark. The drawing is an **approximate
+redraw** of the raster — question 8 in `spec-brand.md` §6 is still open.
+
+The social card is composed with the static instances in `src/assets/*.ttf` — Satori
+does not use the variable face that `next/font` serves. The card's stars are seeded
+(`estrelas()`), so the image is byte-stable across builds: a card that changes on every
+deploy invalidates every social cache.
+
+## Run
 
 ```sh
 pnpm install
-pnpm dev          # http://localhost:3000  →  /apresentacao
+pnpm dev          # http://localhost:3000  →  / points at /apresentacao
 pnpm build && pnpm start
 pnpm lint
 ```
 
-## Rotas
+No `.env` needed in this phase. `NEXT_PUBLIC_SITE_URL` only lands when the real domain
+exists; the default is the Vercel address above.
 
-| Rota | O que é |
+## Routes
+
+| Route | What it is |
 |---|---|
-| `/` | Página de espera. A home de verdade é Fase 0 e depende das fotos e dos dados da Amanda |
-| `/apresentacao` | A proposta para a Amanda — 16 seções, pt-BR, `noindex` |
-| `/icon`, `/apple-icon` | Favicon e apple-touch gerados do símbolo |
-| `/opengraph-image`, `/twitter-image` | Card social 1200×630 |
-| `/robots.txt`, `/sitemap.xml` | `/apresentacao` e `/ir/` ficam fora do índice |
+| `/` | Holding page. The real homepage is Fase 0 and depends on Amanda's photographs and data |
+| `/apresentacao` | The pitch for Amanda — 16 sections, pt-BR, `noindex` |
+| `/icon`, `/apple-icon` | Favicon and apple-touch generated from the symbol |
+| `/opengraph-image`, `/twitter-image` | Social card 1200×630 |
+| `/robots.txt`, `/sitemap.xml` | `/apresentacao` and `/ir/` stay out of the index |
 
-## Componentes da marca
+## Brand components
 
-| Arquivo | O que faz |
+| File | What it does |
 |---|---|
-| `src/components/visor.tsx` | Os quatro colchetes. O único ornamento do sistema |
-| `src/components/numeracao.tsx` | `52□18-145` a partir de três números em mm; o `□` é SVG |
-| `src/components/marca.tsx` | Símbolo + lockup. **Redesenho aproximado** — depende do vetor original |
-| `src/components/visor-cursor.tsx` | Os colchetes seguindo o ponteiro e encaixando no que é `data-alvo`. Só em ponteiro fino, desligado sob `prefers-reduced-motion` |
-| `src/components/ceu.tsx` | O céu estrelado dela, em canvas, piscando. Estático sob `prefers-reduced-motion` |
+| `src/components/visor.tsx` | The four corner brackets. The system's only ornament |
+| `src/components/numeracao.tsx` | `52□18-145` from three numbers in mm; the `□` is SVG |
+| `src/components/marca.tsx` | Symbol + lockup. **Approximate redraw** — pending the original vector |
+| `src/components/visor-cursor.tsx` | The brackets following the pointer and snapping onto `data-alvo`. Fine pointer only, off under `prefers-reduced-motion` |
+| `src/components/ceu.tsx` | Her starfield, on canvas, blinking. Static under `prefers-reduced-motion` |
+
+## Layout
+
+```
+src/app/                 routes: /, /apresentacao, icon/og/robots/sitemap
+src/app/globals.css      spec-design.md §4.1 tokens
+src/components/          visor, visor-cursor, numeracao, marca, ceu
+src/lib/site-config.ts   SITE_URL, normalised once
+src/lib/marca-paths.ts   the eight paths of the symbol
+src/assets/*.ttf         static Archivo, OG only (Satori)
+docs/                    specs, identity board, tasks
+references/              brand evidence (*.mov gitignored; frames committed)
+```
+
+The Fase 1 target layout (`(marca)` / `(loja)` / `(payload)` / `content/` /
+`lib/catalog/`) is in `spec-architecture.md` §10. Do not create those folders in a
+task that is not building them.
 
 ## Deploy
 
-Estático. `pnpm build` gera as três rotas pré-renderizadas — dá pra subir na Vercel
-direto do repo, sem variável de ambiente nenhuma nesta fase.
+Static. `pnpm build` prerenders the routes — it can go up on Vercel straight from the
+repo, with no environment variables in this phase.
+
+## What must not break
+
+Full list in `AGENTS.md` §0. The ones most easily broken by accident:
+
+- **No invented facts** about her business — price, measurement, city, shop name.
+  `[VERIFICAR]` instead. `Consulte o valor` beats a plausible number.
+- **No cart in v1.** Everything ends in WhatsApp.
+- **A reseller is an endorsement, not a sub-brand.** No colour, logo or font per shop.
+- **A bracket frames something real.** A number is a real measurement. `#FFFFFF` means
+  "in focus", not text.
+- **The wordmark is SVG**, from `marca-paths.ts`, never a substitute typeface.
