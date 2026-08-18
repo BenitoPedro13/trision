@@ -4,22 +4,19 @@ import { RiMenuLine } from "@remixicon/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { MarcaSimbolo } from "@/components/marca";
+import { MarcaLockup } from "@/components/marca";
 import * as Drawer from "@/components/ui/drawer";
 import { RevendedorEndosso } from "@/components/revendedor/revendedor-endosso";
 import type { Revendedor } from "@/lib/catalog/types";
 
-/* Storefront nav — TASK-loja-navegacao.md. Every /loja/[rev]/* page used to render just
-   `RevendedorEndosso` in its header with no links at all: a visitor landing on a deep link
-   had no way back to the shop's own front page short of the browser back button. `Cabecalho`
-   isn't reused here on purpose — this needs the shop's own identity, not the brand's
-   (spec-brand.md §3), so it's a separate small component, not a variant of that one.
-
-   First pass crammed the three tabs + mark icon inline at every width, `flex-wrap`, no
-   drawer — measured fine at 375px with no overflow, but user feedback ("no mobile menu for
-   revendedores") wanted the same off-canvas pattern `Cabecalho` already uses, not just
-   "doesn't overflow." Mirrors that component's `lg:` breakpoint and `Drawer` usage exactly
-   for consistency, rather than a second mobile-nav idiom on the same site. */
+/* Storefront nav — TASK-loja-navegacao.md, inverted in TASK-loja-cabecalho-invertido.md.
+   A reseller is an endorsement, not a sub-brand (spec-brand.md §3) — so Trísion's own
+   mark leads the header (left, every breakpoint, linking to `/`, same compact
+   `MarcaLockup` scale `Cabecalho` uses), the reseller's framed identity badge
+   (`RevendedorEndosso`, unchanged as a component) sits centered, and the storefront's
+   own nav — tabs on `lg+`, the drawer hamburger below it — stays on the right, exactly
+   where it already was. `Cabecalho` isn't reused wholesale on purpose — this still needs
+   the shop's own nav destinations, not the brand's five-link menu. */
 export function LojaCabecalho({ revendedor }: { revendedor: Revendedor }) {
   const pathname = usePathname();
   const [aberto, setAberto] = useState(false);
@@ -32,11 +29,23 @@ export function LojaCabecalho({ revendedor }: { revendedor: Revendedor }) {
   ];
 
   return (
-    <header className="flex flex-wrap items-center justify-between gap-6 px-[clamp(24px,5vw,88px)] py-6">
-      <RevendedorEndosso revendedor={revendedor} />
+    <header className="grid grid-cols-[1fr_minmax(0,auto)_1fr] items-center gap-4 px-[clamp(24px,5vw,88px)] py-6 lg:gap-6">
+      <Link href="/" data-alvo className="foco-visor block justify-self-start">
+        <MarcaLockup
+          simbolo="w-7"
+          texto="text-[1.0625rem]"
+          subtexto="text-[.625rem]"
+          gap="gap-3"
+          desde={false}
+        />
+      </Link>
 
-      <div className="hidden items-center gap-6 lg:flex">
-        <nav className="flex items-center gap-6 font-mono text-[.8125rem] uppercase tracking-[.1em]">
+      <div className="min-w-0 justify-self-center">
+        <RevendedorEndosso revendedor={revendedor} />
+      </div>
+
+      <div className="flex items-center justify-self-end">
+        <nav className="hidden items-center gap-6 font-mono text-[.8125rem] uppercase tracking-[.1em] lg:flex">
           {TABS.map(({ href, rotulo }) => (
             <Link
               key={href}
@@ -51,25 +60,18 @@ export function LojaCabecalho({ revendedor }: { revendedor: Revendedor }) {
             </Link>
           ))}
         </nav>
-        <Link
-          href="/"
+
+        <button
+          type="button"
           data-alvo
-          aria-label="Ver o catálogo completo da Trísion"
-          className="foco-visor block text-cinza transition-colors hover:text-prata"
+          onClick={() => setAberto(true)}
+          aria-label="Abrir menu"
+          className="foco-visor text-luz lg:hidden"
         >
-          <MarcaSimbolo className="h-6 w-6" />
-        </Link>
+          <RiMenuLine className="h-6 w-6" aria-hidden="true" />
+        </button>
       </div>
 
-      <button
-        type="button"
-        data-alvo
-        onClick={() => setAberto(true)}
-        aria-label="Abrir menu"
-        className="foco-visor text-luz lg:hidden"
-      >
-        <RiMenuLine className="h-6 w-6" aria-hidden="true" />
-      </button>
       <Drawer.Root open={aberto} onOpenChange={setAberto}>
         <Drawer.Content className="lg:hidden">
           <Drawer.Header className="border-b border-stroke-soft-200">
@@ -90,14 +92,6 @@ export function LojaCabecalho({ revendedor }: { revendedor: Revendedor }) {
                 {rotulo}
               </Link>
             ))}
-            <Link
-              href="/"
-              data-alvo
-              onClick={() => setAberto(false)}
-              className="foco-visor py-3 font-mono text-[.9375rem] uppercase tracking-[.1em] text-cinza hover:text-prata"
-            >
-              Catálogo Trísion
-            </Link>
           </Drawer.Body>
         </Drawer.Content>
       </Drawer.Root>
