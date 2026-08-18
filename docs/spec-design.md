@@ -403,7 +403,7 @@ likely to be the actual bottleneck.
 | `/` | This shop's front: endorsement line, its featured frames, its contact |
 | `/mostruario` | **Only what this shop carries.** Same components, filtered data |
 | `/oculos/[slug]` | Same product page; the CTA is attributed (`spec-architecture.md` §7) |
-| `/a-loja` | Shop identity: photo, address, hours, map |
+| `/a-loja` | Shop identity: photo, address, hours — map `[VERIFICAR: no maps provider chosen; revisit once real addresses exist]` |
 
 The two are **the same components with a different `tenantId`**. If a storefront needs a
 component the brand site does not have, that is a signal the tenancy boundary is being

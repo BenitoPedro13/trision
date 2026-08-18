@@ -52,14 +52,31 @@ it.
 Adds resellers with distinct `cidade`/`uf` (so the filter has something to filter), all obviously
 fictional and `exemplo: true`, all `endereco`/`horarios` filled with plausible placeholder text,
 all `retrato: ""` (no photography exists, `TASK-normalizar-imagens.md` still not built — honest
-empty state, not an invented photo, `AGENTS.md` §0).
+empty state, not an invented photo, `AGENTS.md` §0). `Ótica Exemplo` stays in Volta Redonda/RJ;
+the new records get a different `cidade` each and at least one different `uf`, so both chip
+dimensions (§2.5) are actually exercisable — e.g. one São Paulo/SP record, one Curitiba/PR or
+Belo Horizonte/MG record. Names stay obviously fictional ("Ótica Demonstração," "Loja Exemplo"),
+same license as `content/produtos.ts`.
+
+### 2.2b `src/content/mostruario.ts` — one row per new reseller
+
+`/revendedores` links every card to `/loja/${slug}` (§2.6, existing `RevendedorEndosso` → `Link`
+pattern). A reseller with zero `mostruario` rows lands on a storefront whose `GradeProdutos`
+renders "Nenhum modelo encontrado com esses filtros" — the wrong message (that's the *filtered-to-
+empty* string, not a *this shop carries nothing* string) and a dead end for a directory entry.
+Each new reseller (§2.2) gets at least one `mostruario` row, reusing the existing `TRI-MOD-A/B/C`
+SKUs (`content/produtos.ts`) — doesn't need a full vitrine, just enough that `/loja/<novo-slug>`
+shows a real card instead of an empty grid.
 
 ### 2.3 `src/app/loja/[rev]/a-loja/page.tsx` — shop identity
 
 Server Component, same shell as `src/app/loja/[rev]/page.tsx` (`Ceu` + `VisorCursor`, no
 `Cabecalho` — storefront routes don't carry brand nav, matching the existing `/loja/[rev]` and
-`/mostruario` pages). Reuses `escopoRevendedor` for the `revendedor` record + `notFound()` on
-`generateStaticParams` mismatch, same as the sibling routes.
+`/mostruario` pages). Reuses `escopoRevendedor` for the `revendedor` record + `notFound()`, and
+exports both `generateStaticParams` (via `revendedoresAtivosSlugs()`) and `generateMetadata`
+(title `` `A loja · ${revendedor.nome}` ``, falling back to `"Loja"` on a `notFound` slug) —
+copying `src/app/loja/[rev]/mostruario/page.tsx`'s pattern exactly, not just "same as sibling
+routes" in spirit.
 
 Content, in order:
 
@@ -68,8 +85,12 @@ Content, in order:
    (`components/produto/galeria-produto.tsx` §19–26), not a new pattern.
 2. `RevendedorEndosso` (name + city/UF, already exists) — repeats the header pattern already used
    on `/loja/[rev]`.
-3. `endereco`, `horarios` as labelled text rows (mono, uppercase, tracked label above the value —
-   same idiom `FichaTecnica` uses for spec rows), only rendered when non-empty.
+3. `endereco`, `horarios` as labelled text rows — **the label idiom is `components/produto/
+   filtros.tsx`'s chip-section label** (`font-mono text-[.6875rem] uppercase tracking-[.16em]
+   text-cinza`, label above the value), not `FichaTecnica`'s horizontal `dl` (label-left/value-
+   right row, `spec-design.md` §8's WEB Eyewear tech-spec-table reference) — that pattern is
+   product-spec-specific and wrong here. Only rendered when non-empty, mirroring `whatsapp`'s
+   `""` ⇒ hidden convention.
 4. **No embedded/interactive map.** No Maps provider is chosen anywhere in this repo, every
    address is `exemplo` placeholder text, and an embedded map pointing at a fake address is worse
    than none — same reasoning that already governs invented prices/measurements
@@ -90,12 +111,33 @@ Not a rename/extension of `Filtros` — that component's `FiltrosAtivos` type is
 (`formato`/`material`/`cor`/`genero`); reseller search is a different domain (`cidade`/`uf`), so a
 sibling component is more honest than overloading one type for two shapes.
 
-### 2.6 `src/app/revendedores/page.tsx` — reads `searchParams`, filters, renders chips
+Matching rule, stated explicitly: **exact string equality** on the stored `cidade`/`uf` values —
+same as `/catalogo`'s enum-equality filters, no case folding or partial match. Chip options are
+derived from `revendedoresAtivos()`'s actual `cidade`/`uf` values (`[...new Set(...)].sort()`),
+the same way `/catalogo` derives `coresDisponiveis` from the product list rather than a hardcoded
+enum — with 3–4 `exemplo` records this stays trivially correct; revisit only once real reseller
+data makes case/accent drift a real risk.
+
+No mobile drawer/off-canvas split for this filter. `/catalogo` uses `FiltroToggle` +
+`FiltroDrawer` because it has four filter groups on a two-column layout competing for space
+(`spec-design.md` §9). `/revendedores` has two small chip rows (`cidade`, `uf`) above a
+single-column grid — they render inline at all breakpoints, no toggle/drawer needed. Stated here
+so this isn't "fixed" later by cloning the catalogo sidebar/drawer split onto a page that doesn't
+need it.
+
+### 2.6 `src/app/revendedores/page.tsx` — reads `searchParams`, filters, renders chips + empty state
 
 Same shape `src/app/catalogo/page.tsx` already uses: `searchParams` prop, build `ativos` from it,
 filter the array fetched from `revendedoresAtivos()`, render `FiltroRevendedores` above the grid.
 No change to `lib/tenant/scope.ts` — filtering happens in the page against the already-fetched
 list, exactly like `/catalogo` filters products in the page rather than in `lib/catalog`.
+
+When the filtered list is empty, render the same honest-empty-state idiom `GradeProdutos` already
+established (`components/produto/grade-produtos.tsx` §11–16: bordered, centered, `text-cinza`
+message) with reseller-appropriate copy — e.g. "Nenhuma revenda encontrada com esses filtros." —
+rather than a silent blank grid. Small enough to inline in the page rather than a new shared
+component (one call site; `GradeProdutos`'s version is reused twice today — `/catalogo` and
+`/mostruario` — which is what justified factoring it out there).
 
 ### 2.7 `scripts/verificar-fase-0.mts`
 
@@ -128,13 +170,15 @@ Payload, no real map provider, no reseller self-service).
 
 | File | Change type | Notes |
 |---|---|---|
-| `src/lib/catalog/types.ts` | modified | `Revendedor` gains `endereco`, `horarios`, `retrato` (§2.1) |
+| `src/lib/catalog/types.ts` | modified | `Revendedor` gains `endereco`, `horarios`, `retrato`; stale "no `endereco`/`horarios` yet" comment (line ~69) corrected (§2.1) |
 | `src/content/revendedores.ts` | modified | 2–3 more `exemplo` resellers, distinct cidade/uf (§2.2) |
-| `src/app/loja/[rev]/a-loja/page.tsx` | new | shop identity page (§2.3) |
+| `src/content/mostruario.ts` | modified | one `mostruario` row per new reseller, reusing existing `TRI-MOD-*` SKUs (§2.2b) |
+| `src/app/loja/[rev]/a-loja/page.tsx` | new | shop identity page, `generateStaticParams` + `generateMetadata` (§2.3) |
 | `src/app/loja/[rev]/page.tsx` | modified | nav link to `/a-loja` (§2.4) |
 | `src/components/revendedor/filtro-revendedores.tsx` | new | city/UF chip filter, URL-param idiom (§2.5) |
-| `src/app/revendedores/page.tsx` | modified | reads `searchParams`, filters, renders chips (§2.6) |
+| `src/app/revendedores/page.tsx` | modified | reads `searchParams`, filters, renders chips + empty state (§2.6) |
 | `scripts/verificar-fase-0.mts` | modified | adds `/loja/otica-exemplo/a-loja` to `PAGES` (§2.7) |
+| `docs/spec-design.md` | modified | §11 `/a-loja` row gets a footnote: `[VERIFICAR: no maps provider chosen]` |
 | `README.md` | modified | Status section: two more routes/features live |
 
 ## 5. Verification
@@ -144,7 +188,10 @@ Payload, no real map provider, no reseller self-service).
   gzipped, LCP ≤2.0s, CLS ≤0.05 (`spec-design.md` §12).
 - Visual: `/loja/otica-exemplo/a-loja` renders "Sem foto," endereço, horários for the original
   mock reseller; `/revendedores?cidade=...` and `?uf=...` narrow the grid to matching resellers
-  across all `exemplo` records added in §2.2; clearing filters restores the full list.
+  across all `exemplo` records added in §2.2; clearing filters restores the full list; a filter
+  combination matching nothing renders the empty-state message (§2.6), not a blank grid.
+- Visual: `/loja/<novo-slug>` (every new reseller from §2.2) renders at least one product card via
+  its `mostruario` row (§2.2b), not an empty "Nenhum modelo encontrado" grid.
 - `prefers-reduced-motion: reduce` pass on `/a-loja` and `/revendedores` (filtered + unfiltered):
   zero console/page errors, content fully visible.
 - Keyboard pass: `Tab` reaches the new `/a-loja` nav link, the city/UF chips, and "Limpar

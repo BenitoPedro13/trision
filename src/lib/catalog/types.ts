@@ -65,8 +65,9 @@ export interface Marca {
 
 export type StatusRevendedor = "ativo" | "pausado";
 
-/** Fase 0 stand-in for `revendedores` (`spec-architecture.md` §5.2), trimmed to the
- * fields TASK-frontend-fase-0.md's UI reads — no `endereco`/`horarios` yet. */
+/** Fase 0 stand-in for `revendedores` (`spec-architecture.md` §5.2), field names matching
+ * that schema — `endereco`/`horarios` are display strings here, not the Payload `group`
+ * shape, since nothing in this app parses them yet. */
 export interface Revendedor {
   nome: string;
   /** Unique, indexed — the future subdomain. Never changes once a storefront exists. */
@@ -77,6 +78,12 @@ export interface Revendedor {
   whatsapp: string;
   instagram: string;
   sobre: string;
+  /** "" ⇒ not shown, same convention as `whatsapp`. */
+  endereco: string;
+  /** Free text, e.g. "Seg–Sex 9h–18h · Sáb 9h–13h" — "" ⇒ not shown. */
+  horarios: string;
+  /** Image path, "" ⇒ "Sem foto" empty state (mirrors `GaleriaProduto`). */
+  retrato: string;
   status: StatusRevendedor;
   /** Fase 0 only, mirrors `Produto.exemplo` — gates the visible "exemplo" label. */
   exemplo: boolean;

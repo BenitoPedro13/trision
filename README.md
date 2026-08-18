@@ -35,6 +35,12 @@ and reseller marked `exemplo`. No real photography exists yet, so every gallery 
 pass the 180 KB JS budget; `/`, `/catalogo`, `/colecoes` are 3–7 KB over, accepted as-is
 (figures and reasoning in that task doc §5).
 
+**Shop identity and reseller search** (`TASK-loja-identidade-e-busca-revendedores.md`):
+`/loja/[rev]/a-loja` (portrait, address, hours — no map until a provider is chosen) and
+city/UF chip filters on `/revendedores`. Three `exemplo` resellers in `content/revendedores.ts`
+exercise the filter; each has at least one `mostruario` row so storefront links from the
+directory are not dead ends.
+
 **AlignUI foundation vendored** (`TASK-alignui-vendoring.md`): `src/utils/{cn,tv,polymorphic,
 recursive-clone-children}` + `Drawer` (and its `CompactButton` dependency) in
 `src/components/ui/`, logged in `SOURCES.md`. `FiltroDrawer` now runs on Radix Dialog —
@@ -62,7 +68,7 @@ Versions here are a snapshot, not a pin — see `AGENTS.md` §2.0 before adding 
 | Styling | Tailwind v4, tokens in `src/app/globals.css`, dark only | yes |
 | Brand | `Visor`, `VisorCursor`, `Numeracao`, `Marca`, `Ceu` — hand-written | yes |
 | Catalogue | TS modules in `content/` behind `lib/catalog/` (Fase 0) | wired into `/`, `/catalogo`, `/oculos/[slug]`, `/colecoes` |
-| Tenancy | Mirrors the catalogue seam: `lib/tenant/` + `lib/tenant/scope.ts` (Fase 0, mock data) | one mock reseller, `/loja/[rev]` path stand-in |
+| Tenancy | Mirrors the catalogue seam: `lib/tenant/` + `lib/tenant/scope.ts` (Fase 0, mock data) | three mock resellers, `/loja/[rev]` path stand-in |
 | State | Zustand (client UI state, e.g. the filter drawer) + URL search params (filters). TanStack Query deliberately not installed yet | see `AGENTS.md` "State management" |
 | UI primitives | AlignUI foundation + `Drawer` vendored (`src/components/ui/`, `src/utils/`) | `Drawer` only — rest deferred per real need |
 | CMS | Payload 3, in the same app, at `/admin` (Fase 1) | not yet |
@@ -109,8 +115,8 @@ exists; the default is the Vercel address above.
 
 `scripts/verificar-fase-0.mts` (Lighthouse + Playwright/axe) checks `/`, `/apresentacao`,
 `/catalogo`, `/colecoes`, `/colecoes/exemplo`, `/revendedores`, `/seja-revendedor`,
-`/oculos/TRI-MOD-A`, `/loja/otica-exemplo`,
-and `/loja/otica-exemplo/mostruario` against the budgets in `spec-design.md` §12.
+`/oculos/TRI-MOD-A`, `/loja/otica-exemplo`, `/loja/otica-exemplo/mostruario`,
+and `/loja/otica-exemplo/a-loja` against the budgets in `spec-design.md` §12.
 
 | Route | LCP | CLS | JS transfer |
 |---|---|---|---|
@@ -132,11 +138,11 @@ motion task docs. Run with `pnpm build && PORT=3001 pnpm start` then
 |---|---|
 | `/` | The real homepage: thesis line, collections, `Desde 2002`. Mock data, `exemplo` labelled |
 | `/colecoes`, `/colecoes/[slug]` | Collection list + editorial detail |
-| `/revendedores` | Active reseller network — each card links to its storefront |
+| `/revendedores` | Active reseller network — filter by city/UF; each card links to its storefront |
 | `/seja-revendedor` | B2B funnel — static copy + WhatsApp CTA (no form until Fase 1) |
 | `/catalogo` | Full line, filterable by formato/material/cor/gênero via URL search params |
 | `/oculos/[slug]` | Product page — gallery, ficha técnica, numeração, onde comprar, WhatsApp CTA |
-| `/loja/[rev]`, `/loja/[rev]/mostruario` | **Fase 0 path stand-in** for the storefront — `/loja/otica-exemplo` is the one mock reseller. Not the final URL shape (see `AGENTS.md` "Storefront routing") |
+| `/loja/[rev]`, `/loja/[rev]/mostruario`, `/loja/[rev]/a-loja` | **Fase 0 path stand-in** for the storefront — three mock resellers (`otica-exemplo`, `otica-demonstracao`, `loja-exemplo`). Not the final URL shape (see `AGENTS.md` "Storefront routing") |
 | `/apresentacao` | The pitch for Amanda — 16 sections, pt-BR, `noindex` |
 | `/icon`, `/apple-icon` | Favicon and apple-touch generated from the symbol |
 | `/opengraph-image`, `/twitter-image` | Social card 1200×630 |
@@ -156,6 +162,7 @@ motion task docs. Run with `pnpm build && PORT=3001 pnpm start` then
 | `src/utils/cn.ts`, `tv.ts`, `polymorphic.ts`, `recursive-clone-children.tsx` | AlignUI foundation utils — vendored byte-identical |
 | `src/components/colecao/colecao-card.tsx` | Editorial tile for a collection |
 | `src/components/revendedor/revendedor-endosso.tsx` | The attribution line — `spec-brand.md` §3 |
+| `src/components/revendedor/filtro-revendedores.tsx` | City/UF chip filter on `/revendedores` — URL search params, same idiom as product filters |
 | `src/components/marca/cabecalho.tsx` | Shared nav for the marca routes |
 
 ## Layout

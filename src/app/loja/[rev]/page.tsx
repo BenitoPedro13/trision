@@ -52,15 +52,24 @@ export default async function LojaPage({ params }: { params: Promise<{ rev: stri
             </p>
           </Revela>
           <GradeProdutos produtos={vitrine.map((item) => item.produto)} />
-          {itens.length > vitrine.length && (
+          <div className="mt-8 flex flex-wrap gap-4">
             <Link
-              href={`/loja/${revendedor.slug}/mostruario`}
+              href={`/loja/${revendedor.slug}/a-loja`}
               data-alvo
-              className="foco-visor mt-8 inline-block border border-aro px-6 py-3.5 text-sm font-semibold text-luz transition-colors hover:border-prata"
+              className="foco-visor inline-block border border-aro px-6 py-3.5 text-sm font-semibold text-luz transition-colors hover:border-prata"
             >
-              Ver tudo que essa loja tem
+              Endereço e horários
             </Link>
-          )}
+            {itens.length > vitrine.length && (
+              <Link
+                href={`/loja/${revendedor.slug}/mostruario`}
+                data-alvo
+                className="foco-visor inline-block border border-aro px-6 py-3.5 text-sm font-semibold text-luz transition-colors hover:border-prata"
+              >
+                Ver tudo que essa loja tem
+              </Link>
+            )}
+          </div>
         </main>
       </div>
     </>

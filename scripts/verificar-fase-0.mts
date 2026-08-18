@@ -31,6 +31,7 @@ const PAGES = [
   "/oculos/TRI-MOD-A",
   "/loja/otica-exemplo",
   "/loja/otica-exemplo/mostruario",
+  "/loja/otica-exemplo/a-loja",
 ];
 const LIGHTHOUSE_RUNS = 3;
 
