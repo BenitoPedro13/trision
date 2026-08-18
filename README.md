@@ -31,9 +31,14 @@ and the **pitch page for Amanda** is live at `/apresentacao`
 and reseller marked `exemplo`. No real photography exists yet, so every gallery shows the honest
 "sem foto" state rather than an invented photo. The motion layer (`Revela`, `FocoVerdadeiro`,
 `.iridescencia`) now covers the catalogue and storefront routes too, not just `/apresentacao`
-(`TASK-motion-vitrine.md`). Measured with `pnpm verificar-fase-0` — `/oculos` and `/loja/*`
-pass the 180 KB JS budget; `/`, `/catalogo`, `/colecoes` are 3–7 KB over, accepted as-is
-(figures and reasoning in that task doc §5).
+(`TASK-motion-vitrine.md`). **`Revela` moved from a CSS-only scroll-timeline to
+`motion/react`** (`TASK-revela-motion.md`) — the CSS version only played on an actual scroll
+gesture, so it never animated on any page whose content fit in the first viewport (every
+grid page) or on first paint anywhere. `ProvedorMotion` now wraps every marca/storefront
+route as a result. JS budget: `/catalogo` measured at 240.9 KB (budget ≤180 KB) *before*
+this change, already over from the `(marca)`/`Rodape`/`Drawer` work — a full post-change
+`pnpm verificar-fase-0` re-run against every route is still owed (see that task doc §4),
+the 3–7 KB figures previously here are stale.
 
 **Shop identity and reseller search** (`TASK-loja-identidade-e-busca-revendedores.md`):
 `/loja/[rev]/a-loja` (portrait, address, hours — no map until a provider is chosen) and

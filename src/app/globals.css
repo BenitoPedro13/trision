@@ -112,27 +112,6 @@ body {
     linear-gradient(var(--ouro), var(--ouro)) 100% 100% / 14px 1.5px no-repeat;
 }
 
-/* Scroll entrance — components/revela.tsx. Opacity stays 1 (LCP-safe); only Y moves. */
-.revela {
-  transform: translateY(0);
-}
-@supports (animation-timeline: view()) {
-  .revela {
-    animation: revela-subir linear both;
-    animation-timeline: view();
-    animation-range: entry 0% cover 28%;
-    animation-duration: 0.56s;
-    animation-delay: var(--revela-atraso, 0s);
-  }
-  .revela-secao {
-    animation-duration: 0.76s;
-  }
-}
-@keyframes revela-subir {
-  from { transform: translateY(22px); }
-  to { transform: translateY(0); }
-}
-
 /* docs/spec-design.md §7.3 — the AR-coating flash on exactly one primary CTA per page.
    Stops sampled from her lens flash (#10247C) running to --ouro-claro; §4.2 rule 6 permits
    this because it is explicitly the coating, not a second brand accent. Pure CSS — no
@@ -174,7 +153,6 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .revela { animation: none !important; transform: none; }
   *, *::before, *::after {
     animation-duration: .001ms !important;
     transition-duration: .001ms !important;

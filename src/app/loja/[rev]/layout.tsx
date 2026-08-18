@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Ceu } from "@/components/ceu";
+import { ProvedorMotion } from "@/components/provedor-motion";
 import { LojaCabecalho } from "@/components/revendedor/loja-cabecalho";
 import { VisorCursor } from "@/components/visor-cursor";
 import { escopoRevendedor } from "@/lib/tenant/scope";
@@ -24,13 +25,13 @@ export default async function LojaRevLayout({
   if (!escopo) notFound();
 
   return (
-    <>
+    <ProvedorMotion>
       <Ceu />
       <VisorCursor />
       <div className="relative z-10">
         <LojaCabecalho revendedor={escopo.revendedor} />
         {children}
       </div>
-    </>
+    </ProvedorMotion>
   );
 }
