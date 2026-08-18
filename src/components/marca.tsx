@@ -26,15 +26,22 @@ export function MarcaLockup({
   subtexto = "text-[clamp(.75rem,1.9vw,1.375rem)]",
   gap = "gap-[clamp(16px,3vw,32px)]",
   desde = true,
+  /* `LojaCabecalho`'s `lg+`-only lockup (TASK-loja-cabecalho-invertido.md) sits in a
+     3-column grid whose flanking tracks are both `1fr` — `flex-wrap`'s min-content is
+     just its largest child (the icon or the wordmark alone), so the grid can allocate
+     less than the lockup's real unwrapped width and it wraps mid-layout. `quebra=
+     {false}` reports the full width as the floor instead. */
+  quebra = true,
 }: {
   simbolo?: string;
   texto?: string;
   subtexto?: string;
   gap?: string;
   desde?: boolean;
+  quebra?: boolean;
 }) {
   return (
-    <div className={`flex flex-wrap items-center ${gap}`}>
+    <div className={`flex items-center ${quebra ? "flex-wrap" : "flex-nowrap"} ${gap}`}>
       <MarcaSimbolo className={`${simbolo} h-auto shrink-0 text-foco`} />
       <div className="flex flex-col items-end">
         <span

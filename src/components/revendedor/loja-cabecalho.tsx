@@ -4,7 +4,7 @@ import { RiMenuLine } from "@remixicon/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { MarcaLockup } from "@/components/marca";
+import { MarcaLockup, MarcaSimbolo } from "@/components/marca";
 import * as Drawer from "@/components/ui/drawer";
 import { RevendedorEndosso } from "@/components/revendedor/revendedor-endosso";
 import type { Revendedor } from "@/lib/catalog/types";
@@ -30,18 +30,27 @@ export function LojaCabecalho({ revendedor }: { revendedor: Revendedor }) {
 
   return (
     <header className="grid grid-cols-[1fr_minmax(0,auto)_1fr] items-center gap-4 px-[clamp(24px,5vw,88px)] py-6 lg:gap-6">
-      <Link href="/" data-alvo className="foco-visor block justify-self-start">
-        <MarcaLockup
-          simbolo="w-7"
-          texto="text-[1.0625rem]"
-          subtexto="text-[.625rem]"
-          gap="gap-3"
-          desde={false}
-        />
+      <Link
+        href="/"
+        data-alvo
+        aria-label="Ver o catálogo completo da Trísion"
+        className="foco-visor block shrink-0 justify-self-start text-foco"
+      >
+        <MarcaSimbolo className="h-8 w-8 lg:hidden" />
+        <div className="hidden lg:block">
+          <MarcaLockup
+            simbolo="w-7"
+            texto="text-[1.0625rem]"
+            subtexto="text-[.625rem]"
+            gap="gap-3"
+            desde={false}
+            quebra={false}
+          />
+        </div>
       </Link>
 
       <div className="min-w-0 justify-self-center">
-        <RevendedorEndosso revendedor={revendedor} />
+        <RevendedorEndosso revendedor={revendedor} compacto />
       </div>
 
       <div className="flex items-center justify-self-end">

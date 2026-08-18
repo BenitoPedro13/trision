@@ -41,17 +41,56 @@ repositioned, not redesigned.
     Visible at every breakpoint, not just `lg+` — the "always on left" part of the
     fix applies on mobile too, where the mark previously didn't appear in the header
     at all.
-  - **Center** (`justify-self-center`, `min-w-0`) — `RevendedorEndosso`, unchanged as
-    a component (no edits to that file — it's shared with `/revendedores`'s directory
-    cards, and its content is already correct, just mispositioned here).
+  - **Center** (`justify-self-center`, `min-w-0`) — `RevendedorEndosso`.
   - **Right** (`justify-self-end`) — unchanged: the `lg+` nav tabs, and below `lg` the
     hamburger button opening the existing `Drawer`.
   - The `Drawer`'s redundant "Catálogo Trísion" text link is **removed** — it existed
     specifically because the mark used to be invisible on mobile; now that the header's
     left slot is visible at every width, the drawer entry pointed at the same
     destination as something already on screen.
-- No changes to `RevendedorEndosso`, `MarcaLockup`, `Visor`, or any other shared
-  component — this is a layout-only change inside one file's JSX.
+
+**Revised after first render** (user screenshots mid-session caught two real bugs the
+plan above didn't anticipate):
+
+1. **The always-on `Visor` badge was too big.** At mid viewport widths the full
+   `RevendedorEndosso` (kicker + address, which itself wraps to two lines + the
+   "exemplo" line) reached 4 lines and visually dominated the header, dragging its
+   `Visor` corner brackets down toward the logo. Fix: **`src/components/revendedor/
+   revendedor-endosso.tsx`** gains a `compacto` prop. When true, it drops the "Trísion
+   Eyewear" kicker (redundant now that the header's own mark carries that identity) and
+   the permanent `Visor` frame, rendering as a single-line `<Link href="/loja/[rev]/
+   a-loja">` instead. Brackets still appear — but only on hover/focus, via the site's
+   *existing* mechanism for every other `data-alvo` target: `VisorCursor`
+   (`components/visor-cursor.tsx`) snaps its follow-brackets onto any `data-alvo`
+   element on mouse hover, and `.foco-visor:focus-visible::after` (`globals.css`) draws
+   the identical bracket art on keyboard focus. No new CSS — this is the same
+   mechanism every nav link on the site already uses; a permanently framed badge in a
+   compact header slot was the wrong read anyway ("a bracket frames something real:
+   focus, selection," `AGENTS.md` §0, not a passive label). `LojaCabecalho` now renders
+   `<RevendedorEndosso revendedor={revendedor} compacto />`. The un-compacted branch
+   (used by `/revendedores`'s directory cards) is untouched.
+2. **The Trísion mark itself wrapped and broke** at the same mid-widths, once the badge
+   was addressed. Root cause: the grid's two flanking columns are both `1fr`, which
+   forces them to *equal* width regardless of how much content each actually needs —
+   and `MarcaLockup`'s root div is `flex flex-wrap`, whose min-content to the grid is
+   just its largest child (the icon), not its full unwrapped width. The grid happily
+   shrank the mark's track down toward the hamburger icon's minimal width below `lg`,
+   and the mark wrapped: icon on one line, "Trísion"/"Eyewear" stacked awkwardly below.
+   First fix attempt added a `quebra` (wrap) prop to `MarcaLockup` and passed
+   `quebra={false}` here — worked, but the next round of feedback (below) replaced the
+   full lockup with the icon alone, which can't wrap at all, so `quebra` had no more
+   callers and was reverted out of `marca.tsx` rather than left as unused surface.
+3. **Full wordmark was still too much below `lg`.** User feedback: below `lg`, show
+   only the small bracket mark, not "Trísion/Eyewear" text — matching how the mark
+   reads elsewhere at icon scale (favicon, `VisorCursor`'s own idle state). Above `lg`
+   there's room for the full identity, so `LojaCabecalho`'s left slot is now both,
+   toggled by breakpoint: `<MarcaSimbolo className="h-8 w-8 lg:hidden" />` plus a
+   `<div className="hidden lg:block">` wrapping the same compact `MarcaLockup` as
+   before, inside one `Link href="/"` + `foco-visor` + `data-alvo` wrapper (`text-foco`
+   for full-white icon colour — leading position, not the muted `text-cinza` the old
+   far-right icon used). The `quebra` prop from fix #2 turned out not to be dead after
+   all — reinstated in `marca.tsx` and passed `quebra={false}` on the `lg+` `MarcaLockup`
+   here, since that lockup sits in the same squeeze-prone grid track.
 
 ## 3. Why
 
@@ -63,8 +102,8 @@ mid-session; this task is that fix, scoped to the one component that owns it.
 
 ## 4. Explicitly out of scope
 
-- No change to `RevendedorEndosso`'s own content or the `(marca)/` brand-site
-  `Cabecalho` — both are correct as they are.
+- No change to `RevendedorEndosso`'s un-compacted branch (`/revendedores`'s directory
+  cards) or the `(marca)/` brand-site `Cabecalho` — both are correct as they are.
 - No new "reseller mark" field, image, or component — none exists in the data model
   and none is being added here (see §1).
 
@@ -72,14 +111,16 @@ mid-session; this task is that fix, scoped to the one component that owns it.
 
 | File | Change type | Notes |
 |---|---|---|
-| `src/components/revendedor/loja-cabecalho.tsx` | modified | 3-column grid layout, drops the redundant mobile-drawer "Catálogo Trísion" link |
+| `src/components/revendedor/loja-cabecalho.tsx` | modified | 3-column grid layout, mark icon below `lg` / full lockup at `lg+`, compact centered badge, drops the redundant mobile-drawer "Catálogo Trísion" link |
+| `src/components/revendedor/revendedor-endosso.tsx` | modified | new `compacto` prop — single-line `Link`, no permanent `Visor`, brackets only on hover/focus via the site's existing `data-alvo`/`foco-visor` mechanism |
+| `src/components/marca.tsx` | modified | `MarcaLockup` gains a `quebra` (wrap) prop, default `true` (no behaviour change anywhere else); `LojaCabecalho`'s `lg+` lockup passes `quebra={false}` |
 
 ## 6. Verification
 
-- `pnpm build` succeeds, `pnpm lint` clean.
-- Visual check in a real browser at desktop (`lg+`) and mobile (375px) widths on
-  `/loja/otica-exemplo`: Trísion mark visible top-left at both widths and links to
-  `/`; reseller badge visually centered; nav tabs (desktop) / hamburger (mobile) stay
-  on the right; the mobile drawer no longer shows a redundant "Catálogo Trísion" row.
-- `Visor`'s corner brackets (8px `folga` outside the badge's own box) don't clip
-  against the mark or the nav at the narrowest tested width.
+- `pnpm build` succeeds, `pnpm lint` clean, `tsc --noEmit` clean.
+- Rendered with Playwright (Chrome extension unavailable this session) at 375, 800,
+  1024, 1230 and 1440px on `/loja/otica-exemplo` and its product page: mark icon-only
+  and non-wrapping below `lg`, full non-wrapping lockup at `lg+`, both always linking
+  to `/`; reseller badge single-line and centered, brackets absent by default; nav
+  tabs (desktop) / hamburger (mobile) stay on the right; mobile drawer no longer shows
+  the redundant "Catálogo Trísion" row; no console errors.
