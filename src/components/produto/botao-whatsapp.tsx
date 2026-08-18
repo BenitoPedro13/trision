@@ -22,7 +22,7 @@ export function BotaoWhatsApp({ dados }: { dados: DadosContatoWhatsapp }) {
       target="_blank"
       rel="noopener noreferrer"
       data-alvo
-      className="foco-visor block bg-ouro px-6 py-3.5 text-center text-sm font-semibold text-noite transition-opacity hover:opacity-90"
+      className="iridescencia foco-visor block bg-ouro px-6 py-3.5 text-center text-sm font-semibold text-noite transition-opacity hover:opacity-90"
     >
       Falar no WhatsApp
     </a>

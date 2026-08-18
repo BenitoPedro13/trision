@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Ceu } from "@/components/ceu";
 import { GradeProdutos } from "@/components/produto/grade-produtos";
+import { Revela } from "@/components/revela";
 import { RevendedorEndosso } from "@/components/revendedor/revendedor-endosso";
 import { VisorCursor } from "@/components/visor-cursor";
 import { escopoRevendedor, revendedoresAtivosSlugs } from "@/lib/tenant/scope";
@@ -40,12 +41,16 @@ export default async function LojaPage({ params }: { params: Promise<{ rev: stri
       <VisorCursor />
       <div className="relative z-10">
         <header className="px-[clamp(24px,5vw,88px)] py-6">
-          <RevendedorEndosso revendedor={revendedor} />
+          <Revela secao>
+            <RevendedorEndosso revendedor={revendedor} />
+          </Revela>
         </header>
         <main className="px-[clamp(24px,5vw,88px)] pb-[clamp(64px,10vh,160px)]">
-          <p className="mb-10 max-w-[60ch] text-[1.0625rem] leading-relaxed text-luz">
-            {revendedor.sobre}
-          </p>
+          <Revela secao>
+            <p className="mb-10 max-w-[60ch] text-[1.0625rem] leading-relaxed text-luz">
+              {revendedor.sobre}
+            </p>
+          </Revela>
           <GradeProdutos produtos={vitrine.map((item) => item.produto)} />
           {itens.length > vitrine.length && (
             <Link

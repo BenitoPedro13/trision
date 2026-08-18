@@ -1,3 +1,4 @@
+import { Revela } from "@/components/revela";
 import { ProdutoCard } from "./produto-card";
 import type { Produto } from "@/lib/catalog/types";
 
@@ -15,8 +16,10 @@ export function GradeProdutos({ produtos }: { produtos: Produto[] }) {
   }
   return (
     <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
-      {produtos.map((produto) => (
-        <ProdutoCard key={produto.sku} produto={produto} />
+      {produtos.map((produto, i) => (
+        <Revela key={produto.sku} atraso={Math.min(i * 0.05, 0.3)}>
+          <ProdutoCard produto={produto} />
+        </Revela>
       ))}
     </div>
   );

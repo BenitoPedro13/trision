@@ -29,9 +29,11 @@ and the **pitch page for Amanda** is live at `/apresentacao`
 (`TASK-frontend-fase-0.md`): `/`, `/colecoes`, `/catalogo`, `/oculos/[slug]`, and a
 Fase-0 storefront stand-in at `/loja/[rev]` all render — every product and reseller
 marked `exemplo`. No real photography exists yet, so every gallery shows the honest
-"sem foto" state rather than an invented photo, and AlignUI/React Bits aren't installed
-yet, so the CTA/filter chips/thesis line are hand-written on the token system, not their
-eventual polished versions.
+"sem foto" state rather than an invented photo. The motion layer (`Revela`, `FocoVerdadeiro`,
+`.iridescencia`) now covers the catalogue and storefront routes too, not just `/apresentacao`
+(`TASK-motion-vitrine.md`). AlignUI/React Bits aren't installed yet, so filter chips and
+other interaction chrome are hand-written on the token system, not their eventual polished
+versions.
 
 No Payload, no database — a scope decision: Payload enters in Fase 1
 (`spec-architecture.md` §3).
@@ -98,8 +100,8 @@ exists; the default is the Vercel address above.
 ## Verification
 
 `scripts/verificar-fase-0.mts` (Lighthouse + Playwright/axe) checks `/`, `/apresentacao`,
-`/catalogo`, `/oculos/TRI-MOD-A`, and `/loja/otica-exemplo/mostruario` against the budgets
-in `spec-design.md` §12. Last full extension run **2026-08-18** (`docs/tasks/TASK-verificacao-fase-0.md` §6):
+`/catalogo`, `/colecoes`, `/colecoes/exemplo`, `/oculos/TRI-MOD-A`, `/loja/otica-exemplo`,
+and `/loja/otica-exemplo/mostruario` against the budgets in `spec-design.md` §12.
 
 | Route | LCP | CLS | JS transfer |
 |---|---|---|---|

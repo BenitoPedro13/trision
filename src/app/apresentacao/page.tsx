@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { MotionConfig } from "motion/react";
 import s from "./apresentacao.module.css";
 import { Ceu } from "@/components/ceu";
 import { Visor } from "@/components/visor";
@@ -7,6 +6,7 @@ import { Numeracao } from "@/components/numeracao";
 import { MarcaLockup, MarcaSimbolo } from "@/components/marca";
 import { VisorCursor } from "@/components/visor-cursor";
 import { Deck } from "@/components/deck";
+import { ProvedorMotion } from "@/components/provedor-motion";
 import { Revela } from "@/components/revela";
 import { FocoVerdadeiro } from "@/components/foco-verdadeiro";
 
@@ -90,7 +90,7 @@ export default function Apresentacao() {
           (spec-design.md §3.1: "the mark IS the focus ring"), not a silent gap where
           `:focus-visible { outline: none }` (globals.css) would otherwise leave nothing
           to see. Found by docs/tasks/TASK-verificacao-fase-0.md's keyboard pass. */}
-      <MotionConfig reducedMotion="user">
+      <ProvedorMotion>
       <Deck className={`${s.deck} foco-visor`} ariaLabel="Apresentação — use as setas para navegar">
         {/* 01 ───────────────────────────────── */}
         <section className={`${s.slide} ${s.escuro}`}>
@@ -613,7 +613,7 @@ export default function Apresentacao() {
             ))}
           </div>
           <Visor cor="var(--ouro)">
-            <div className={`${s.iridescencia} flex flex-col gap-1 bg-[color-mix(in_srgb,var(--fumo)_88%,transparent)] p-[clamp(16px,2.4vw,26px)]`}>
+            <div className="iridescencia flex flex-col gap-1 bg-[color-mix(in_srgb,var(--fumo)_88%,transparent)] p-[clamp(16px,2.4vw,26px)]">
               <span className={s.rotulo}>o combinado</span>
               <p className="max-w-none text-luz">
                 <strong className="font-semibold text-foco">R$ 300</strong> pelo site no ar,
@@ -852,7 +852,7 @@ export default function Apresentacao() {
           <Contador n={16} />
         </section>
       </Deck>
-      </MotionConfig>
+      </ProvedorMotion>
     </>
   );
 }

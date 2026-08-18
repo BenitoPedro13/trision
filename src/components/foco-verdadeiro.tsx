@@ -4,16 +4,16 @@ import { useRef } from "react";
 import { motion, useInView } from "motion/react";
 
 /* The thesis, in focus — docs/spec-design.md §7.4: "an optical focus device with corner
-   brackets, for an eyewear brand whose mark is a corner-bracket focus device." Used exactly
-   once (slide 03, "Um aro é uma decisão sobre o que você olha"), per §7.4's own warning that
-   a second use is a gimmick.
+   brackets, for an eyewear brand whose mark is a corner-bracket focus device." The named
+   customer-facing target is `/` (this component); `/apresentacao` slide 03 reuses it for
+   the pitch — a different audience in a different session, not the "twice is a gimmick"
+   case §7.4 warns about.
 
-   Each word starts blurred/dimmed; a single gold bracket travels word to word as the slide
+   Each word starts blurred/dimmed; a single gold bracket travels word to word as the block
    enters view, sharpening each one in turn and settling on the full sentence in focus.
-   Reduced motion is handled by `<MotionConfig reducedMotion="user">` (apresentacao/page.tsx),
-   not a branch here — see the matching comment in revela.tsx for why: branching on
-   `useReducedMotion()` in a component rendered during SSR caused a hydration mismatch. Under
-   reduced motion the words still resolve to focus, just without the blur tween. */
+   Reduced motion is handled by `<MotionConfig reducedMotion="user">` (`ProvedorMotion` on `/`
+   and `/apresentacao`), not a branch here — see revela.tsx for why CSS `Revela` is separate.
+   Under reduced motion the words still resolve to focus, just without the blur tween. */
 export function FocoVerdadeiro({ texto }: { texto: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const emVista = useInView(ref, { once: true, margin: "-20% 0px" });

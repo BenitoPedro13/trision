@@ -5,6 +5,7 @@ import { FiltroDrawer } from "@/components/produto/filtro-drawer";
 import { FiltroToggle } from "@/components/produto/filtro-toggle";
 import { Filtros, type FiltrosAtivos } from "@/components/produto/filtros";
 import { GradeProdutos } from "@/components/produto/grade-produtos";
+import { Revela } from "@/components/revela";
 import { RevendedorEndosso } from "@/components/revendedor/revendedor-endosso";
 import { VisorCursor } from "@/components/visor-cursor";
 import { escopoRevendedor, revendedoresAtivosSlugs } from "@/lib/tenant/scope";
@@ -65,7 +66,9 @@ export default async function MostruarioPage({
       <VisorCursor />
       <div className="relative z-10">
         <header className="px-[clamp(24px,5vw,88px)] py-6">
-          <RevendedorEndosso revendedor={revendedor} />
+          <Revela secao>
+            <RevendedorEndosso revendedor={revendedor} />
+          </Revela>
         </header>
         <main className="px-[clamp(24px,5vw,88px)] pb-[clamp(64px,10vh,160px)]">
           <div className="mb-10 flex items-center justify-between gap-4">

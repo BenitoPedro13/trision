@@ -274,11 +274,22 @@ The anti-reflective flash, sampled from her own lens at `#10247C` and running to
 collection card in view. It is the only place two hues meet, and it is the reason the site
 does not need a second accent colour.
 
+**Live instances (`TASK-motion-vitrine.md`, 2026-08-18):** `.iridescencia` in `globals.css`
+on `/` ("Ver o catálogo") and `/oculos/[slug]` (`BotaoWhatsApp`). `/apresentacao` slide 12
+uses the same class on the combinado panel — internal pitch, not a customer route. Listing
+pages (`/catalogo`, `/colecoes`) have no single primary CTA and correctly omit it.
+
 ### 7.4 Supporting cast
 
 | Component | Where | Justification |
 |---|---|---|
 | `TrueFocus` | the homepage statement, once | Text that blurs while a focus bracket travels word to word and snaps each into focus. It is an **optical focus device with corner brackets**, for an eyewear brand whose mark is a corner-bracket focus device. Nothing else in the library is this on-brand. Use once; twice is a gimmick. |
+
+**Implemented as `FocoVerdadeiro` (`components/foco-verdadeiro.tsx`).** The named customer-
+facing target is `/` (*"Uma armação é uma decisão sobre o que você olha"*). `/apresentacao`
+slide 03 reuses it for Amanda's pitch (*"Um aro é uma decisão…"*) — a different audience in a
+different session, not the "twice is a gimmick" case the table warns about (that rule is about
+one visitor's experience on one page, not the repo's total mount count).
 | `ScrollFloat` / `ScrollReveal` | section headings | Quiet entrance. Both `whileInView`-driven — verify they degrade to visible text with JS off. |
 | `ModelViewer` | one hero frame, if a 3D asset exists | `[VERIFICAR: does Amanda have any 3D/turntable assets? Almost certainly not — this is Fase 3 at the earliest. Do not build the route on the assumption.]` |
 | `LogoLoop` | `/revendedores` | The network, marching. Uses reseller names as type, not logos (`spec-brand.md` §3). |

@@ -6,6 +6,7 @@ import { BotaoWhatsApp } from "@/components/produto/botao-whatsapp";
 import { FichaTecnica } from "@/components/produto/ficha-tecnica";
 import { GaleriaProduto } from "@/components/produto/galeria-produto";
 import { OndeComprar } from "@/components/produto/onde-comprar";
+import { Revela } from "@/components/revela";
 import { VisorCursor } from "@/components/visor-cursor";
 import { catalogSourceLocal } from "@/lib/catalog/source.local";
 import { marca } from "@/content/marca";
@@ -42,7 +43,7 @@ export default async function ProdutoPage({ params }: { params: Promise<{ slug: 
         <main className="px-[clamp(24px,5vw,88px)] pb-[clamp(64px,10vh,160px)]">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
             <GaleriaProduto produto={produto} />
-            <div className="flex flex-col gap-6">
+            <Revela secao className="flex flex-col gap-6">
               <div>
                 <h1 className="text-[clamp(1.75rem,3.5vw,2.5rem)] font-semibold tracking-[-0.02em] text-foco">
                   {produto.nome}
@@ -72,7 +73,7 @@ export default async function ProdutoPage({ params }: { params: Promise<{ slug: 
                 }}
               />
               <OndeComprar sku={produto.sku} />
-            </div>
+            </Revela>
           </div>
         </main>
       </div>

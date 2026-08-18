@@ -24,7 +24,10 @@ const PAGES = [
   "/",
   "/apresentacao",
   "/catalogo",
+  "/colecoes",
+  "/colecoes/exemplo",
   "/oculos/TRI-MOD-A",
+  "/loja/otica-exemplo",
   "/loja/otica-exemplo/mostruario",
 ];
 const LIGHTHOUSE_RUNS = 3;
@@ -154,6 +157,29 @@ async function visorCursorOff(context: import("playwright").BrowserContext, url:
   return opacity === "0" ? "off (correct)" : `opacity=${opacity} — STILL ON`;
 }
 
+async function motionLayerUnderReducedMotion(context: import("playwright").BrowserContext, url: string) {
+  const page = await context.newPage();
+  const pageErrors: string[] = [];
+  page.on("pageerror", (err) => pageErrors.push(err.message));
+  await page.goto(url, { waitUntil: "networkidle" });
+  await waitForReady(page);
+  const stuck = await page.evaluate(() => {
+    const targets = document.querySelectorAll("main h1, main p, main a.bg-ouro, main .grid > *");
+    let hidden = 0;
+    for (const el of targets) {
+      const style = getComputedStyle(el);
+      if (parseFloat(style.opacity) < 0.1 && style.visibility !== "hidden" && style.display !== "none") {
+        hidden++;
+      }
+    }
+    return hidden;
+  });
+  await page.close();
+  if (pageErrors.length) return `FAIL — page error(s): ${pageErrors.join("; ")}`;
+  if (stuck > 0) return `FAIL — ${stuck} stuck-at-opacity-0 element(s) in main`;
+  return "PASS — no page errors, content visible";
+}
+
 async function main() {
   console.log(`Base URL: ${BASE_URL}\n`);
   let failed = false;
@@ -234,6 +260,15 @@ async function main() {
     console.log(`\`${p}\`: ${await visorCursorOff(ctx2, `${BASE_URL}${p}`)}`);
   }
   await ctx2.close();
+
+  console.log("\n## Motion layer under reduced-motion (Revela / FocoVerdadeiro)\n");
+  const ctxMotion = await browser.newContext({ reducedMotion: "reduce" });
+  for (const p of PAGES) {
+    const result = await motionLayerUnderReducedMotion(ctxMotion, `${BASE_URL}${p}`);
+    if (!result.startsWith("PASS")) failed = true;
+    console.log(`\`${p}\`: ${result}`);
+  }
+  await ctxMotion.close();
 
   console.log("\n## VisorCursor off under coarse pointer\n");
   const ctx3 = await browser.newContext({
