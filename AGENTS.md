@@ -421,7 +421,7 @@ second package emerges. Payload, when it lands, is mounted *inside* this app
 - **Layout (current, Fase 0):**
 
   ```
-  src/app/                      App Router: / (holding page), /apresentacao (pitch, noindex)
+  src/app/                      App Router: /apresentacao (pitch, noindex)
   src/app/layout.tsx            <html lang="pt-BR" class="dark">, Archivo + IBM Plex Mono
   src/app/globals.css           spec-design.md §4.1 tokens + @theme
   src/app/icon.tsx              favicon, from marca-paths.ts
@@ -429,16 +429,32 @@ second package emerges. Payload, when it lands, is mounted *inside* this app
   src/app/opengraph-image.tsx   1200×630 card; twitter-image.tsx reuses it
   src/app/robots.ts             Disallow /apresentacao, /ir/, /loja/ (Fase 0 path stand-in, §2.4 caveat above)
   src/app/sitemap.ts            marca routes + colecoes/produtos slugs — /loja/ stays out
-  src/app/catalogo/             filterable grid, URL search params
-  src/app/colecoes/             list + [slug] detail
-  src/app/oculos/[slug]/        product page: gallery, ficha técnica, numeração, onde comprar, WhatsApp CTA
-  src/app/loja/[rev]/           Fase 0 storefront path stand-in: home + mostruario/
+  src/app/(marca)/               route group, chrome-sharing only — TASK-footer.md, NOT the
+                                same thing as the target (marca)/ below (see that entry)
+  src/app/(marca)/layout.tsx     Ceu, VisorCursor, Cabecalho, {children}, Rodape — every
+                                marca page below is just its own <main>
+  src/app/(marca)/page.tsx       /, home hero (keeps its own <ProvedorMotion>)
+  src/app/(marca)/catalogo/      filterable grid, URL search params
+  src/app/(marca)/colecoes/      list + [slug] detail
+  src/app/(marca)/oculos/[slug]/ product page: gallery, ficha técnica, numeração, onde comprar, WhatsApp CTA
+  src/app/(marca)/revendedores/  network directory, city/UF filter
+  src/app/(marca)/seja-revendedor/  B2B funnel
+  src/app/(marca)/sobre/          honest-partial bio page — TASK-sobre.md, [VERIFICAR] panel
+                                for what Amanda hasn't confirmed yet
+  src/app/loja/[rev]/           Fase 0 storefront path stand-in: home + mostruario/ — own
+                                chrome (RevendedorEndosso), deliberately outside (marca)/
   src/components/visor.tsx      the four brackets
   src/components/visor-cursor.tsx  brackets following the pointer, data-alvo snap
   src/components/numeracao.tsx  mm in → 52□18-145; □ is SVG (string logic lives in lib/numeracao.ts)
-  src/components/marca.tsx      symbol + lockup (approximate redraw)
-  src/components/marca/cabecalho.tsx  nav shared by marca routes
-  src/components/ceu.tsx        starfield canvas; static under reduced motion
+  src/components/marca.tsx      symbol + lockup (approximate redraw); MarcaLockup takes
+                                simbolo/texto/subtexto/gap so it renders at header AND hero
+                                scale — one logo treatment, not two
+  src/components/marca/cabecalho.tsx  nav shared by marca routes, small MarcaLockup as the
+                                header logo (not a bare icon)
+  src/components/marca/rodape.tsx  shared footer: brand blurb, nav, contact (honest-absence
+                                fallback), legal bar with studio credit
+  src/components/ceu.tsx        starfield canvas; static under reduced motion; dim, slow
+                                twinkle, ~14% of stars --ouro (TASK-ceu-brilho-velocidade.md)
   src/components/produto/       ProdutoCard, GaleriaProduto, FichaTecnica, BotaoWhatsApp,
                                 OndeComprar, GradeProdutos, Filtros, FiltroToggle/FiltroDrawer
                                 + filtro-store.ts (Zustand)

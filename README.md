@@ -151,7 +151,8 @@ motion task docs. Run with `pnpm build && PORT=3001 pnpm start` then
 | `/seja-revendedor` | B2B funnel — static copy + WhatsApp CTA (no form until Fase 1) |
 | `/catalogo` | Full line, filterable by formato/material/cor/gênero via URL search params |
 | `/oculos/[slug]` | Product page — gallery, ficha técnica, numeração, onde comprar, WhatsApp CTA |
-| `/loja/[rev]`, `/loja/[rev]/mostruario`, `/loja/[rev]/a-loja`, `/loja/[rev]/oculos/[slug]` | **Fase 0 path stand-in** for the storefront — three mock resellers (`otica-exemplo`, `otica-demonstracao`, `loja-exemplo`). The product page is tenant-scoped (404s for a sku the shop doesn't carry) and its WhatsApp CTA is attributed to the shop. Not the final URL shape (see `AGENTS.md` "Storefront routing") |
+| `/sobre` | Honest-partial bio page — confirmed facts (`Desde 2002`, positioning, `Eyewear Addict ❤`) plus a visible `[VERIFICAR]` panel for what Amanda hasn't confirmed yet (her name, her story, portrait use) |
+| `/loja/[rev]`, `/loja/[rev]/mostruario`, `/loja/[rev]/a-loja`, `/loja/[rev]/oculos/[slug]` | **Fase 0 path stand-in** for the storefront — three mock resellers (`otica-exemplo`, `otica-demonstracao`, `loja-exemplo`). The product page is tenant-scoped (404s for a sku the shop doesn't carry) and its WhatsApp CTA is attributed to the shop. Shared `src/app/loja/[rev]/layout.tsx` renders `LojaCabecalho` — tabs between the shop's own pages plus a mark link back to the brand site (`TASK-loja-navegacao.md`). Not the final URL shape (see `AGENTS.md` "Storefront routing") |
 | `/apresentacao` | The pitch for Amanda — 16 sections, pt-BR, `noindex` |
 | `/icon`, `/apple-icon` | Favicon and apple-touch generated from the symbol |
 | `/opengraph-image`, `/twitter-image` | Social card 1200×630 |
@@ -163,23 +164,29 @@ motion task docs. Run with `pnpm build && PORT=3001 pnpm start` then
 |---|---|
 | `src/components/visor.tsx` | The four corner brackets. The system's only ornament |
 | `src/components/numeracao.tsx` | `52□18-145` from three numbers in mm; the `□` is SVG |
-| `src/components/marca.tsx` | Symbol + lockup. **Approximate redraw** — pending the original vector |
+| `src/components/marca.tsx` | Symbol + lockup. **Approximate redraw** — pending the original vector. `MarcaLockup` takes `simbolo`/`texto`/`subtexto`/`gap` so the same component renders at header scale and hero scale — one logo treatment, not a small icon plus a separate big lockup |
 | `src/components/visor-cursor.tsx` | The brackets following the pointer and snapping onto `data-alvo`. Fine pointer only, off under `prefers-reduced-motion` |
-| `src/components/ceu.tsx` | Her starfield, on canvas, blinking. Static under `prefers-reduced-motion` |
+| `src/components/ceu.tsx` | Her starfield, on canvas. Dim, slow twinkle (~1.5–4s cycle), ~1 in 4 stars `--ouro`. Static under `prefers-reduced-motion` |
 | `src/components/produto/*` | `ProdutoCard`, `GaleriaProduto`, `FichaTecnica`, `BotaoWhatsApp`, `OndeComprar`, `GradeProdutos`, `Filtros`, `FiltroToggle`/`FiltroDrawer` (Zustand-backed; drawer chrome is AlignUI `Drawer`) |
 | `src/components/ui/drawer.tsx` | AlignUI `Drawer` — vendored, Radix Dialog. Powers `FiltroDrawer` |
 | `src/utils/cn.ts`, `tv.ts`, `polymorphic.ts`, `recursive-clone-children.tsx` | AlignUI foundation utils — vendored byte-identical |
 | `src/components/colecao/colecao-card.tsx` | Editorial tile for a collection |
 | `src/components/revendedor/revendedor-endosso.tsx` | The attribution line — `spec-brand.md` §3 |
 | `src/components/revendedor/filtro-revendedores.tsx` | City/UF chip filter on `/revendedores` — URL search params, same idiom as product filters |
-| `src/components/marca/cabecalho.tsx` | Shared nav for the marca routes |
+| `src/components/marca/cabecalho.tsx` | Shared nav for the marca routes, small `MarcaLockup` as the header logo |
+| `src/components/marca/rodape.tsx` | Shared footer — brand blurb, nav, contact column (WhatsApp/email/Instagram, honest-absence fallback), legal bar with studio credit |
 
 ## Layout
 
 ```
-src/app/                 routes: /, /catalogo, /colecoes, /oculos/[slug], /revendedores,
-                          /seja-revendedor, /loja/[rev] (+ mostruario, a-loja, oculos/[slug]),
-                          /apresentacao, icon/og/robots/sitemap
+src/app/(marca)/         route group sharing one layout (Ceu, VisorCursor, Cabecalho,
+                          Rodape): /, /catalogo, /colecoes, /oculos/[slug], /revendedores,
+                          /seja-revendedor, /sobre — chrome-sharing only, no URL segment,
+                          NOT the Fase 1 target (marca)/ below (see note after this tree)
+src/app/loja/[rev]/      Fase 0 storefront path stand-in (+ mostruario, a-loja, oculos/[slug]) —
+                          own layout.tsx + LojaCabecalho (RevendedorEndosso + tab nav),
+                          deliberately outside (marca)/
+src/app/apresentacao/    the pitch, own chrome, icon/og/robots/sitemap alongside it
 src/app/globals.css      spec-design.md §4.1 tokens
 src/components/          visor, visor-cursor, numeracao, marca, ceu, produto/, colecao/, revendedor/, ui/
 src/utils/               AlignUI foundation (cn, tv, polymorphic, recursive-clone-children)
@@ -197,9 +204,12 @@ docs/                    specs, identity board, tasks
 references/              brand evidence (*.mov gitignored; frames committed)
 ```
 
-The Fase 1 target layout (`(marca)` / `(loja)` / `(payload)` / `content/` /
-`lib/catalog/`) is in `spec-architecture.md` §10. Do not create those folders in a
-task that is not building them.
+The Fase 1 target layout (`(loja)` / `(payload)` / `content/` / `lib/catalog/`) is in
+`spec-architecture.md` §10. Do not create those folders in a task that is not building
+them. `(marca)/` is the one exception already built (`TASK-footer.md`) — it exists today
+purely to share `Cabecalho`/`Rodape`/`Ceu`/`VisorCursor` across the brand-site routes, has
+no dependency on `middleware.ts` or the domain, and isn't itself the Fase 1 migration —
+just a head start on the folder shape.
 
 ## Deploy
 
