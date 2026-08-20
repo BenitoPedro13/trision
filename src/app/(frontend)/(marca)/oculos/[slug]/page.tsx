@@ -83,7 +83,7 @@ export default async function ProdutoPage({ params }: { params: Promise<{ slug: 
               medidas: produto.medidas,
             }}
           />
-          <OndeComprar sku={produto.sku} />
+          <OndeComprar />
         </Revela>
       </div>
     </main>

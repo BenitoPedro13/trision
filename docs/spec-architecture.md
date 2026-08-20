@@ -19,9 +19,17 @@ Three requirements, in Benito's words:
 
 1. **Register a product once.** One catalogue, one database, one set of photographs.
 2. **Each reseller gets its own storefront** (`lojaa.trision…`, `lojab.trision…`) showing
-   **only the frames it actually carries**, selected by the reseller in a CMS. A reseller can
-   *select*, never *create*.
-3. **Amanda receives every lead, and knows which storefront it came from.**
+   **Trísion's full catalogue — the same one, everywhere.** A reseller does not select or
+   create products; there is no per-reseller curation (**decided by Benito, 2026-08-20**,
+   reversing an earlier version of this requirement — see `TASK-catalogo-unico-sem-mostruario.md`).
+   Amanda confirmed why this is correct for how she actually runs the network: consignado
+   and atacado both exist, but for this system "será tudo por mim, eles revendem, eu
+   finalizo entrega, pagamento e repasso comissão" — she fulfills every sale herself no
+   matter which shop referred the customer, so gating a shop's storefront to a subset of
+   stock buys nothing.
+3. **Amanda receives every lead, and knows which storefront it came from — so she can pay
+   commission on it.** This is now the storefront's entire remaining job beyond
+   endorsement (`spec-brand.md` §3): not curation, attribution.
 
 The commercial shape mirrors F&A Móveis and works for the same reason: no cart, no checkout,
 no payments. Every path terminates in WhatsApp, which is where this market already buys.
@@ -46,7 +54,7 @@ money**, exactly as it did with Fátima.
 | Fase | What ships | Recurring cost |
 |---|---|---|
 | **0 — a venda** | The brand site only, real frames, real photographs, WhatsApp CTA. No CMS, no tenants — catalogue as typed TS modules in `content/`. Shown to Amanda on her phone. | ~R$0 (Vercel Hobby) + domain |
-| **1 — o segundo inquilino** | Payload + Postgres + Blob. Subdomain routing. `produtos` / `revendedores` / `mostruario`. **One real reseller onboarded end to end.** This is where the product proves itself, and it is the phase worth charging for. | Vercel Pro + Postgres + Blob |
+| **1 — o segundo inquilino** | Payload + Postgres + Blob. Subdomain routing. `produtos` / `revendedores`. **One real reseller onboarded end to end.** This is where the product proves itself, and it is the phase worth charging for. | Vercel Pro + Postgres + Blob |
 | **2 — a atribuição** | `/ir` lead route, `leads` collection, Amanda's dashboard, lead status workflow, per-reseller report | unchanged |
 | **3 — escala** | Custom domains per reseller, reseller self-onboarding automation, catalogue CSV import | + domain automation |
 
@@ -84,10 +92,13 @@ trision.com.br              → brand site
 trision.com.br/admin        → Payload
 ```
 
-**Wildcard subdomains require owning the apex domain.** Amanda is currently on
-`sitetrision.my.canva.site`, which suggests she owns nothing. **This is the first purchase of
-the project and it blocks all of Fase 1** — `spec-brand.md` §6 question 4. Fase 0 can ship on
-`trision.vercel.app` while it is sorted, but nothing multi-tenant can.
+**Wildcard subdomains require owning the apex domain.** Amanda confirmed 2026-08-20 she owns
+**`trision.com.br`** — currently pointed at a Wbuy storefront, not a purchase that's still
+needed. What's still open: who controls DNS/registrar access, required before this can be
+wired up (`spec-brand.md` §6 question 4). Cutting over is a migration off a live Wbuy site,
+not a blank first purchase — Amanda asked to review what's there before anything is rebuilt.
+Fase 0 can ship on `trision.vercel.app` while DNS access is sorted, but nothing multi-tenant
+can.
 
 ---
 
@@ -142,30 +153,21 @@ filtered, sorted, or converted.
 brand-architecture rule from `spec-brand.md` §3 is enforced here, in the schema, because a
 rule that lives only in a document gets designed around.
 
-### 5.3 `mostruario` — the join. Tenant-scoped.
+### 5.3 `mostruario` — REMOVED 2026-08-20
 
-One row per (reseller × product) the reseller carries. This is the collection the whole
-system exists to hold.
+There is no per-reseller join collection. Every reseller storefront reads `produtos`
+directly and shows the same active catalogue as the brand site's `/catalogo` — no
+selection, no per-row `disponivel`/`destaque`/`ordem`/`observacao`, no per-reseller
+`preco` field to ever build speculatively. See §1 requirement 2 and
+`TASK-catalogo-unico-sem-mostruario.md` for the decision and the full list of what this
+removed, including the "custom Payload admin view" reseller mostruário grid this section
+used to require — that deliverable no longer exists.
 
-| Field | Type | Notes |
-|---|---|---|
-| `revendedor` | rel → `revendedores` | set by the plugin, never by the user |
-| `produto` | rel → `produtos` | |
-| `disponivel` | checkbox, default `true` | |
-| `destaque` | checkbox | drives the storefront home |
-| `ordem` | number | |
-| `observacao` | text | e.g. `só na cor tartaruga` |
-| `preco` | number, optional | **only exists if open question #7 resolves to per-reseller pricing.** Do not build it speculatively — it is the field that quietly destroys "one catalogue" |
-
-**Why a join collection rather than an array of relationships on `revendedores`:** an array
-field means one document lock per edit, a relationship picker that is unusable past ~100
-products, and nowhere to hang `destaque` / `ordem` / `observacao`. The join costs one
-collection and buys per-item curation.
-
-**Reseller-facing UX:** a picker listing 400 products one row at a time is a bad product. Ship
-a **custom Payload admin view** — a grid of every product with a toggle per card, writing
-`mostruario` rows underneath. Budget this explicitly; it is the reseller's entire experience
-of the CMS and the thing they will judge it by.
+Open question #11 (`spec-brand.md` §6, stock quantity) **still stands, relocated**: it was
+framed around `mostruario.disponivel`, but the underlying question — does Amanda need a
+real count, and who updates it — is about `produtos` availability regardless of which
+collection holds it. If it's ever built, it's a field on `produtos`, not a reason to bring
+`mostruario` back.
 
 ### 5.4 `leads` — §7
 
@@ -189,7 +191,6 @@ arrives in Amanda's inbox, from the customer, by their own choice.
 | `produtos` | CRUD | **read only**, `status: ativo` |
 | `colecoes`, `config` | CRUD | read |
 | `revendedores` | CRUD | read own · update own **field-level allowlist** (§5.2) |
-| `mostruario` | CRUD | CRUD **own rows only** |
 | `leads` | CRUD | read own rows, **no create/update** |
 | `usuarios` | CRUD | read/update self |
 
@@ -204,9 +205,10 @@ This section is the one that matters. Everything else is a website.
 > **Every read of a tenant-scoped collection goes through `lib/tenant/scope.ts`, which takes
 > a `tenantId`.** No route, no component, no loader writes its own tenant filter.
 
-A missing filter here shows one reseller another's leads or mostruário. It is the only
-catastrophic bug this system can have, and it is the kind that ships silently — the page
-looks fine, it just has the wrong rows. One boundary, one place to test, one place to audit.
+A missing filter here shows one reseller another's leads (Fase 2) or lets them edit another
+reseller's `revendedores` row today. It is the only catastrophic bug this system can have,
+and it is the kind that ships silently — the page looks fine, it just has the wrong rows.
+One boundary, one place to test, one place to audit.
 
 The same module is the Fase 0 → Fase 1 seam: `source.local.ts` (typed TS in `content/`) and
 `source.payload.ts` implement one interface, and nothing outside them imports a Payload type.
@@ -298,9 +300,9 @@ app/ir/[rev]/[sku]/     the lead redirect (§7)
 ```
 
 **Caching.** Storefronts are statically generated per tenant and revalidated by tag:
-`rev:<slug>`, `produto:<id>`, `mostruario:<slug>`. Payload `afterChange` / `afterDelete`
-hooks call `revalidateTag`. `generateStaticParams` covers active tenants at build; **new
-tenants render on demand**, so onboarding a reseller never requires a deploy — which is the
+`rev:<slug>`, `produto:<id>`. Payload `afterChange` / `afterDelete` hooks call
+`revalidateTag`. `generateStaticParams` covers active tenants at build; **new tenants
+render on demand**, so onboarding a reseller never requires a deploy — which is the
 difference between a platform and thirty forks.
 
 `[VERIFICAR: whether Next 16 Cache Components (`use cache`) is on. Payload has initial
@@ -313,14 +315,14 @@ verify against Payload's own docs at scaffold time, and if it is not solid, ship
 
 | | Amanda (`admin`) | Reseller (`revendedor`) |
 |---|---|---|
-| Lands on | leads dashboard | **the mostruário grid** (§5.3) |
-| Products | full CRUD, photography, collections | a read-only grid with a toggle per frame |
+| Lands on | leads dashboard (Fase 2) | their own `revendedores` profile |
+| Products | full CRUD, photography, collections | read only — nothing to curate (§5.3) |
 | Resellers | all, plus create/onboard | own shop, allowlisted fields |
 | Leads | all, filterable by reseller, status workflow | own, read-only |
 
-The reseller's admin must be usable by a shop owner on a phone, between customers. If it is
-not, they will not curate, the storefront will show the whole catalogue including frames they
-cannot sell, and the product's core promise fails quietly.
+The reseller's admin is now small on purpose: contact info, address, hours, one photo. There
+is no toggle grid to learn and nothing that can drift out of sync with what the shop actually
+carries, because every shop carries the same thing.
 
 ---
 
@@ -362,7 +364,7 @@ them. Losing them makes those specs unverifiable.
 
 | # | Requirement |
 |---|---|
-| NFR-1 | A reseller cannot read or write another reseller's `mostruario` or `leads`. **Asserted by test**, not by review. |
+| NFR-1 | A reseller cannot read or write another reseller's `revendedores` row or `leads`. **Asserted by test**, not by review. |
 | NFR-2 | A reseller cannot create, edit or delete a `produto`. Two locks (§6.2). |
 | NFR-3 | Every lead row carries a resolvable `revendedor` — no orphans, ever. |
 | NFR-4 | Onboarding a reseller requires **no deploy**. |
@@ -378,15 +380,20 @@ them. Losing them makes those specs unverifiable.
 | **One Next app per reseller** | Thirty deploys, thirty drifting designs, no shared catalogue. This is the problem, not the solution. |
 | **Shopify / Shopify Markets** | Requires a paid store to exist before the site does, which inverts the sale (F&A Móveis §2.2), and imposes a cart this business does not want. |
 | **Path-based tenants (`/loja/silva`)** | Cheaper — no wildcard DNS — but a reseller cannot say "my site is X" in their shop window, and that sentence is most of what they are buying. Keep as the fallback if the domain (§4.1) stalls. |
-| **Array of product relationships on `revendedores`** | §5.3. Unusable picker, one lock per edit, nowhere to hang curation. |
+| **Per-reseller `mostruario` join (curated subset, by Amanda or the reseller)** | Built, then removed 2026-08-20 (§5.3, `TASK-catalogo-unico-sem-mostruario.md`). Amanda fulfills every sale herself regardless of which shop referred the customer, so gating a storefront to a subset of stock bought nothing — and it deleted a whole planned admin-UI deliverable for free. |
 | **`sendBeacon` attribution on direct `wa.me` links** | §7.1. Loses exactly the traffic that matters. |
 | **Per-reseller theming** | `spec-brand.md` §3. Destroys the product's core value. |
 | **Building Amanda a custom admin** | Payload already is one, with the access-control model this design needs. Writing it by hand is weeks of work to arrive somewhere worse (`AGENTS.md` §2). |
 
 ## 15. Open questions
 
-All ten live in **`spec-brand.md` §6** with an owner each. The two that block code:
+All eleven live in **`spec-brand.md` §6** with an owner each; most were answered
+2026-08-20. The one still blocking code:
 
-- **#4 — the domain.** Blocks every multi-tenant route. First purchase of the project.
-- **#7 — pricing model.** Decides whether `mostruario.preco` exists, and whether "register a
-  product once" survives contact with reality.
+- **#4 — DNS/registrar access for `trision.com.br`.** The domain string itself is
+  confirmed; what's missing is who controls it. Blocks every multi-tenant route, and it's
+  now a cutover off a live Wbuy site, not a first purchase.
+
+**#7 — pricing model** is resolved (one price, no per-reseller override) and, combined
+with `TASK-catalogo-unico-sem-mostruario.md`, no longer names a field that could exist —
+there is no per-reseller collection left for a price override to live on.

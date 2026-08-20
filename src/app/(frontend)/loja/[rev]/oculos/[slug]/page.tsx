@@ -10,21 +10,20 @@ import { metadataDaPagina } from "@/lib/seo";
 import { produtoJsonLd } from "@/lib/structured-data";
 import { formatarNumeracao } from "@/lib/numeracao";
 
-/* Same product page as `/oculos/[slug]`, but tenant-scoped (spec-design.md §11:
-   "the two are the same components with a different tenantId") and attributed:
-   the WhatsApp message names this shop (spec-architecture.md §7.3's sentence half,
-   minus the `/ir/` codigo — that redirect needs the Fase 1 `leads` collection,
-   TASK-loja-oculos-slug.md §2.3). A sku not in this reseller's mostruário 404s
-   here even if it exists in the brand catalogue — the same boundary
-   `/loja/[rev]/mostruario` already enforces, applied to one product. */
+/* Same product page as `/oculos/[slug]`, but attributed: the WhatsApp message names
+   this shop (spec-architecture.md §7.3's sentence half, minus the `/ir/` codigo — that
+   redirect needs the Fase 1 `leads` collection, TASK-loja-oculos-slug.md §2.3). Every
+   active reseller shows the same catalogue (TASK-catalogo-unico-sem-mostruario.md), so a
+   sku 404s here only if the product itself doesn't exist or isn't `ativo` — never because
+   "this reseller doesn't carry it." */
 export async function generateStaticParams() {
   const revendedores = await revendedoresAtivos();
   const params: { rev: string; slug: string }[] = [];
   for (const revendedor of revendedores) {
     const escopo = await escopoRevendedor(revendedor.slug);
     if (!escopo) continue;
-    for (const item of escopo.itens) {
-      params.push({ rev: revendedor.slug, slug: item.produto.sku });
+    for (const produto of escopo.produtos) {
+      params.push({ rev: revendedor.slug, slug: produto.sku });
     }
   }
   return params;
@@ -37,12 +36,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { rev, slug } = await params;
   const escopo = await escopoRevendedor(rev);
-  const item = escopo?.itens.find((i) => i.produto.sku === slug);
-  if (!escopo || !item) {
+  const produto = escopo?.produtos.find((p) => p.sku === slug);
+  if (!escopo || !produto) {
     return metadataDaPagina({ titulo: "Óculos", descricao: "Óculos Trísion.", caminho: `/loja/${rev}/oculos/${slug}`, indexar: false });
   }
 
-  const { produto } = item;
   const { revendedor } = escopo;
   const numeracao = formatarNumeracao(produto.medidas);
   return metadataDaPagina({
@@ -62,11 +60,9 @@ export default async function ProdutoLojaPage({
   const escopo = await escopoRevendedor(rev);
   if (!escopo) notFound();
 
-  const { revendedor, itens } = escopo;
-  const item = itens.find((i) => i.produto.sku === slug);
-  if (!item) notFound();
-
-  const { produto } = item;
+  const { revendedor, produtos } = escopo;
+  const produto = produtos.find((p) => p.sku === slug);
+  if (!produto) notFound();
 
   return (
     <main className="px-[clamp(24px,5vw,88px)] pb-[clamp(64px,10vh,160px)]">

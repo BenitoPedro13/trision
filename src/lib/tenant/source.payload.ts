@@ -1,5 +1,5 @@
 import { getPayloadClient } from "@/lib/payload/client";
-import { mapMostruario, mapRevendedor } from "@/lib/payload/map";
+import { mapRevendedor } from "@/lib/payload/map";
 
 import type { TenantSource } from "./source";
 
@@ -26,19 +26,5 @@ export const tenantSourcePayload: TenantSource = {
     });
     const doc = docs[0];
     return doc ? mapRevendedor(doc as unknown as Parameters<typeof mapRevendedor>[0]) : undefined;
-  },
-
-  async listarMostruario(revendedorSlug) {
-    const payload = await getPayloadClient();
-    const { docs } = await payload.find({
-      collection: "mostruario",
-      depth: 2,
-      limit: 1000,
-      overrideAccess: true,
-      where: { "revendedor.slug": { equals: revendedorSlug } },
-    });
-    return docs
-      .map((doc) => mapMostruario(doc as unknown as Parameters<typeof mapMostruario>[0]))
-      .filter((item): item is NonNullable<typeof item> => item !== null);
   },
 };

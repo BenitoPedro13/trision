@@ -9,7 +9,6 @@ import sharp from 'sharp'
 
 import { Colecoes } from './collections/Colecoes'
 import { Media } from './collections/Media'
-import { Mostruario } from './collections/Mostruario'
 import { Produtos } from './collections/Produtos'
 import { Revendedores } from './collections/Revendedores'
 import { Usuarios } from './collections/Usuarios'
@@ -26,7 +25,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Usuarios, Media, Colecoes, Produtos, Revendedores, Mostruario],
+  collections: [Usuarios, Media, Colecoes, Produtos, Revendedores],
   globals: [Config],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
@@ -47,7 +46,7 @@ export default buildConfig({
     multiTenantPlugin({
       tenantsSlug: 'revendedores',
       tenantField: { name: 'revendedor' },
-      collections: { mostruario: {} },
+      collections: {},
       tenantsArrayField: { includeDefaultField: true },
       userHasAccessToAllTenants: (user) =>
         (user as TrisionUser | null)?.role === 'admin',

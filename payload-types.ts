@@ -72,7 +72,6 @@ export interface Config {
     colecoes: Colecoe;
     produtos: Produto;
     revendedores: Revendedore;
-    mostruario: Mostruario;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -85,7 +84,6 @@ export interface Config {
     colecoes: ColecoesSelect<false> | ColecoesSelect<true>;
     produtos: ProdutosSelect<false> | ProdutosSelect<true>;
     revendedores: RevendedoresSelect<false> | RevendedoresSelect<true>;
-    mostruario: MostruarioSelect<false> | MostruarioSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -273,21 +271,6 @@ export interface Produto {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "mostruario".
- */
-export interface Mostruario {
-  id: number;
-  revendedor?: (number | null) | Revendedore;
-  produto: number | Produto;
-  disponivel?: boolean | null;
-  destaque?: boolean | null;
-  ordem: number;
-  observacao?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -329,10 +312,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'revendedores';
         value: number | Revendedore;
-      } | null)
-    | ({
-        relationTo: 'mostruario';
-        value: number | Mostruario;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -499,20 +478,6 @@ export interface RevendedoresSelect<T extends boolean = true> {
   sobre?: T;
   status?: T;
   destinoLead?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "mostruario_select".
- */
-export interface MostruarioSelect<T extends boolean = true> {
-  revendedor?: T;
-  produto?: T;
-  disponivel?: T;
-  destaque?: T;
-  ordem?: T;
-  observacao?: T;
   updatedAt?: T;
   createdAt?: T;
 }

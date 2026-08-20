@@ -2,7 +2,6 @@ import config from "@payload-config";
 import { getPayload } from "payload";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { Mostruario } from "../collections/Mostruario";
 import type { TrisionUser } from "@/payload/access";
 
 const hasDatabase = Boolean(process.env.DATABASE_URL?.trim());
@@ -14,7 +13,6 @@ const ACCESS_MATRIX: Record<
   produtos: { admin: ["create", "read", "update", "delete"], revendedor: ["read"] },
   colecoes: { admin: ["create", "read", "update", "delete"], revendedor: ["read"] },
   revendedores: { admin: ["create", "read", "update", "delete"], revendedor: ["read", "update"] },
-  mostruario: { admin: ["create", "read", "update", "delete"], revendedor: ["create", "read", "update", "delete"] },
   usuarios: { admin: ["create", "read", "update", "delete"], revendedor: ["read", "update"] },
   media: { admin: ["create", "read", "update", "delete"], revendedor: ["create", "read", "update"] },
 };
@@ -100,12 +98,5 @@ describe.skipIf(!hasDatabase)("tenancy access control", () => {
         },
       } as never),
     ).rejects.toThrow();
-  });
-});
-
-describe("tenancy access control (offline)", () => {
-  it("mostruario schema has no preco field", () => {
-    const names = Mostruario.fields?.map((f) => ("name" in f ? f.name : null));
-    expect(names).not.toContain("preco");
   });
 });

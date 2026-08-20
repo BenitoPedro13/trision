@@ -12,11 +12,10 @@ A sophisticated Brazilian eyewear brand platform connecting one curated catalogu
 
 Trísion is an existing eyewear brand managed by Amanda. This platform allows her to:
 - Maintain a unified catalogue of frames, controlled centrally
-- Empower independent optical shops to showcase their inventory online
-- Route all customer inquiries directly to the appropriate reseller via WhatsApp
-- Track sourcing and attribution for each lead
+- Give independent optical shops a branded storefront, showing the same catalogue everywhere
+- Route all customer inquiries directly to Amanda via WhatsApp, attributed to the reseller that sent them (so she knows who to pay commission)
 
-Each reseller operates a branded storefront at their own domain, displaying only the frames they carry, while the brand maintains editorial control over collections, product information, and the core brand identity.
+Each reseller operates a branded storefront at their own domain, showing Trísion's full catalogue — there is no per-reseller selection (decided 2026-08-20, `docs/tasks/TASK-catalogo-unico-sem-mostruario.md`). The storefront exists for endorsement and attribution, not curation; the brand maintains editorial control over the catalogue, collections, and the core brand identity.
 
 ---
 
@@ -48,7 +47,7 @@ All specifications, design system details, architecture decisions, and implement
 
 ### Fase 1: CMS Foundation Landed ✓ (2026-08-18)
 - **Payload 3.88** mounted at `/admin` with multi-tenant plugin
-- **Six collections** implemented: `Produtos`, `Colecoes`, `Revendedores`, `Mostruario`, `Usuarios`, `Config`
+- **Five collections + one global** implemented: `Produtos`, `Colecoes`, `Revendedores`, `Usuarios`, `Config`. (`Mostruario` was built here and removed 2026-08-20 — see the note below.)
 - **Postgres + Vercel Blob** adapters wired (requires marketplace provisioning)
 - **Seam swap complete:** `lib/catalog/source.ts` and `lib/tenant/source.ts` now select between Payload (live) and mock data (offline fallback)
 - **Access control matrix** implemented and tested — resellers can only edit their own data
@@ -57,6 +56,16 @@ All specifications, design system details, architecture decisions, and implement
 **What's working now:**
 - Without `DATABASE_URL`: all routes render from `src/content/` mock data
 - With `DATABASE_URL` set: `/admin` loads Payload, and routes query Postgres when the database is reachable
+
+### One catalogue everywhere — `Mostruario` removed (2026-08-20)
+
+Every reseller storefront now shows Trísion's full active catalogue, identical for every
+shop. Resellers no longer select or curate which frames they carry — Amanda fulfills
+every sale herself regardless of which shop referred the customer, so the earlier
+per-reseller `Mostruario` join collection (and the reseller-facing "toggle grid" admin
+view it implied) bought nothing and has been deleted. The storefront's job is now
+endorsement and lead attribution only. See
+[`docs/tasks/TASK-catalogo-unico-sem-mostruario.md`](docs/tasks/TASK-catalogo-unico-sem-mostruario.md).
 
 ### Fase 2: Lead Attribution & Dashboard (Planned)
 - `/ir/[rev]/[sku]` redirect for tracking which reseller sent the lead
@@ -161,16 +170,19 @@ This design allows Fase 0 to run without a database (dev demos) and Fase 1 to sw
 |-----------|-----------|------------|-------|
 | `Productos` | Brand | Admin only | Global, not tenant-scoped. Lock: admin cannot be created by reseller role. |
 | `Colecoes` | Brand | Admin (read for reseller) | Editorial collections, brand voice only. |
-| `Revendedores` | Admin | Admin + reseller (field-level) | Tenant collection. Reseller can edit: name, contact, address, hours, portrait, bio. Admin controls: slug, city, UF, status, lead destination. |
-| `Mostruario` | (Implicit) | Reseller (own rows) | Tenant-scoped. Links product + reseller + availability. Reseller CRUD on own rows only. |
+| `Revendedores` | Admin | Admin + reseller (field-level) | Tenant collection. Reseller can edit: contact, address, hours, portrait, bio. Admin controls: name, slug, city, UF, status, lead destination. No tenant-scoped catalogue collection sits under it — every reseller reads `Productos` directly. |
 | `Usuarios` | Admin | Admin | Role: `admin` or `revendedor`. Multi-tenant plugin manages tenant membership. |
 | `Config` | Admin | Admin | Global. Brand WhatsApp, socials, home hero, footer, founding year. |
 
 ### Multi-Tenancy Model
 
 - Each row of `Revendedores` is a tenant
-- Payload's `plugin-multi-tenant` automatically filters `Mostruario` by the logged-in reseller's tenant
-- `Productos` and `Colecoes` remain global so all resellers see the same catalogue
+- No collection is listed in `plugin-multi-tenant`'s `collections` config — there's nothing
+  left to filter by tenant. The plugin still does real work: it adds the `tenants` array
+  field to `Usuarios` (so `revendedorOwnTenantUpdate` in `src/payload/access.ts` knows which
+  `Revendedores` row a given reseller user may edit) and the `revendedor` tenant field +
+  admin selector on `Revendedores` itself
+- `Productos` and `Colecoes` are global so all resellers see the same catalogue
 - `Usuarios` is global (admin is global, reseller auth is tenant-agnostic)
 
 ---
@@ -191,12 +203,16 @@ This design allows Fase 0 to run without a database (dev demos) and Fase 1 to sw
 ### Storefronts (`/loja/*` — temporary path-based routing)
 | Path | Purpose |
 |------|---------|
-| `/loja/[rev]` | Storefront home — shop portrait, hours, featured items |
-| `/loja/[rev]/mostruario` | Shop's inventory (subset of catalogue) |
+| `/loja/[rev]` | Storefront: full active catalogue (same one everywhere, filterable), shop's `sobre` blurb, endorsement line |
 | `/loja/[rev]/a-loja` | Shop detail: address, hours, contact |
-| `/loja/[rev]/oculos/[slug]` | Product detail (tenant-scoped: 404 if shop doesn't carry it), WhatsApp CTA names the shop |
+| `/loja/[rev]/oculos/[slug]` | Product detail, WhatsApp CTA names the shop for commission attribution |
 
 **Note:** This path-based routing (`/loja/[rev]`) is the Fase 0 stand-in. Fase 1+ targets wildcard subdomains (`loja-exemplo.trision.com.br`) via `middleware.ts` Host rewriting — blocked on confirming the apex domain (question #4 in `spec-brand.md`).
+
+**Every reseller storefront shows the same catalogue** (decided 2026-08-20,
+`docs/tasks/TASK-catalogo-unico-sem-mostruario.md`). A reseller does not curate or select
+products — the storefront exists for brand endorsement and lead attribution (so Amanda
+knows which shop to pay commission on), not for a per-shop assortment.
 
 ### Admin & System
 | Path | Purpose |
@@ -258,7 +274,6 @@ src/content/            Mock data for Fase 0 (marked `exemplo`)
   produtos.ts
   colecoes.ts
   revendedores.ts
-  mostruario.ts
 
 src/components/         Brand components + product/reseller UI
 src/utils/              AlignUI foundation (cn, tv, polymorphic, recursive-clone-children)
@@ -322,7 +337,7 @@ scripts/
 | `/` | 1.56s | 0.000 | 143 KB | ✓ |
 | `/catalogo` | 1.61s | 0.000 | 147 KB | ✓ |
 | `/oculos/[slug]` | 1.58s | 0.000 | 145 KB | ✓ |
-| `/loja/[rev]/mostruario` | 1.56s | 0.000 | 147 KB | ✓ |
+| `/loja/[rev]` | `[VERIFICAR: re-run pnpm verificar-fase-0 — route now serves the full catalogue, not the old /mostruario page these numbers were measured against]` | | | |
 | `/apresentacao` | 3.77s | 0.000 | 178 KB | ✗ LCP over (motion layer pending optimization) |
 
 **Accessibility:** All routes pass WCAG AA contrast checks, keyboard navigation, focus indicators (via `.foco-visor`), and reduced-motion rendering (Ceu is static, VisorCursor is disabled).
@@ -331,13 +346,14 @@ scripts/
 
 ## Blocking Questions
 
-Three answers Amanda must give before scaling further (tracked in `spec-brand.md` §6):
+One answer still blocks scaling further (tracked in `spec-brand.md` §6 — most of the
+eleven questions there were answered 2026-08-20):
 
 | # | Question | Impact | Status |
 |---|----------|--------|--------|
-| 4 | **What is the apex domain?** (e.g., `trision.com.br`) | Blocks wildcard subdomain routing, multi-tenant URLs, Fase 1+ launch | Partially answered 2026-08-17 — Amanda owns a domain, exact string `[VERIFICAR]` |
-| 6 | **Where does the WhatsApp button point?** (Amanda's number or local reseller?) | Affects every CTA on the site | Uses `lib/lead/link.ts` `destinoLead` field so this can vary per storefront, but the policy must be set |
-| 7 | **Pricing model:** per-reseller or one suggested price? | Decides whether `Mostruario.preco` exists | Unresolved — do not build `preco` field until this is answered |
+| 4 | **Who controls DNS/registrar access for `trision.com.br`?** | Blocks wildcard subdomain routing, multi-tenant URLs, Fase 1+ launch | Domain string confirmed 2026-08-20 (currently points at a Wbuy storefront); DNS/registrar access still `[VERIFICAR]` |
+| 6 | **Where does the WhatsApp button point?** (Amanda's number or local reseller?) | Affects every CTA on the site | **Answered 2026-08-20** — always Amanda ("deverá ser comigo"); `destinoLead` stays available but should never be set to `revendedor` in practice |
+| 7 | **Pricing model:** per-reseller or one suggested price? | Decided whether a per-reseller price-override field would exist | **Answered 2026-08-20** — one price everywhere ("mesmo preço, tabelado"); no such field will be built |
 
 ---
 
@@ -379,7 +395,7 @@ Push to GitHub → Vercel builds and deploys automatically. No environment varia
 2. Run `pnpm dev` and answer Drizzle migration prompts (always **create**, never **rename**)
 3. Visit `/admin` and create the first admin user (Usuarios collection)
 4. If Drizzle fails with constraint errors, run `pnpm payload:fix-rels`
-5. Verify all six collections exist: Usuarios, Media, Colecoes, Productos, Revendedores, Mostruario, Config
+5. Verify all collections/globals exist: Usuarios, Media, Colecoes, Productos, Revendedores, Config
 
 ---
 

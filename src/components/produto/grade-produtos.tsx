@@ -2,10 +2,10 @@ import { Revela } from "@/components/revela";
 import { ProdutoCard } from "./produto-card";
 import type { Produto } from "@/lib/catalog/types";
 
-/* The shared grid — `/catalogo` and `/loja/[rev]/mostruario` both render this against
-   different data (`spec-design.md` §11: "the two are the same components with a
-   different tenantId"). If a storefront ever needs a grid this doesn't offer, that's
-   the tenancy boundary being violated, not a reason to fork the component. */
+/* The shared grid — `/catalogo` and `/loja/[rev]` both render this against the same
+   catalogue (`spec-design.md` §11: "the two are the same components with a different
+   tenantId"). If a storefront ever needs a grid this doesn't offer, that's the tenancy
+   boundary being violated, not a reason to fork the component. */
 export function GradeProdutos({
   produtos,
   hrefBase,

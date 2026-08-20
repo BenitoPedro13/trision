@@ -14,9 +14,7 @@ import { getPayload } from "payload";
 import config from "../payload.config";
 import type { Produto as ProdutoDoc } from "../payload-types";
 import { colecoes } from "../src/content/colecoes";
-import type { MostruarioItem } from "@/lib/catalog/types";
 import { marca } from "../src/content/marca";
-import { mostruario } from "../src/content/mostruario";
 import { produtos } from "../src/content/produtos";
 import { revendedores } from "../src/content/revendedores";
 
@@ -95,20 +93,6 @@ async function main() {
     const skus = produtos.map((p) => p.sku);
     const slugs = revendedores.map((r) => r.slug);
 
-    const existingMostruario = await payload.find({
-      collection: "mostruario",
-      limit: 1000,
-      overrideAccess: true,
-      depth: 0,
-    });
-    for (const row of existingMostruario.docs) {
-      await payload.delete({
-        collection: "mostruario",
-        id: row.id,
-        overrideAccess: true,
-      });
-    }
-
     for (const sku of skus) {
       const found = await payload.find({
         collection: "produtos",
@@ -179,9 +163,8 @@ async function main() {
     console.log(`  colecoes: ${c.slug}`);
   }
 
-  const revendedorIds = new Map<string, number>();
   for (const r of revendedores) {
-    const doc = await payload.create({
+    await payload.create({
       collection: "revendedores",
       overrideAccess: true,
       data: {
@@ -198,16 +181,14 @@ async function main() {
         destinoLead: "marca",
       },
     });
-    revendedorIds.set(r.slug, doc.id as number);
     console.log(`  revendedores: ${r.slug}`);
   }
 
-  const produtoIds = new Map<string, number>();
   for (const p of produtos) {
     const colecaoId = colecaoIds.get(p.colecaoSlug);
     if (colecaoId === undefined) throw new Error(`Missing coleção for ${p.sku}`);
 
-    const doc = await payload.create({
+    await payload.create({
       collection: "produtos",
       overrideAccess: true,
       data: {
@@ -225,31 +206,7 @@ async function main() {
         status: p.status,
       },
     });
-    produtoIds.set(p.sku, doc.id as number);
     console.log(`  produtos: ${p.sku}`);
-  }
-
-  for (const m of mostruario) {
-    const revendedorId = revendedorIds.get(m.revendedorSlug);
-    const produtoId = produtoIds.get(m.produtoSku);
-    if (revendedorId === undefined || produtoId === undefined) {
-      throw new Error(`Missing rels for mostruario ${m.revendedorSlug}/${m.produtoSku}`);
-    }
-
-    const item = m as MostruarioItem;
-    await payload.create({
-      collection: "mostruario",
-      overrideAccess: true,
-      data: {
-        revendedor: revendedorId,
-        produto: produtoId,
-        disponivel: item.disponivel,
-        destaque: item.destaque,
-        ordem: item.ordem,
-        observacao: item.observacao,
-      },
-    });
-    console.log(`  mostruario: ${m.revendedorSlug} → ${m.produtoSku}`);
   }
 
   console.log("Done.");

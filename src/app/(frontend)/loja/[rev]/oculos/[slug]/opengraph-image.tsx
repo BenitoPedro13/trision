@@ -12,13 +12,12 @@ export default async function Image({
 }) {
   const { rev, slug } = await params;
   const escopo = await escopoRevendedor(rev);
-  const item = escopo?.itens.find((i) => i.produto.sku === slug);
+  const produto = escopo?.produtos.find((p) => p.sku === slug);
 
-  if (!escopo || !item) {
+  if (!escopo || !produto) {
     return gerarOgImage({ kicker: "Óculos", titulo: "Trísion Eyewear" });
   }
 
-  const { produto } = item;
   const { revendedor } = escopo;
   return gerarOgImage({
     kicker: `Revenda oficial · ${revendedor.nome}`,

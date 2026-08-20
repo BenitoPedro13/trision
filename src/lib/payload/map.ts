@@ -1,6 +1,6 @@
 import { convertLexicalToPlaintext } from "@payloadcms/richtext-lexical/plaintext";
 
-import type { Colecao, MostruarioItem, Produto, Revendedor } from "@/lib/catalog/types";
+import type { Colecao, Produto, Revendedor } from "@/lib/catalog/types";
 
 type MediaDoc = { url?: string | null };
 
@@ -35,15 +35,6 @@ type RevendedorDoc = {
   horarios?: { texto?: string | null } | null;
   retrato?: MediaDoc | string | number | null;
   status: Revendedor["status"];
-};
-
-type MostruarioDoc = {
-  revendedor: RevendedorDoc | string | number;
-  produto: ProdutoDoc | string | number;
-  disponivel?: boolean | null;
-  destaque?: boolean | null;
-  ordem: number;
-  observacao?: string | null;
 };
 
 function mediaUrl(value: MediaDoc | string | number | null | undefined): string {
@@ -115,24 +106,5 @@ export function mapRevendedor(doc: RevendedorDoc): Revendedor {
     retrato: mediaUrl(doc.retrato),
     status: doc.status,
     exemplo: false,
-  };
-}
-
-export function mapMostruario(doc: MostruarioDoc): MostruarioItem | null {
-  const revendedor = doc.revendedor;
-  if (typeof revendedor !== "object" || revendedor === null || !("slug" in revendedor)) {
-    return null;
-  }
-  const produto = doc.produto;
-  const produtoSku =
-    typeof produto === "object" && produto !== null && "sku" in produto ? produto.sku : null;
-  if (!produtoSku) return null;
-  return {
-    revendedorSlug: revendedor.slug,
-    produtoSku,
-    disponivel: doc.disponivel ?? true,
-    destaque: doc.destaque ?? false,
-    ordem: doc.ordem,
-    observacao: doc.observacao ?? undefined,
   };
 }

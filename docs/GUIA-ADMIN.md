@@ -1,7 +1,7 @@
 # Guia de Administração — Trísion Eyewear
 
 **Para:** Amanda, proprietária da Trísion Eyewear  
-**Versão:** 1.0 — Fase 1 (Agosto 2026)  
+**Versão:** 1.1 — Fase 1 (Agosto 2026) — catálogo único, sem mostruário por loja  
 **Objetivo:** Ensinar como usar e configurar cada aspecto do painel de administração Payload
 
 ---
@@ -13,10 +13,9 @@
 3. [Gerenciar produtos](#gerenciar-produtos)
 4. [Gerenciar coleções](#gerenciar-coleções)
 5. [Gerenciar revendedores](#gerenciar-revendedores)
-6. [Gerenciar mostruário (inventário por loja)](#gerenciar-mostruário)
-7. [Configuração global da marca](#configuração-global-da-marca)
-8. [Ensinar revendedores a escolher seus produtos](#ensinar-revendedores)
-9. [Dúvidas e solução de problemas](#dúvidas-e-solução-de-problemas)
+6. [Configuração global da marca](#configuração-global-da-marca)
+7. [Dar acesso aos revendedores](#ensinar-revendedores)
+8. [Dúvidas e solução de problemas](#dúvidas-e-solução-de-problemas)
 
 ---
 
@@ -53,7 +52,6 @@ Quando entra no painel, vê uma barra lateral esquerda com várias abas:
 📦 Productos
 📚 Colecoes
 🏪 Revendedores
-📋 Mostruario
 👥 Usuarios
 ⚙️  Config
 🖼️  Media (Imagens)
@@ -87,7 +85,7 @@ Todas seguem o mesmo padrão:
 
 ### O que é a coleção "Productos"
 
-Aqui você cadastra todos os óculos que a Trísion oferece. É o **catálogo centralizado** — um produto existe aqui uma vez, e vários revendedores podem carregar o mesmo produto em suas lojas.
+Aqui você cadastra todos os óculos que a Trísion oferece. É o **catálogo centralizado** — um produto existe aqui uma vez, e aparece automaticamente em **todas** as lojas de revendedores, exatamente igual. Não existe uma etapa de "atribuir" um produto a uma loja: assim que você salva um produto aqui, ele já está em todas as lojas.
 
 ### Ver todos os produtos
 
@@ -290,89 +288,6 @@ Isso protege a integridade dos dados que você controla.
 
 ---
 
-## Gerenciar Mostruário
-
-### O que é "Mostruario" (Inventário por loja)
-
-O mostruário é o **link entre um revendedor e os produtos que ele vende**.
-
-**Exemplo:**
-- A Trísion tem 50 produtos no catálogo
-- Mas a "Ótica Exemplo" só vende 15 desses 50
-- Você cria 15 linhas no mostruário da "Ótica Exemplo", dizendo: "Este revendedor tem estes produtos"
-
-Quando alguém visita a loja da "Ótica Exemplo" online, vê apenas os 15 produtos que ela realmente tem.
-
-### Ver o mostruário de um revendedor
-
-**Opção 1: Direto no painel**
-1. Clique em **"Mostruario"** na barra lateral
-2. Você vê todas as linhas de todos os revendedores
-3. Use a barra de **busca/filtro** para encontrar um revendedor específico
-
-**Opção 2: De dentro do revendedor**
-1. Vá em **"Revendedores"**
-2. Abra o revendedor
-3. Procure pela seção **"Mostruario"** (lista de produtos)
-
-### Adicionar produtos ao mostruário de um revendedor
-
-#### Método 1: Do painel Mostruario
-
-1. Clique em **"+ Add New"** no painel Mostruario
-2. Preencha:
-
-| Campo | O que é | Como preencher |
-|-------|---------|----------------|
-| **Revendedor** | Qual loja este produto pertence | Escolha da lista suspensa |
-| **Produto** | Qual produto da Trísion | Escolha da lista suspensa |
-| **Disponível** | Está em estoque? | Sim/Não (padrão: Sim) |
-| **Destaque** | Mostrar em primeiro lugar? | Sim/Não (padrão: Não) |
-| **Observação** | Notas extras (opcional) | Ex: "Sob encomenda em 5 dias" |
-
-3. **Ordem:** Se quiser que produtos apareçam em ordem específica, use o campo **"Ordem"** (número)
-4. Clique em **"Save"**
-
-#### Método 2: De dentro do revendedor (mais fácil para muitos produtos)
-
-1. Vá em **"Revendedores"**
-2. Abra o revendedor que quer atualizar
-3. Procure pela seção **"Mostruario"** (provavelmente no final da página)
-4. Clique em **"Add"** ou **"+ Add New Product"**
-5. Escolha os produtos da lista
-6. Preencha **Disponível**, **Destaque**, **Observação**
-7. Clique em **"Save"**
-
-### Editar o mostruário
-
-1. Na lista do **Mostruario**, clique no item que quer editar
-2. Faça as mudanças (produto, disponibilidade, ordem, etc.)
-3. Clique em **"Save"**
-
-### Remover um produto do mostruário
-
-1. Abra o item no **Mostruario**
-2. Clique em **"Delete"** (vermelho)
-3. Confirme
-
-O produto **não é apagado** do catálogo, só desaparece da loja daquele revendedor.
-
-### Entender "Destaque" e "Disponível"
-
-**Disponível:**
-- ✅ **Sim** = A loja tem este produto em estoque agora
-- ❌ **Não** = A loja não tem (pode estar sob encomenda)
-
-**Destaque:**
-- ✅ **Sim** = Mostra este produto primeiro na loja (tipo "bestseller")
-- ❌ **Não** = Ordem normal
-
-Exemplo de uso:
-- Um óculos muito vendido? Marque como **Destaque: Sim**
-- Um óculos fora de estoque mas ainda oferecido? Marque **Disponível: Não**
-
----
-
 ## Configuração Global da Marca
 
 ### O que é "Config"
@@ -417,7 +332,10 @@ Tudo que você muda aqui aparece no site automaticamente.
 
 Cada revendedor tem uma **conta separada** com acesso limitado:
 - ✅ Pode **editar seus próprios dados** (telefone, endereço, foto, horas)
-- ✅ Pode **gerenciar seu próprio mostruário** (quais produtos tem)
+- ❌ Não pode **escolher quais produtos aparecem na loja dele** — toda loja mostra o
+  catálogo completo da Trísion, sempre o mesmo. Isso não é uma limitação técnica: é assim
+  de propósito. A loja do revendedor existe para dizer "essa venda veio daqui" (você sabe
+  a quem pagar comissão), não para montar um sortimento próprio.
 - ❌ Não pode **criar produtos** (produtos ficam sob seu controle)
 - ❌ Não pode **ver dados de outros revendedores**
 
@@ -451,9 +369,11 @@ Senha: [senha temporária]
 
 No painel, você pode:
 ✓ Atualizar seu endereço e horários
-✓ Escolher quais óculos da Trísion você tem em estoque
 ✓ Adicionar foto da sua loja
 ✓ Gerenciar informações de contato
+
+Sua loja mostra o catálogo completo da Trísion — o mesmo em todas as lojas. Não precisa
+escolher nada; é só manter seus dados de contato atualizados.
 
 Após o primeiro acesso, você pode trocar sua senha em Perfil.
 
@@ -463,37 +383,23 @@ Abraços,
 Amanda — Trísion
 ```
 
-### Guiar um revendedor: Adicionar seus produtos
+### Colocar a loja de um revendedor no ar
 
-**Cenário:** A "Ótica Exemplo" quer adicionar seus produtos no site.
+**Cenário:** A "Ótica Exemplo" vai virar revendedora.
 
-#### Passo 1: Você prepara a loja (admin)
+1. Vá em **"Revendedores"**, clique em **"+ Add New"**
+2. Preencha nome, slug, cidade, UF (veja [Gerenciar Revendedores](#gerenciar-revendedores))
+3. Salve — a loja já existe em `/loja/otica-exemplo` mostrando o catálogo completo,
+   sem nenhum passo extra de escolher produtos
+4. Crie a conta de acesso dela (veja acima) para que ela edite contato, endereço, horários
+   e foto quando quiser
 
-1. Vá em **"Revendedores"**
-2. Abra a "Ótica Exemplo"
-3. Na seção **"Mostruario"**, clique em **"Add"**
-4. Escolha todos os produtos que essa loja oferece (você sabe qual loja tem o quê)
-5. Clique em **"Save"**
+Não existe um "Passo 2" de montar o sortimento — não há sortimento para montar.
 
-Pronto! Os produtos estão ali. Agora o revendedor pode gerenciar.
+### Você monitora
 
-#### Passo 2: O revendedor faz login e edita
-
-O revendedor faz login em `/admin` com suas credenciais. Ele vê:
-- Seu nome e dados de contato
-- Uma lista dos seus produtos
-
-O revendedor pode:
-- **Marcar "Disponível: Não"** se um óculos está fora de estoque
-- **Marcar "Destaque: Sim"** se quer destacar um produto
-- **Mudar a ordem** para reorganizar como aparecem
-- **Adicionar observação** (ex: "Sob encomenda em 5 dias")
-
-#### Passo 3: Você monitora
-
-De vez em quando, você entra no painel e verifica:
-- Os revendedores estão atualizando seus dados?
-- Os mostruários estão precisos (disponibilidade, destaque)?
+De vez em quando, entre no painel e verifique se os revendedores estão com contato e
+endereço atualizados — é a única coisa que muda de loja para loja.
 
 ---
 
@@ -555,14 +461,21 @@ Se tudo está correto, peça que ele:
 
 Ainda não funciona? **Contacte o suporte.**
 
-### "Um produto desapareceu da loja de um revendedor"
+### "Um produto sumiu do site"
 
-Pode ser:
-1. Você deletou o produto? Ele desaparece de todas as lojas.
-2. Você desabilitou o revendedor (Status: Inativo)? Seus produtos desaparecem.
-3. Você removeu o produto do mostruário dele? Procure em **"Mostruario"**.
+Como toda loja mostra o mesmo catálogo, um produto some de **todas** as lojas ao mesmo
+tempo — nunca de uma loja só. Pode ser:
+1. Você deletou o produto?
+2. Você mudou o Status dele para "Descontinuado"?
 
-**Solução:** Adicione o produto de volta ao mostruário.
+**Solução:** Reative o produto (Status: Ativo) ou recadastre-o.
+
+### "A loja de um revendedor sumiu"
+
+1. Você mudou o Status do revendedor para "Pausado"? Um revendedor pausado não aparece
+   no site.
+
+**Solução:** Volte o Status para "Ativo".
 
 ### "Não consigo fazer upload de uma foto"
 

@@ -394,14 +394,13 @@ likely to be the actual bottleneck.
 | `/revendedores` | The network. Search by city/UF. Proof of 24 years |
 | `/sobre` | Amanda, 2002, the portrait |
 | `/seja-revendedor` | The B2B funnel — the second front door (`spec-brand.md` §2.1) |
-| `/atendimento-exclusivo` | `[VERIFICAR: blocked on open question #2]` |
+| `/atendimento-exclusivo` | Amanda's optical practice: 24 years of in-home/in-location visits, technical assessment, aesthetic consultation (`spec-brand.md` §6 question 2, answered 2026-08-20) |
 
 **Reseller storefront — `<loja>.trision.com.br`**
 
 | Route | Purpose |
 |---|---|
-| `/` | This shop's front: endorsement line, its featured frames, its contact |
-| `/mostruario` | **Only what this shop carries.** Same components, filtered data |
+| `/` | This shop's front: endorsement line, its contact, and Trísion's full catalogue — same one every storefront shows (`TASK-catalogo-unico-sem-mostruario.md`) |
 | `/oculos/[slug]` | Same product page; the CTA is attributed (`spec-architecture.md` §7) |
 | `/a-loja` | Shop identity: photo, address, hours — map `[VERIFICAR: no maps provider chosen; revisit once real addresses exist]` |
 

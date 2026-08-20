@@ -1,4 +1,3 @@
-import { mostruario } from "@/content/mostruario";
 import { revendedores } from "@/content/revendedores";
 import type { TenantSource } from "./source";
 
@@ -10,9 +9,5 @@ export const tenantSourceLocal: TenantSource = {
 
   async buscarRevendedorPorSlug(slug) {
     return revendedores.find((r) => r.slug === slug);
-  },
-
-  async listarMostruario(revendedorSlug) {
-    return mostruario.filter((m) => m.revendedorSlug === revendedorSlug);
   },
 };

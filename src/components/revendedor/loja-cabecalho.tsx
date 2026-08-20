@@ -24,7 +24,6 @@ export function LojaCabecalho({ revendedor }: { revendedor: Revendedor }) {
 
   const TABS = [
     { href: base, rotulo: "Vitrine" },
-    { href: `${base}/mostruario`, rotulo: "Mostruário" },
     { href: `${base}/a-loja`, rotulo: "A loja" },
   ];
 

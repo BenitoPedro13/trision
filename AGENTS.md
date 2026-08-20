@@ -53,9 +53,11 @@ Trísion (`spec-brand.md` §4).
 ### Status
 
 **Fase 0 frontend complete; Fase 1 CMS foundation landed** (`TASK-payload-tenancy.md`).
-Payload 3.88 at `/admin` (blank template install). Six Trísion collections/globals +
+Payload 3.88 at `/admin` (blank template install). Five Trísion collections + one global +
 multi-tenant plugin + Blob. Seams: `catalogSource` / `tenantSource` with Payload fallback
-to `content/` mock when DB unreachable or schema not pushed.
+to `content/` mock when DB unreachable or schema not pushed. **Every reseller storefront
+shows the same catalogue** — the `Mostruario` collection was built here and removed
+2026-08-20, see the note further down and `TASK-catalogo-unico-sem-mostruario.md`.
 
 **The frontend layout is built end-to-end against mock data**
 (`TASK-frontend-fase-0.md`): `/`, `/colecoes`, `/catalogo`, `/oculos/[slug]` and a
@@ -68,8 +70,13 @@ are still not installed.
 
 The live URL is `https://trision.vercel.app` (`src/lib/site-config.ts`). Wildcard
 subdomains — and therefore every multi-tenant route — wait on the apex domain. Amanda
-confirmed 2026-08-17 that she owns one; the exact domain and DNS/registrar access are still
-`[VERIFICAR]` (`spec-brand.md` §6 question 4).
+confirmed 2026-08-20 the domain is `trision.com.br` (currently a Wbuy storefront); who
+controls DNS/registrar access is still `[VERIFICAR]` (`spec-brand.md` §6 question 4).
+
+**Every reseller storefront shows the same catalogue** — resellers do not curate or
+select products (decided 2026-08-20, `TASK-catalogo-unico-sem-mostruario.md`). The
+`mostruario` join collection was built, then removed; do not reintroduce per-reseller
+product selection without a new explicit decision.
 
 ### Brand identity (for copy, tone, and component decisions)
 
@@ -103,7 +110,7 @@ confirmed 2026-08-17 that she owns one; the exact domain and DNS/registrar acces
 | Brand components | Hand-written: `Visor`, `VisorCursor`, `Numeracao`, `Marca`/`MarcaLockup`, `Ceu` (`src/components/`). No generator produces these; they are the brand | built |
 | Components (later) | AlignUI (vendored, primary) → shadcn (gaps only) → React Bits (`spec-design.md` §8). **Foundation utils + `Drawer` vendored** (`src/utils/`, `src/components/ui/drawer.tsx`); rest deferred per real need | partial — `Drawer` only |
 | Catalogue, Fase 0 | Typed TS modules in `content/` behind the same domain types Payload will later implement. **The seam is `lib/catalog/source.*.ts`.** Nothing outside those files imports a Payload type | wired — `/`, `/colecoes`, `/catalogo`, `/oculos/[slug]` render it, example data, `TASK-frontend-fase-0.md` |
-| Tenancy seam, Fase 0 | Mirrors the catalogue seam: `lib/tenant/source.*.ts` + **`lib/tenant/scope.ts`**, the one place that reads `revendedores`/`mostruario` (`spec-architecture.md` §6.1). One mock reseller, path-routed at `/loja/[rev]` — **not** the real subdomain shape, see the routing row below | seam scaffolded, mock data, `TASK-frontend-fase-0.md` §2.4 |
+| Tenancy seam, Fase 0 | Mirrors the catalogue seam: `lib/tenant/source.*.ts` + **`lib/tenant/scope.ts`**, the one place that reads `revendedores` (`spec-architecture.md` §6.1). Every reseller shows the same catalogue — there's no per-reseller product data left to scope (`TASK-catalogo-unico-sem-mostruario.md`). Path-routed at `/loja/[rev]` — **not** the real subdomain shape, see the routing row below | seam scaffolded, mock data, `TASK-frontend-fase-0.md` §2.4 |
 | CMS, Fase 1 | **Payload ≥ 3.73.0**, mounted at `/admin`, `@payloadcms/plugin-multi-tenant`. Collections it does *not* list stay global — which is how `produtos` stays brand-owned | **started** — 3.88.0, Trísion collections, `/admin` |
 | Data + files, Fase 1 | Postgres via `@payloadcms/db-postgres` (provider chosen at scaffold time, not from memory) + Vercel Blob | wired — Neon in `.env`, Blob token in `.env.example` |
 | Client/server state | **Zustand** for client-only ephemeral UI state shared between sibling components with no natural parent (e.g. the mobile filter drawer, `components/produto/filtro-store.ts`) — plain `create()`, no provider. **URL search params + Server Components** for anything shareable/filterable (`/catalogo` filters), per Next's own guidance over either state library. **TanStack Query is not installed** — Fase 0 has no live/mutable server data for it to manage; see the state-management note below before reaching for either library | zustand 5, `@tanstack/react-query` deliberately absent |
@@ -129,8 +136,9 @@ re-deriving it per task.
    *revalidate, mutate, or poll* live data. Nothing does yet. Installing the provider
    before that would sit in every route's client bundle for zero benefit (storefront JS
    budget ≤180 KB gzipped, `spec-design.md` §12) — install it when a real feature needs
-   it (first candidate: the Fase 1 reseller mostruário toggle grid,
-   `spec-architecture.md` §5.3), not speculatively. When it lands, the pattern is: a
+   it, not speculatively. (The earlier "first candidate" here — the Fase 1 reseller
+   mostruário toggle grid — no longer exists, `TASK-catalogo-unico-sem-mostruario.md`;
+   the next real candidate is the Fase 2 leads dashboard.) When it lands, the pattern is: a
    per-request `getQueryClient` via React's `cache()`, `queryClient.prefetchQuery` (not
    awaited) in the Server Component wrapped in `<HydrationBoundary state={dehydrate(...)}>`,
    and `useSuspenseQuery` in the client leaf underneath.
@@ -200,11 +208,11 @@ a lesson already paid for on a sibling project.
 - **One `wa.me` builder.** `lib/lead/link.ts` is that builder — nothing else composes a
   WhatsApp URL. F&A Móveis shipped `localhost` inside every production message because
   more than one place built that string (`spec-architecture.md` §6.3).
-- **One tenancy boundary.** Every read of a tenant-scoped collection goes through
-  `lib/tenant/scope.ts` (built, Fase 0 version, against mock `revendedores`/`mostruario`
-  in `content/`). A reseller can never create a product — two locks, plus a catalog test
-  that enumerates every collection (`spec-architecture.md` §6, still Fase 1 — no product
-  creation UI exists yet). Do not write a filter inline in a route.
+- **One tenancy boundary.** Every read of tenant data goes through `lib/tenant/scope.ts`
+  (built, Fase 0 version, against mock `revendedores` in `content/`). A reseller can never
+  create a product — two locks, plus a catalog test that enumerates every collection
+  (`spec-architecture.md` §6, still Fase 1 — no product creation UI exists yet). Do not
+  write a filter inline in a route.
 - **A React Bits component needs a sentence naming the brand fact it carries.** "It
   looks incredible" is not that sentence. The rejected list in `spec-design.md` §7.4 is
   binding.
@@ -241,20 +249,22 @@ a lesson already paid for on a sibling project.
 
 ### Open questions that block code
 
-All ten live in `spec-brand.md` §6 with an owner each. **Three of them block everything
-else**, and they are the real deliverable of `/apresentacao` slides 14–15:
+All eleven live in `spec-brand.md` §6 with an owner each; most were answered 2026-08-20.
+**One still blocks Fase 1:**
 
-1. **The domain** (question 4). Wildcard subdomains require an apex. Hard blocker for
-   every multi-tenant route. Fase 0 can ship on `trision.vercel.app`. **Partially
-   answered 2026-08-17** — Amanda confirmed she owns a domain; the exact string and
-   DNS/registrar access are still `[VERIFICAR]`, so this still blocks Fase 1.
-2. **The pricing model** (question 7). Decides whether `mostruario.preco` exists, and
-   whether "register a product once" survives contact with reality. Do not build a
-   per-reseller price field speculatively.
-3. **Where the WhatsApp button points** (question 6). `destinoLead` exists so this does
-   not block the build, but it must be answered before launch.
+1. **DNS/registrar access for `trision.com.br`** (question 4). Wildcard subdomains
+   require an apex, and the domain string itself is now confirmed — what's missing is
+   who controls it. Fase 0 can ship on `trision.vercel.app` while this is sorted. Note:
+   the domain currently points at a live Wbuy storefront, so this is a cutover, not a
+   first purchase — see the note under §0 "Status" above before assuming a clean slate.
 
-Do not silently assume answers. The presentation exists to extract them.
+Two that were listed here as blocking are now resolved: **the pricing model** (question
+7 — one price everywhere, no per-reseller override, and the collection it would have
+lived on no longer exists) and **where the WhatsApp button points** (question 6 —
+always Amanda).
+
+Do not silently assume answers to the ones still open. The presentation exists to
+extract them.
 
 ---
 
@@ -441,8 +451,8 @@ second package emerges. Payload, when it lands, is mounted *inside* this app
   src/app/(marca)/seja-revendedor/  B2B funnel
   src/app/(marca)/sobre/          honest-partial bio page — TASK-sobre.md, [VERIFICAR] panel
                                 for what Amanda hasn't confirmed yet
-  src/app/loja/[rev]/           Fase 0 storefront path stand-in: home + mostruario/ — own
-                                chrome (RevendedorEndosso), deliberately outside (marca)/
+  src/app/loja/[rev]/           Fase 0 storefront path stand-in: full catalogue + a-loja/ —
+                                own chrome (RevendedorEndosso), deliberately outside (marca)/
   src/components/visor.tsx      the four brackets
   src/components/visor-cursor.tsx  brackets following the pointer, data-alvo snap
   src/components/numeracao.tsx  mm in → 52□18-145; □ is SVG (string logic lives in lib/numeracao.ts)
@@ -474,7 +484,7 @@ second package emerges. Payload, when it lands, is mounted *inside* this app
   src/lib/tenant/               Fase 0 tenancy seam: source.ts, source.local.ts, scope.ts (the ONE scoping fn)
   src/lib/lead/link.ts          the ONE wa.me builder — direct link only, no /ir/ attribution yet
   src/content/                  example catalogue + tenant data (produtos, colecoes, marca,
-                                revendedores, mostruario) — all `exemplo`
+                                revendedores) — all `exemplo`
   src/assets/*.ttf              Archivo statics for Satori; next/font's variable face
                                 does not reach ImageResponse
   scripts/verificar-fase-0.mts  budget checks: Lighthouse + Playwright/axe (TASK-verificacao-fase-0.md;

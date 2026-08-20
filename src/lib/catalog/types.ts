@@ -91,15 +91,3 @@ export interface Revendedor {
   /** Fase 0 only, mirrors `Produto.exemplo` — gates the visible "exemplo" label. */
   exemplo: boolean;
 }
-
-/** Fase 0 stand-in for `mostruario` (`spec-architecture.md` §5.3) — the join between a
- * `Revendedor` and the `Produto`s it carries. No `preco` field: open question #7
- * (per-reseller pricing) is unresolved, so it isn't built speculatively. */
-export interface MostruarioItem {
-  revendedorSlug: string;
-  produtoSku: string;
-  disponivel: boolean;
-  destaque: boolean;
-  ordem: number;
-  observacao?: string;
-}

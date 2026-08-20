@@ -1,13 +1,12 @@
 import { hasDatabase } from "@/lib/payload/client";
 
-import type { MostruarioItem, Revendedor } from "@/lib/catalog/types";
+import type { Revendedor } from "@/lib/catalog/types";
 import { tenantSourceLocal } from "./source.local";
 
 /** Fase 0 → Fase 1 seam for tenant data (`spec-architecture.md` §6.1). */
 export interface TenantSource {
   listarRevendedores(): Promise<Revendedor[]>;
   buscarRevendedorPorSlug(slug: string): Promise<Revendedor | undefined>;
-  listarMostruario(revendedorSlug: string): Promise<MostruarioItem[]>;
 }
 
 async function withTenantSource<T>(fn: (source: TenantSource) => Promise<T>): Promise<T> {
@@ -27,8 +26,5 @@ export const tenantSource: TenantSource = {
   },
   async buscarRevendedorPorSlug(slug) {
     return withTenantSource((source) => source.buscarRevendedorPorSlug(slug));
-  },
-  async listarMostruario(revendedorSlug) {
-    return withTenantSource((source) => source.listarMostruario(revendedorSlug));
   },
 };
