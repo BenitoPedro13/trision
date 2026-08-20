@@ -29,6 +29,8 @@ All specifications, design system details, architecture decisions, and implement
 | [`spec-design.md`](docs/spec-design.md) | Visual system: tokens, components, motion, performance budgets, accessibility rules |
 | [`spec-architecture.md`](docs/spec-architecture.md) | Platform design: multi-tenancy model, data schema, phasing, API structure |
 | [`AGENTS.md`](AGENTS.md) | Development workflow: task-document process, stack assumptions, things that must not break |
+| [`docs/GUIA-ESTRUTURA-SITE.md`](docs/GUIA-ESTRUTURA-SITE.md) | pt-BR, for Amanda: site map — every route, what it shows, how they connect |
+| [`docs/GUIA-ADMIN.md`](docs/GUIA-ADMIN.md) | pt-BR, for Amanda: how to use the `/admin` panel |
 | [`docs/tasks/`](docs/tasks/) | Implementation tracking: one document per unit of work, no code before a task doc |
 
 **How to work here:** Read `AGENTS.md` first. Every code change begins with a task document in `docs/tasks/` describing current state, planned changes, and verification criteria.
@@ -198,6 +200,7 @@ This design allows Fase 0 to run without a database (dev demos) and Fase 1 to sw
 | `/revendedores` | Active reseller directory, filterable by city/state |
 | `/seja-revendedor` | B2B pitch + WhatsApp CTA (no form yet) |
 | `/sobre` | Brand story — confirmed facts only, `[VERIFICAR]` panel for unknowns |
+| `/atendimento-exclusivo` | In-home consultation service: 3-step process, testimonials, WhatsApp CTA — copy ported from Amanda's Canva page |
 | `/oculos/[slug]` | Product detail: gallery, specs, numeração, where to buy, WhatsApp CTA |
 
 ### Storefronts (`/loja/*` — temporary path-based routing)
