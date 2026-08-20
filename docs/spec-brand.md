@@ -83,11 +83,15 @@ is the brand's best photograph and belongs on /sobre.]`
 | `Atendimento Exclusivo` | link-in-bio button + a Canva page | a named service she already sells |
 | `Fale comigo` | link-in-bio button | her CTA, singular and first person |
 
-**ANSWERED 2026-08-20 — see §6 question 2 for the full content.** In short: Trísion is
-also an optical practice (**Trísion Personal Optical**), 24 years of in-home/in-location
-visits — technical routine assessment, technology recommendation, aesthetic frame
-consultation. `[VERIFICAR: exact page structure/length — the Canva page and Instagram
-linklist entry Amanda pointed at may still have detail worth reading before final copy.]`
+**BUILT 2026-08-20 — `/atendimento-exclusivo` ships with the real copy**, read directly
+from the rendered Canva page (`TASK-atendimento-exclusivo.md`): the three-step process,
+the four "para você que" audience bullets, and the confirmed service area — **Rio de
+Janeiro and Mato Grosso do Sul**. Trísion is also an optical practice (**Trísion Personal
+Optical**), 24 years of in-home/in-location visits — technical routine assessment,
+technology recommendation, aesthetic frame consultation. `[VERIFICAR: the three client
+testimonials and the "Olhar como assinatura" editorial paragraph on the Canva page were
+deliberately left off the new page — ask Amanda whether to port the testimonials
+verbatim before adding them; see TASK-atendimento-exclusivo.md §3.]`
 
 ### 1.5b CONTESTED — the brand colour is gold, according to Amanda
 

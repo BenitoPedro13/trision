@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/colecoes", rotulo: "Coleções" },
   { href: "/revendedores", rotulo: "Revendedores" },
   { href: "/sobre", rotulo: "Sobre" },
+  { href: "/atendimento-exclusivo", rotulo: "Atendimento Exclusivo" },
   { href: "/seja-revendedor", rotulo: "Seja revendedor" },
 ];
 
