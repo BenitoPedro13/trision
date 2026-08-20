@@ -100,6 +100,12 @@ not a blank first purchase — Amanda asked to review what's there before anythi
 Fase 0 can ship on `trision.vercel.app` while DNS access is sorted, but nothing multi-tenant
 can.
 
+**Confirmed 2026-08-20 (asked directly, not assumed):** reseller storefronts stay
+`noindex`/`disallow`d (as `robots.ts` and every `/loja/[rev]*` page's `indexar: false`
+already do) until real subdomains exist — local SEO for resellers (`LocalBusiness`/
+`Service` schema, indexing) is Fase 1+ work, done once, on the final URL shape, not now on
+`trision.vercel.app` followed by a redirect cleanup later.
+
 ---
 
 ## 5. Data model
