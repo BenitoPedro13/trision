@@ -322,12 +322,12 @@ exclusivo" for more detail; read those before writing final copy.
 
 ### Question 3 — partially answered 2026-08-20
 
-Instagram handle confirmed: **`@trisioneyewear`**. WhatsApp number is explicitly **not
-yet decided** — Amanda: *"será um outro contato, ainda estou vendo qual número vou
-disponibilizar"* (a different number than whatever she uses today; she hasn't picked it).
-Do not use any number seen elsewhere (Wbuy, Instagram bio) as `WHATSAPP_MARCA` until she
-names the one she's choosing for this site. Full name and city/UF are **still
-unanswered** — not addressed in this round.
+Instagram handle confirmed: **`@trisioneyewear`**. WhatsApp number: Amanda first said it
+was **not yet decided** — *"será um outro contato, ainda estou vendo qual número vou
+disponibilizar"* — but the number has since been named: **`+55 21 98011-8467`**
+(`+5521980118467` E.164), set 2026-08-20 in `.env` (`WHATSAPP_MARCA`) and
+`src/content/marca.ts`. Full name and city/UF are **still unanswered** — not addressed in
+this round.
 
 ### Question 5 — answered 2026-08-20
 

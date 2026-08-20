@@ -57,7 +57,7 @@ export interface Colecao {
 
 /** Fase 0 stand-in for the `config` global (`spec-architecture.md` §5.5). */
 export interface Marca {
-  /** E.164 — [VERIFICAR: Amanda's real WhatsApp number, spec-brand.md §6 question 6] */
+  /** E.164 — confirmed 2026-08-20, spec-brand.md §6 question 3 */
   whatsapp: string;
   instagram: string;
   /** "" ⇒ not shown, same convention as `whatsapp` — [VERIFICAR: a confirmed contact

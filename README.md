@@ -374,7 +374,7 @@ BLOB_READ_WRITE_TOKEN="<vercel blob token>"
 NEXT_PUBLIC_SITE_URL="https://trision.vercel.app"  # Override when apex domain is confirmed
 
 # WhatsApp (brand default, overrideable per-reseller in Payload)
-WHATSAPP_MARCA="+5524999999999"  # [VERIFICAR: actual number]
+WHATSAPP_MARCA="+5521980118467"  # confirmed 2026-08-20, spec-brand.md §6 question 3
 ```
 
 If `DATABASE_URL` is not set, the app runs entirely from mock data in `src/content/`.
